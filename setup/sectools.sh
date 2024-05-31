@@ -109,6 +109,7 @@ install_sectools() {
     go_tool "Mapcidr" "github.com/projectdiscovery/mapcidr/cmd/mapcidr"
     go_tool "Amass" "github.com/owasp-amass/amass/v4/..."
     go_tool "ffuf" "go install github.com/ffuf/ffuf/v2"
+    go_tool "rayder" "go install github.com/devanshbatham/rayder"
 }
 
 core() {
