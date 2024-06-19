@@ -1,0 +1,7 @@
+vim.cmd([[nnoremap <C-r> :lua Run()<CR>]])
+vim.cmd([[nnoremap <C-s> :w!<CR>]])
+vim.cmd([[nnoremap <C-q> :q<CR>]])
+vim.cmd([[nnoremap <C-x> :x<CR>]])
+vim.cmd([[nnoremap g gg]])
+vim.cmd([[nnoremap <C-N> :NvimTreeToggle<CR>]])
+vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files<cr>', { noremap = true, silent = true })

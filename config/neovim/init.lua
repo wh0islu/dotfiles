@@ -1,0 +1,6 @@
+require("core.map")
+require("core.sets")
+require("core.run")
+require("core.plugins")
+require("plugins.lualine")
+require("plugins.ntree")
