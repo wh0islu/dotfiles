@@ -13,6 +13,13 @@ install_app(){
     sudo apt install $app -y 1>/dev/null 2>error.log
 }
 
+neovim_config(){
+    cd $HOME
+    git clone https://github.com/neovim/neovim
+    cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
+    git checkout stable
+    sudo make install
+}
 
 echo "$blue[*]$reset Update and upgrade $blue[*]$reset"
 sudo apt update && sudo apt upgrade -y
@@ -52,7 +59,7 @@ install_go() {
             else
                 echo "$red[!]$reset Failed to install Go $red[!]$reset"
             fi
-        elif [ -f "$HOME/.bashrc" ]; then
+        Gelif [ -f "$HOME/.bashrc" ]; then
             echo "export PATH=\$PATH:/usr/local/go/bin" >> "$HOME/.bashrc"
             . $HOME/.bashrc
             export PATH=$PATH:/usr/local/go/bin
@@ -83,12 +90,23 @@ clear
 sleep 1
 echo "$blue[*]$reset Install applications $blue[*]$reset"
 install_app "Python v3" "python3"
-install_app "Python Venv" "python3.11-venv"
-install_app "Emacs" "emacs"
+install_app "Python Venv" "python3.12-venv"
 install_app "UFW" "ufw"
 install_app "Build essential" "buildssential"
 install_app "Tree" "tree"
 install_app "7zip" "7zip"
 install_app "Transmission" "transmission"
 install_app "Git" "git"
+install_app "xbindkeys" "xbindkeys"
+install_app "ninja-build" "ninja-build"
+install_app "gettext" "gettext"
+install_app "cmake" "cmake"
+install_app "unzip" "unzip"
+install_app "curl" "curl"
+install_app "build-essential" "build-essential"
+echo "$green[*]$reset Done. $green[*]$reset"
+sleep 1
+clear
+echo "$blue[+]$reset Neovim installation $blue[+]$reset"
+neovim_config()
 echo "$green[*]$reset Done. $green[*]$reset"
