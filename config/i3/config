@@ -181,4 +181,3 @@ exec_always --no-startup-id feh --bg-scale $HOME/Pictures/Wallpapers/Kyoto.png
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec_always --no-startup-id xbindkeys
 bindsym $mod+Shift+O exec obsidian
-bindsym $mod+Shift+V exec code
