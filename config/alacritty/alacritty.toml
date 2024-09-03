@@ -1,0 +1,59 @@
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.bright]
+black = "#38252C"
+blue = "#289CD5"
+cyan = "#0A9B81"
+green = "#76B639"
+magenta = "#FF2491"
+red = "#FF0000"
+white = "#F8F8F8"
+yellow = "#E1A126"
+
+[colors.normal]
+black = "#101010"
+blue = "#16B1FB"
+cyan = "#0FDCB6"
+green = "#97D01A"
+magenta = "#FF2491"
+red = "#D81765"
+white = "#EBEBEB"
+yellow = "#FFA800"
+
+[colors.primary]
+background = "#101010"
+foreground = "#ffffff"
+
+[cursor.style]
+blinking = "On"
+shape = "Block"
+
+[font]
+size = 11
+
+[font.normal]
+family = "FiraMono Nerd Font"
+style = "Regular"
+
+[shell]
+program = "/bin/zsh"
+
+[window]
+opacity = 0.95
+
+[window.class]
+general = "Alacritty"
+instance = "Alacritty"
+
+[window.dimensions]
+columns = 100
+lines = 27
+
+[window.padding]
+x = 2
+y = 2
+
+[window.position]
+x = 100
+y = 100

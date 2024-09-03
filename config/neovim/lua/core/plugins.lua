@@ -22,4 +22,7 @@ require("lazy").setup({
     {
 	"nvim-tree/nvim-tree.lua",
     },
+    {
+      'akinsho/toggleterm.nvim', version = "*", config = true
+    },
 })
