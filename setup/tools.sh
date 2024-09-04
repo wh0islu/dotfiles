@@ -104,6 +104,7 @@ install_app "cmake" "cmake"
 install_app "unzip" "unzip"
 install_app "curl" "curl"
 install_app "build-essential" "build-essential"
+install_app "neofetch" "neofetch"
 echo "$green[*]$reset Done. $green[*]$reset"
 sleep 1
 clear
