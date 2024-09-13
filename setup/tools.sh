@@ -13,13 +13,14 @@ install_app(){
     sudo apt install $app -y 1>/dev/null 2>error.log
 }
 
-neovim_config(){
-    cd $HOME
-    git clone https://github.com/neovim/neovim
-    cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
-    git checkout stable
-    sudo make install
-}
+# TODO
+#neovim_config(){
+#    cd $HOME
+#    git clone https://github.com/neovim/neovim
+#    cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
+#    git checkout stable
+#    sudo make install
+#}
 
 echo "$blue[*]$reset Update and upgrade $blue[*]$reset"
 sudo apt update && sudo apt upgrade -y
@@ -92,7 +93,6 @@ echo "$blue[*]$reset Install applications $blue[*]$reset"
 install_app "Python v3" "python3"
 install_app "Python Venv" "python3.12-venv"
 install_app "UFW" "ufw"
-install_app "Build essential" "buildssential"
 install_app "Tree" "tree"
 install_app "7zip" "7zip"
 install_app "Transmission" "transmission"
@@ -108,6 +108,6 @@ install_app "neofetch" "neofetch"
 echo "$green[*]$reset Done. $green[*]$reset"
 sleep 1
 clear
-echo "$blue[+]$reset Neovim installation $blue[+]$reset"
-neovim_config()
-echo "$green[*]$reset Done. $green[*]$reset"
+#echo "$blue[+]$reset Neovim installation $blue[+]$reset"
+#neovim_config()
+#echo "$green[*]$reset Done. $green[*]$reset"
