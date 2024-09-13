@@ -12,3 +12,4 @@ vim.o.number=true
 vim.o.showtabline=2
 vim.o.updatetime=100
 vim.o.timeoutlen=100
+vim.opt.clipboard = "unnamedplus"
