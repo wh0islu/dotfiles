@@ -5,6 +5,11 @@ green="\e[32m"
 red="\e[31m"
 reset="\e[97m"
 
+check_file_exists() {
+    local file="$1"
+    [ -f "$file" ]
+}
+
 install_app() {
     local appname="$1"
     local app="$2"
