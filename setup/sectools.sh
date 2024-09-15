@@ -28,53 +28,57 @@ go_tool() {
 
 install_go() {
     echo "${red}❌[!]${reset} Go isn't installed ${red}[!]${reset}"
-    sleep 1
-    echo "${red}❓[!]${reset} Enter the version of Go you want to install (e.g., 1.17.5) ${red}[!]${reset} > "
-    read -r go_version
-    echo "${red}🔑[!]${reset} Please enter the SHA256 hash for the downloaded file ${red}[!]${reset} > "
-    read -r official_sha256
-    local filename="go${go_version}.linux-amd64.tar.gz"
-    if check_file_exists "$filename"; then
-        echo "⏭️ Skipping download as $filename already exists."
-    else
-        wget -q --show-progress "https://golang.org/dl/go${go_version}.linux-amd64.tar.gz"
-        if [ $? -ne 0 ]; then
-            echo "${blue}❌[!]${reset} Failed to download ${filename}. Exiting. ${blue}[!]${reset}"
-            return
+    read -p "Would you like to install Go? [y/N] " answer
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
+        echo "${red}❓[!]${reset} Enter the version of Go you want to install (e.g., 1.17.5) ${red}[!]${reset} > "
+        read -r go_version
+        echo "${red}🔑[!]${reset} Please enter the SHA256 hash for the downloaded file ${red}[!]${reset} > "
+        read -r official_sha256
+        local filename="go${go_version}.linux-amd64.tar.gz"
+        if check_file_exists "$filename"; then
+            echo "⏭️ Skipping download as $filename already exists."
+        else
+            wget -q --show-progress "https://golang.org/dl/go${go_version}.linux-amd64.tar.gz"
+            if [ $? -ne 0 ]; then
+                echo "${blue}❌[!]${reset} Failed to download ${filename}. Exiting. ${blue}[!]${reset}"
+                return
+            fi
         fi
-    fi
-    go_sha256=$(sha256sum "$filename" | awk '{print $1}')
-    if [ "$go_sha256" = "$official_sha256" ]; then
-        echo "${green}✅[*****]${reset}\n$go_sha256\n$official_sha256\n${green}[*****]${reset}"
-        echo "${green}✅[!]${reset} Hash match ${green}[!]${reset}"
-        echo "${blue}🚀[+]${reset} Installing Go ${blue}[+]${reset}"
+        go_sha256=$(sha256sum "$filename" | awk '{print $1}')
+        if [ "$go_sha256" = "$official_sha256" ]; then
+            echo "${green}✅[*****]${reset}\n$go_sha256\n$official_sha256\n${green}[*****]${reset}"
+            echo "${green}✅[!]${reset} Hash match ${green}[!]${reset}"
+            echo "${blue}🚀[+]${reset} Installing Go ${blue}[+]${reset}"
 
-        sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "$filename"
-        if [ -f "$HOME/.zshrc" ]; then
-            echo "export PATH=\$PATH:/usr/local/go/bin" >> "$HOME/.zshrc"
-            export PATH=$PATH:/usr/local/go/bin
-            . "$HOME/.zshrc"
-            if command -v go &>/dev/null; then
-                go version
-                echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
-                sleep 1
-            else
-                echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
+            sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "$filename"
+            if [ -f "$HOME/.zshrc" ]; then
+                echo "export PATH=\$PATH:/usr/local/go/bin" >> "$HOME/.zshrc"
+                export PATH=$PATH:/usr/local/go/bin
+                . "$HOME/.zshrc"
+                if command -v go &>/dev/null; then
+                    go version
+                    echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
+                    sleep 1
+                else
+                    echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
+                fi
+            elif [ -f "$HOME/.bashrc" ]; then
+                echo "export PATH=\$PATH:/usr/local/go/bin" >> "$HOME/.bashrc"
+                . "$HOME/.bashrc"
+                export PATH=$PATH:/usr/local/go/bin
+                if command -v go &>/dev/null; then
+                    go version
+                    echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
+                    sleep 1
+                else
+                    echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
+                fi
             fi
-        elif [ -f "$HOME/.bashrc" ]; then
-            echo "export PATH=\$PATH:/usr/local/go/bin" >> "$HOME/.bashrc"
-            . "$HOME/.bashrc"
-            export PATH=$PATH:/usr/local/go/bin
-            if command -v go &>/dev/null; then
-                go version
-                echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
-                sleep 1
-            else
-                echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
-            fi
+        else
+            echo "${red}❌[!]${reset} Hash does not match ${red}[!]${reset}"
         fi
     else
-        echo "${red}❌[!]${reset} Hash does not match ${red}[!]${reset}"
+        echo "${blue}⏩[*]${reset} Skipping Go installation ${blue}[*]${reset}"
     fi
 }
 
@@ -140,7 +144,9 @@ core() {
     install_app "nmap" "nmap"
     echo
 
-    if [ -d "/usr/local/go" ]; then
+    if ! command -v go &>/dev/null; then
+        install_go
+    else
         echo "${green}✅[*]${reset} Go is already installed ${green}[*]${reset}"
         read -p "Would you like to install the tools? [y/N] " answer
         if [ "$answer" = "y" ]; then
@@ -148,21 +154,15 @@ core() {
                 mkdir -p "$HOME/go/bin"
             else
                 install_sectools
-		echo "${green}📂[*]${reset} Moving tools to /usr/bin/ ${green}[*]${reset}"
+                echo "${green}📂[*]${reset} Moving tools to /usr/bin/ ${green}[*]${reset}"
                 sudo mv "$HOME"/go/bin/* /usr/bin/
                 echo "${green}✅[*]${reset} Done ${green}[*]${reset}"
             fi
         else
             echo "${green}✔️[!]${reset} Done ${green}[!]${reset}"
         fi
-    else
-        install_go
-        sleep 1
-        install_sectools
-        echo "${green}✅[*]${reset} Done ${green}[*]${reset}"
-        echo "${green}📂[*]${reset} Moving tools to /usr/bin/ ${green}[*]${reset}"
-        sudo mv "$HOME"/go/bin/* /usr/bin/
     fi
 }
 
 core
+
