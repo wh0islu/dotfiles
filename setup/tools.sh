@@ -53,7 +53,7 @@ sudo apt update && sudo apt upgrade -y
 install_go() {
     echo "${red}❌[!]${reset} Go isn't installed ${red}[!]${reset}"
     read -p "Would you like to install Go? [y/N] " answer
-    if [[ "$answer" =~ ^[Yy]$ ]]; then
+    if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
         echo "${red}❓[!]${reset} Enter the version of Go you want to install (e.g., 1.17.5) ${red}[!]${reset} > "
         read -r go_version
         echo "${red}🔑[!]${reset} Please enter the SHA256 hash for the downloaded file ${red}[!]${reset} > "
