@@ -122,5 +122,5 @@ else
     echo "${green}✅[*]${reset} Go is already installed at $go_path ${green}[*]${reset}"
         echo "${green}✅[*]${reset} Done ${green}[*]${reset}"
         echo "${blue}⏩[*]${reset} Skipping ${blue}[*]${reset}"
-
+fi
 core
