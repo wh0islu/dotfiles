@@ -1,14 +1,13 @@
 configuration {
-    display-drun: "Applications 🚀: ";
-    display-drun: "Applications 🚀: ";
+    display-drun: "🚀Applications";
     show-icons: true;
     icon-theme: "Papirus";
     background-color: "#FFFFFF";
     foreground-color: "#FFFFFF";
-    selection-background-color: "#555555";
-    selection-foreground-color: "#FfFFFf";
+    selection-background-color: "#FFFFFF";
+    selection-foreground-color: "#FFFFFf";
     border-color: "#555555";
-    font: "Cousine Nerd Font Bold 10";
+    font: "FiraMono Nerd Font Bold 10";
 }
 
 window {
@@ -16,7 +15,7 @@ window {
     location: center;
     padding: 10;
     border-radius: 5px;
-    background-color: "#1C1C1C";
+    background-color: "#0F0F0F";
 }
 
 element {

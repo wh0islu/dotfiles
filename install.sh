@@ -1,44 +1,38 @@
 #!/usr/bin/bash
 
 blue="\e[34m"
-green="\e[32m"
-red="\e[31m"
 reset="\e[97m"
+
 ascii="${blue}
- _____             _  _____ 	
-/__   \_ __ _   _ | |/__   \	
-  / /\/ '__| | | / __) / /\/
- / /  | |   		
- \/   |_|	 
+(::)
 ${reset}
 "
 
-Menu(){
-
+Menu() {
     clear
-    echo "$ascii"
-    echo "Menu"
-    echo "$blue[1]$reset * Install sec tools"
-    echo "$blue[2]$reset * Install tools"
-    echo "$blue[0]$reset * Exit"
-    read option
+    echo -e "$ascii"
+    echo "📋 Menu"
+    echo -e "${blue}[1]${reset} 🛡️ * Install sec tools"
+    echo -e "${blue}[2]${reset} 🛠️ * Install tools"
+    echo -e "${blue}[0]${reset} Exit"
+    read -p "Choose an option: " option
     case $option in
-	1) InstallSecTools ;;
-	2) InstallTools ;;
-	0) exit ;;
-	*) "Wrong option. Try again"; echo ; Menu ;;
+        1) InstallSecTools ;;
+        2) InstallTools ;;
+        0) exit ;;
+        *) echo -e "${red}❌ Wrong option. Try again${reset}"; echo ; Menu ;;
     esac
 }
 
-InstallSecTools(){
+InstallSecTools() {
     clear
-    echo "$blue[*]$reset Sec tools $blue[*]$reset"
+    echo -e "${blue}🛡️[*]${reset} Sec tools ${blue}[*]${reset}"
     sh setup/sectools.sh
 }
 
-InstallTools(){
+InstallTools() {
     clear
-    echo "$blue[*]$reset tools $blue[*]$reset"
+    echo -e "${blue}🛠️[*]${reset} Tools ${blue}[*]${reset}"
     sh setup/tools.sh
 }
 

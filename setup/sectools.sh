@@ -1,9 +1,10 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 
 blue="\e[34m"
 green="\e[32m"
 red="\e[31m"
 reset="\e[97m"
+
 sudo apt update 1>/dev/null 2>/dev/null
 
 check_file_exists() {
@@ -14,66 +15,66 @@ check_file_exists() {
 install_app() {
     local appname="$1"
     local app="$2"
-    echo "$blue[+]$reset Installing $appname"
-    sudo apt install "$app" -y 1>/dev/null 2>error_apt.log
+    echo "${blue}🚀[+]${reset} Installing ${appname}${blue}[+]${reset}"
+    sudo apt install "$app" -y
 }
 
 go_tool() {
     local tool_name="$1"
     local tool="$2"
-    echo "$blue[+]$reset Installing $tool_name"
+    echo "${blue}🔧[+]${reset} Installing ${tool_name}${blue}[+]${reset}"
     go install "$tool@latest" 1>/dev/null 2>go_tool_error.log
 }
 
 install_go() {
-    echo "$red[!]$reset Go isn't installed $red[!]$reset"
+    echo "${red}❌[!]${reset} Go isn't installed ${red}[!]${reset}"
     sleep 1
-    echo "$red[!]$reset Enter the version of Go you want to install (e.g., 1.17.5) $red[!]$reset > "
+    echo "${red}❓[!]${reset} Enter the version of Go you want to install (e.g., 1.17.5) ${red}[!]${reset} > "
     read -r go_version
-    echo "$red[!]$reset Please enter the SHA256 hash for the downloaded file $red[!]$reset > "
+    echo "${red}🔑[!]${reset} Please enter the SHA256 hash for the downloaded file ${red}[!]${reset} > "
     read -r official_sha256
     local filename="go${go_version}.linux-amd64.tar.gz"
     if check_file_exists "$filename"; then
-        echo "Skipping download as $filename already exists."
+        echo "⏭️ Skipping download as $filename already exists."
     else
         wget -q --show-progress "https://golang.org/dl/go${go_version}.linux-amd64.tar.gz"
         if [ $? -ne 0 ]; then
-            echo "$blue[!]$reset Failed to download $filename. Exiting. $blue[!]$reset"
+            echo "${blue}❌[!]${reset} Failed to download ${filename}. Exiting. ${blue}[!]${reset}"
             return
         fi
     fi
-    go_sha256=$(sha256sum "go${go_version}.linux-amd64.tar.gz" | awk '{print $1}')
+    go_sha256=$(sha256sum "$filename" | awk '{print $1}')
     if [ "$go_sha256" = "$official_sha256" ]; then
-        echo "$green[*****]$reset\n$go_sha256\n$official_sha256\n$green[*****]$reset"
-        echo "$green[!]$reset Hash match $green[!]$reset"
-        echo "$blue[+]$reset Installing Go $blue[+]$reset"
+        echo "${green}✅[*****]${reset}\n$go_sha256\n$official_sha256\n${green}[*****]${reset}"
+        echo "${green}✅[!]${reset} Hash match ${green}[!]${reset}"
+        echo "${blue}🚀[+]${reset} Installing Go ${blue}[+]${reset}"
 
-        sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "go${go_version}.linux-amd64.tar.gz"
+        sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "$filename"
         if [ -f "$HOME/.zshrc" ]; then
             echo "export PATH=\$PATH:/usr/local/go/bin" >> "$HOME/.zshrc"
             export PATH=$PATH:/usr/local/go/bin
-            . $HOME/.bashrc
+            . "$HOME/.zshrc"
             if command -v go &>/dev/null; then
                 go version
-                echo "$green[!]$reset Done. Go installed $green[!]$reset"
+                echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
                 sleep 1
             else
-                echo "$red[!]$reset Failed to install Go $red[!]$reset"
+                echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
             fi
         elif [ -f "$HOME/.bashrc" ]; then
             echo "export PATH=\$PATH:/usr/local/go/bin" >> "$HOME/.bashrc"
-            . $HOME/.bashrc
+            . "$HOME/.bashrc"
             export PATH=$PATH:/usr/local/go/bin
             if command -v go &>/dev/null; then
                 go version
-                echo "$green[!]$reset Done. Go installed $green[!]$reset"
+                echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
                 sleep 1
             else
-                echo "[!] Failed to install Go [!]"
+                echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
             fi
         fi
     else
-        echo "$red[!]$reset Hash does not match $red[!]$reset"
+        echo "${red}❌[!]${reset} Hash does not match ${red}[!]${reset}"
     fi
 }
 
@@ -115,23 +116,23 @@ install_sectools() {
 core() {
     echo
     sleep 1
-    echo "$blue[*]$reset Python settings $blue[*]$reset"
+    echo "${blue}🐍[*]${reset} Python settings ${blue}[*]${reset}"
     install_app "Python version 3" "python3"
-    install_app "Python 3.11-venv" "python3.11-venv"
+    install_app "Python 3.12-venv" "python3.12-venv"
     install_app "Package manager - pip3" "python3-pip"
 
     echo
-    echo "$blue[*]$reset Virtual environment $blue[*]$reset"
+    echo "${blue}📦[*]${reset} Virtual environment ${blue}[*]${reset}"
     if [ ! -d "$HOME/.virtualenvs" ]; then
         mkdir -p "$HOME/.virtualenvs"
     fi
     python3 -m venv "$HOME/.virtualenvs/sec"
     . "$HOME/.virtualenvs/sec/bin/activate"
     python3 -m pip install --upgrade pip 1>/dev/null 2>pip_error.log
-    echo "$blue[+]$reset Installing uro and shodan"
-    pip3 install -r ~/dotfilesz/setup/requirements.txt 1>/dev/null 2>pip_error.log
+    echo "${blue}🚀[+]${reset} Installing uro and shodan"
+    pip3 install -r ~/dotfiles/setup/requirements.txt 1>/dev/null 2>pip_error.log
     echo
-    echo "$blue[*]$reset apt tools $blue[*]$reset"
+    echo "${blue}🔧[*]${reset} apt tools ${blue}[*]${reset}"
     install_app "jq" "jq"
     install_app "git" "git"
     install_app "curl" "curl"
@@ -140,25 +141,26 @@ core() {
     echo
 
     if [ -d "/usr/local/go" ]; then
-        echo "$green[*]$reset Go is already installed $green[*]$reset"
-        read -p "Would you like to install the tools? [y/N]" answer
+        echo "${green}✅[*]${reset} Go is already installed ${green}[*]${reset}"
+        read -p "Would you like to install the tools? [y/N] " answer
         if [ "$answer" = "y" ]; then
             if [ ! -d "$HOME/go/bin" ]; then
                 mkdir -p "$HOME/go/bin"
             else
                 install_sectools
-                echo "$blue[*]$reset Done $blue[*]$reset"
+		echo "${green}📂[*]${reset} Moving tools to /usr/bin/ ${green}[*]${reset}"
                 sudo mv "$HOME"/go/bin/* /usr/bin/
+                echo "${green}✅[*]${reset} Done ${green}[*]${reset}"
             fi
         else
-            echo "$green[!] Done [!]$reset"
+            echo "${green}✔️[!]${reset} Done ${green}[!]${reset}"
         fi
     else
         install_go
         sleep 1
         install_sectools
-        echo "$blue[*]$reset Done $blue[*]$reset"
-        echo "$blue[*]$reset Moving tools to /usr/bin/$blue[*]$reset" 
+        echo "${green}✅[*]${reset} Done ${green}[*]${reset}"
+        echo "${green}📂[*]${reset} Moving tools to /usr/bin/ ${green}[*]${reset}"
         sudo mv "$HOME"/go/bin/* /usr/bin/
     fi
 }
