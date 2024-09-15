@@ -5,16 +5,13 @@ green="\e[32m"
 red="\e[31m"
 reset="\e[97m"
 
-check_file_exists() {
-    local file="$1"
-    [ -f "$file" ]
-}
+sudo apt update 1>/dev/null 2>/dev/null
 
 install_app() {
     local appname="$1"
     local app="$2"
     echo "${blue}🚀[+]${reset} Installing ${appname}${blue}[+]${reset}"
-    sudo apt install $app -y
+    sudo apt install "$app" -y
 }
 
 neovim_config() {
@@ -47,9 +44,6 @@ neovim_config() {
     echo "${green}🎉[+]${reset} Neovim installation complete ${green}[+]${reset}"
 }
 
-echo "${blue}🔄[*]${reset} Update and upgrade ${blue}[*]${reset}"
-sudo apt update && sudo apt upgrade -y
-
 install_go() {
     echo "${red}❌[!]${reset} Go isn't installed ${red}[!]${reset}"
     read -p "Would you like to install Go? [y/N] " answer
@@ -59,7 +53,7 @@ install_go() {
         echo "${red}🔑[!]${reset} Please enter the SHA256 hash for the downloaded file ${red}[!]${reset} > "
         read -r official_sha256
         local filename="go${go_version}.linux-amd64.tar.gz"
-        if check_file_exists "$filename"; then
+        if [ -f "$filename" ]; then
             echo "⏭️ Skipping download as $filename already exists."
         else
             wget -q --show-progress "https://golang.org/dl/go${go_version}.linux-amd64.tar.gz"
@@ -73,29 +67,18 @@ install_go() {
             echo "${green}✅[*****]${reset}\n$go_sha256\n$official_sha256\n${green}[*****]${reset}"
             echo "${green}✅[!]${reset} Hash match ${green}[!]${reset}"
             echo "${blue}🚀[+]${reset} Installing Go ${blue}[+]${reset}"
+
             sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "$filename"
-            if [ -f "$HOME/.zshrc" ]; then
-                echo "export PATH=\$PATH:/usr/local/go/bin" >> "$HOME/.zshrc"
-                export PATH=$PATH:/usr/local/go/bin
-                . "$HOME/.zshrc"
-                if command -v go &>/dev/null; then
-                    go version
-                    echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
-                    sleep 1
-                else
-                    echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
-                fi
-            elif [ -f "$HOME/.bashrc" ]; then
-                echo "export PATH=\$PATH:/usr/local/go/bin" >> "$HOME/.bashrc"
-                . "$HOME/.bashrc"
-                export PATH=$PATH:/usr/local/go/bin
-                if command -v go &>/dev/null; then
-                    go version
-                    echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
-                    sleep 1
-                else
-                    echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
-                fi
+            echo "export PATH=\$PATH:/usr/local/go/bin" >> "$HOME/.profile"
+            export PATH=$PATH:/usr/local/go/bin
+            source "$HOME/.profile"
+
+            if command -v go &>/dev/null; then
+                go version
+                echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
+                sleep 1
+            else
+                echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
             fi
         else
             echo "${red}❌[!]${reset} Hash does not match ${red}[!]${reset}"
@@ -105,36 +88,39 @@ install_go() {
     fi
 }
 
-if ! command -v go &>/dev/null; then
+core() {
+    echo
+    sleep 1
+    echo "${blue}🐍[*]${reset} Python settings ${blue}[*]${reset}"
+    install_app "Python v3" "python3"
+    install_app "Python Venv" "python3.12-venv"
+    install_app "UFW" "ufw"
+    install_app "Tree" "tree"
+    install_app "7zip" "p7zip-full"
+    install_app "Transmission" "transmission-cli"
+    install_app "Git" "git"
+    install_app "xbindkeys" "xbindkeys"
+    install_app "ninja-build" "ninja-build"
+    install_app "gettext" "gettext"
+    install_app "cmake" "cmake"
+    install_app "unzip" "unzip"
+    install_app "curl" "curl"
+    install_app "build-essential" "build-essential"
+    install_app "neofetch" "neofetch"
+    echo "${green}✅[*]${reset} Done. ${green}[*]${reset}"
+    sleep 1
+
+    echo "${blue}🚀[+]${reset} Neovim installation ${blue}[+]${reset}"
+    neovim_config
+    echo "${green}✅[*]${reset} Done. ${green}[*]${reset}"
+}
+
+go_path=$(command -v go)
+if [ -z "$go_path" ]; then
     install_go
 else
-    echo "${green}✅[*]${reset} Go is already installed ${green}[*]${reset}"
-    echo "${blue}⏩[*]${reset} Skipping Go installation ${blue}[*]${reset}"
-fi
+    echo "${green}✅[*]${reset} Go is already installed at $go_path ${green}[*]${reset}"
+        echo "${green}✅[*]${reset} Done ${green}[*]${reset}"
+        echo "${blue}⏩[*]${reset} Skipping ${blue}[*]${reset}"
 
-clear
-sleep 1
-echo "${blue}📦[*]${reset} Install applications ${blue}[*]${reset}"
-install_app "Python v3" "python3"
-install_app "Python Venv" "python3.12-venv"
-install_app "UFW" "ufw"
-install_app "Tree" "tree"
-install_app "7zip" "7zip"
-install_app "Transmission" "transmission"
-install_app "Git" "git"
-install_app "xbindkeys" "xbindkeys"
-install_app "ninja-build" "ninja-build"
-install_app "gettext" "gettext"
-install_app "cmake" "cmake"
-install_app "unzip" "unzip"
-install_app "curl" "curl"
-install_app "build-essential" "build-essential"
-install_app "neofetch" "neofetch"
-echo "${green}✅[*]${reset} Done. ${green}[*]${reset}"
-sleep 1
-clear
-
-echo "${blue}🚀[+]${reset} Neovim installation ${blue}[+]${reset}"
-neovim_config
-echo "${green}✅[*]${reset} Done. ${green}[*]${reset}"
-
+core
