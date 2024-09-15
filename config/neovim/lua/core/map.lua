@@ -1,3 +1,4 @@
+vim.g.mapleader = ","
 vim.cmd([[nnoremap <C-r> :lua Run()<CR>]])
 vim.cmd([[nnoremap <C-s> :w!<CR>]])
 vim.cmd([[nnoremap <C-q> :q<CR>]])
@@ -5,7 +6,12 @@ vim.cmd([[nnoremap <C-x> :x<CR>]])
 vim.cmd([[nnoremap g gg]])
 vim.cmd([[nnoremap <C-n> :NvimTreeToggle<CR>]])
 vim.cmd([[nnoremap <C-t> :ToggleTerm<CR>]])
+vim.cmd([[nnoremap <C-f> :Telescope<CR>]])
 vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files<cr>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('t', '<C-w>', [[<C-\><C-n><C-w>w]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-w>', [[<C-w>w]], { noremap = true, silent = true })
-vim.g.mapleader = ","
+vim.keymap.set('n', '<Tab>', ':BufferLineCycleNext<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<S-Tab>', ':BufferLineCyclePrev<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', 'K', vim.lsp.buf.hover, {})
+vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
+vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, silent = true })

@@ -1,19 +1,24 @@
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
-vim.opt.termguicolors = true
-
 require("nvim-tree").setup({
-    sort = {
-        sorter = "case_sensitive",
-    },
     view = {
         width = 30,
         side = 'left',
+        signcolumn = "no",
     },
     renderer = {
-        group_empty = true,
+        highlight_opened_files = "none",
     },
-    filters = {
-        dotfiles = false,
+    actions = {
+        open_file = {
+            window_picker = {
+                enable = false,
+            },
+        },
+    },
+    hijack_directories = {
+        enable = false,
+    },
+    update_focused_file = {
+        enable = true,
+        update_cwd = true,
     },
 })
