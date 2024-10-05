@@ -143,26 +143,28 @@ core() {
     install_app "wget" "wget"
     install_app "nmap" "nmap"
     echo
+}
 
-    if ! command -v go &>/dev/null; then
-        install_go
-    else
-        echo "${green}✅[*]${reset} Go is already installed ${green}[*]${reset}"
-        read -p "Would you like to install the tools? [y/N] " answer
-        if [ "$answer" = "y" ]; then
-            if [ ! -d "$HOME/go/bin" ]; then
-                mkdir -p "$HOME/go/bin"
-            else
-                install_sectools
-                echo "${green}📂[*]${reset} Moving tools to /usr/bin/ ${green}[*]${reset}"
-                sudo mv "$HOME"/go/bin/* /usr/bin/
-                echo "${green}✅[*]${reset} Done ${green}[*]${reset}"
-            fi
+go_path=$(command -v go)
+if [ -z "$go_path" ]; then
+    install_go
+else
+    echo "${green}✅[*]${reset} Go is already installed at $go_path ${green}[*]${reset}"
+    read -p "Would you like to install the tools? [y/N] " answer
+    if [ "$answer" = "y" ]; then
+	if [ ! -d "$HOME/go/bin" ]; then
+	    mkdir -p "$HOME/go/bin"
+        else
+            install_sectools
+            echo "${green}📂[*]${reset} Moving tools to /usr/bin/ ${green}[*]${reset}"
+            sudo mv "$HOME"/go/bin/* /usr/bin/
+            echo "${green}✅[*]${reset} Done ${green}[*]${reset}"
+        fi
         else
             echo "${green}✔️[!]${reset} Done ${green}[!]${reset}"
+        echo "${blue}⏩[*]${reset} Skipping ${blue}[*]${reset}"
         fi
-    fi
-}
+fi
 
 core
 
