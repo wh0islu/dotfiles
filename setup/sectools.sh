@@ -22,12 +22,11 @@ install_app() {
 go_tool() {
     local tool_name="$1"
     local tool="$2"
-    echo "${blue}🔧[+]${reset} Installing ${tool_name}${blue}[+]${reset}"
-    go install "$tool@latest" 1>/dev/null 2>go_tool_error.log
+    echo "${blue}🔧[+]${reset} Installing ${tool_name} ${blue}[+]${reset}"
+    go install "$tool@latest"
 }
 
 install_go() {
-    echo "${red}❌[!]${reset} Go isn't installed ${red}[!]${reset}"
     read -p "Would you like to install Go? [y/N] " answer
     if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
         echo "${red}❓[!]${reset} Enter the version of Go you want to install (e.g., 1.17.5) ${red}[!]${reset} > "
@@ -58,6 +57,7 @@ install_go() {
                 if command -v go &>/dev/null; then
                     go version
                     echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
+		    install_sectools
                     sleep 1
                 else
                     echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
@@ -69,6 +69,7 @@ install_go() {
                 if command -v go &>/dev/null; then
                     go version
                     echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
+		    install_sectools
                     sleep 1
                 else
                     echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
@@ -120,6 +121,7 @@ install_sectools() {
 core() {
     echo
     sleep 1
+    install_go
     echo "${blue}🐍[*]${reset} Python settings ${blue}[*]${reset}"
     install_app "Python version 3" "python3"
     install_app "Python 3.12-venv" "python3.12-venv"
@@ -145,26 +147,4 @@ core() {
     echo
 }
 
-go_path=$(command -v go)
-if [ -z "$go_path" ]; then
-    install_go
-else
-    echo "${green}✅[*]${reset} Go is already installed at $go_path ${green}[*]${reset}"
-    read -p "Would you like to install the tools? [y/N] " answer
-    if [ "$answer" = "y" ]; then
-	if [ ! -d "$HOME/go/bin" ]; then
-	    mkdir -p "$HOME/go/bin"
-        else
-            install_sectools
-            echo "${green}📂[*]${reset} Moving tools to /usr/bin/ ${green}[*]${reset}"
-            sudo mv "$HOME"/go/bin/* /usr/bin/
-            echo "${green}✅[*]${reset} Done ${green}[*]${reset}"
-        fi
-        else
-            echo "${green}✔️[!]${reset} Done ${green}[!]${reset}"
-        echo "${blue}⏩[*]${reset} Skipping ${blue}[*]${reset}"
-        fi
-fi
-
 core
-

@@ -45,7 +45,6 @@ neovim_config() {
 }
 
 install_go() {
-    echo "${red}❌[!]${reset} Go isn't installed ${red}[!]${reset}"
     read -p "Would you like to install Go? [y/N] " answer
     if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
         echo "${red}❓[!]${reset} Enter the version of Go you want to install (e.g., 1.17.5) ${red}[!]${reset} > "
@@ -67,7 +66,6 @@ install_go() {
             echo "${green}✅[*****]${reset}\n$go_sha256\n$official_sha256\n${green}[*****]${reset}"
             echo "${green}✅[!]${reset} Hash match ${green}[!]${reset}"
             echo "${blue}🚀[+]${reset} Installing Go ${blue}[+]${reset}"
-
             sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "$filename"
             echo "export PATH=\$PATH:/usr/local/go/bin" >> "$HOME/.profile"
             export PATH=$PATH:/usr/local/go/bin
@@ -112,15 +110,9 @@ core() {
 
     echo "${blue}🚀[+]${reset} Neovim installation ${blue}[+]${reset}"
     neovim_config
+    echo "${blue}🚀[+]${reset} Go installation ${blue}[+]${reset}"
+    install_go
     echo "${green}✅[*]${reset} Done. ${green}[*]${reset}"
 }
 
-go_path=$(command -v go)
-if [ -z "$go_path" ]; then
-    install_go
-else
-    echo "${green}✅[*]${reset} Go is already installed at $go_path ${green}[*]${reset}"
-        echo "${green}✅[*]${reset} Done ${green}[*]${reset}"
-        echo "${blue}⏩[*]${reset} Skipping ${blue}[*]${reset}"
-fi
 core
