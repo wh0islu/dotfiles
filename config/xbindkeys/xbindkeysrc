@@ -37,33 +37,8 @@
 #keystate_capslock = enable
 #keystate_scrolllock= enable
 
-# Examples of commands:
-
-"xbindkeys_show"
+"xbindkeys_show" 
   control+shift + q
-
-# set directly keycode (here control + f with my keyboard)
-#"xterm"
-#  c:41 + m:0x4
-
-# specify a mouse button
-#"xterm"
-#  control + b:2
-
-#"xterm -geom 50x20+20+20"
-#   Shift+Mod2+alt + s
-#
-## set directly keycode (here control+alt+mod2 + f with my keyboard)
-#"xterm"
-#  alt + c:0x29 + m:4 + mod2
-#
-## Control+Shift+a  release event starts rxvt
-#"rxvt"
-#  release+control+shift + a
-#
-## Control + mouse button 2 release event starts rxvt
-#"rxvt"
-#  Control + b:2 + Release
 
 # PlayPause
 "dbus-send --type=method_call --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause"
@@ -76,6 +51,14 @@ Control + Shift + N
 # Previous
 "dbus-send --type=method_call --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous"
 Control + Shift + B
+
+# Aumentar volume com Ctrl + Scroll Up
+"pactl set-sink-volume @DEFAULT_SINK@ +5%"
+    Control + b:4
+
+# Diminuir volume com Ctrl + Scroll Down
+"pactl set-sink-volume @DEFAULT_SINK@ -5%"
+    Control + b:5
 
 
 ##################################

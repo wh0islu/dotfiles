@@ -172,12 +172,13 @@ client.urgent         #1e1e1e #1e1e1e #1e1e1e #1e1e1e
 client.background     $cor_terciaria
 
 # Configurações padrão de borda
-for_window [class="^.*"] border pixel 2
+for_window [class="^.*"] border pixel 1
 
 # Espaçamento interno
 gaps inner 5
 
-exec_always --no-startup-id feh --bg-scale $HOME/Pictures/Wallpapers/Kyoto.png
+exec_always --no-startup-id feh --bg-scale $HOME/Pictures/Wallpapers/kaiju.png
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec_always --no-startup-id xbindkeys
 bindsym $mod+Shift+O exec obsidian
+
