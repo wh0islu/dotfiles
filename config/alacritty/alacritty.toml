@@ -1,37 +1,64 @@
 [colors]
 draw_bold_text_with_bright_colors = true
-    [colors.primary]
-	background = '#0f0f0f'
 
-[cursor.style]
-blinking = "On"
-shape = "Block"
+  [colors.primary]
+  background = '#0f0f0f'
+  foreground = '#dcdcdc'
+
+  [colors.normal]
+  black   = '#1c1c1c'
+  red     = '#ff6c6b'
+  green   = '#98be65'
+  yellow  = '#ecbe7b'
+  blue    = '#51afef'
+  magenta = '#c678dd'
+  cyan    = '#46d9ff'
+  white   = '#dfdfdf'
+
+  [colors.bright]
+  black   = '#3f444a'
+  red     = '#ff6c6b'
+  green   = '#98be65'
+  yellow  = '#ecbe7b'
+  blue    = '#51afef'
+  magenta = '#c678dd'
+  cyan    = '#46d9ff'
+  white   = '#ffffff'
+
+[cursor]
+  style = "Block"        # Options: "Block", "Underline", "Beam"
+  unfocused_hollow = true
 
 [font]
-size = 10.5
+  size = 10.5
 
-[font.normal]
-family = "FiraMono Nerd Font"
-style = "Medium"
-
-[shell]
-program = "/bin/zsh"
+  [font.normal]
+  family = "FiraMono Nerd Font"
+  style = "Medium"
 
 [window]
-opacity = 0.90
+  opacity = 0.90
+  
+  [window.padding]
+  x = 8
+  y = 8
 
-[window.class]
-general = "Alacritty"
-instance = "Alacritty"
+  [window.dimensions]
+  columns = 100
+  lines = 27
+  
+  [window.class]
+  general = "Alacritty"
+  instance = "Alacritty"
 
-[window.dimensions]
-columns = 100
-lines = 27
+[shell]
+  program = "/bin/zsh"
 
-[window.padding]
-x = 2
-y = 2
 
-[window.position]
-x = 100
-y = 100
+
+[scrolling]
+  history = 10000
+  multiplier = 3
+
+[debug]
+  render_timer = false
