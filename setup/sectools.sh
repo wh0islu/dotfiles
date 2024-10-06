@@ -58,6 +58,7 @@ install_go() {
                     go version
                     echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
 		    install_sectools
+		    echo "export PATH=\$PATH:\$HOME/go/bin" >> "$HOME/.zshrc"
                     sleep 1
                 else
                     echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
@@ -70,6 +71,7 @@ install_go() {
                     go version
                     echo "${green}✅[!]${reset} Done. Go installed ${green}[!]${reset}"
 		    install_sectools
+		    echo "export PATH=\$PATH:\$HOME/go/bin" >> "$HOME/.bashrc"
                     sleep 1
                 else
                     echo "${red}❌[!]${reset} Failed to install Go ${red}[!]${reset}"
@@ -116,6 +118,7 @@ install_sectools() {
     go_tool "Amass" "github.com/owasp-amass/amass/v4/..."
     go_tool "ffuf" "go install github.com/ffuf/ffuf/v2"
     go_tool "rayder" "go install github.com/devanshbatham/rayder"
+    go_tool "asnmap" "go install github.com/projectdiscovery/asnmap/cmd/asnmap"
 }
 
 core() {
@@ -144,6 +147,11 @@ core() {
     install_app "curl" "curl"
     install_app "wget" "wget"
     install_app "nmap" "nmap"
+    install_app "whois" "whois"
+    install_app "host" "host"
+    install_app "net-tools" "net-tools"
+    install_app "dnsenum" "dnsenum"
+    install_app "dnsrecon" "dnsrecon"
     echo
 }
 
