@@ -154,6 +154,7 @@ core() {
     install_app "dnsrecon" "dnsrecon"
     install_app "hping3" "hping3"
     install_app "ncat" "ncat"
+    install_app "amap" "amap"
     echo
 }
 
