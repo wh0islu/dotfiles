@@ -152,6 +152,8 @@ core() {
     install_app "net-tools" "net-tools"
     install_app "dnsenum" "dnsenum"
     install_app "dnsrecon" "dnsrecon"
+    install_app "hping3" "hping3"
+    install_app "ncat" "ncat"
     echo
 }
 
