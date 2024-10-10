@@ -54,13 +54,11 @@ Control + Shift + B
 
 # Aumentar volume com Ctrl + Scroll Up
 "pactl set-sink-volume @DEFAULT_SINK@ +5%"
-    Control + b:4
+    Control + Shift + b:4
 
 # Diminuir volume com Ctrl + Scroll Down
 "pactl set-sink-volume @DEFAULT_SINK@ -5%"
-    Control + b:5
-
-
+    Control + Shift + b:5
 ##################################
 # End of xbindkeys configuration #
 ##################################
