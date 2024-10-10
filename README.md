@@ -6,4 +6,11 @@
 
 ---
 
+### ToDo
+- [] Fix errors during Neovim installation.
+- [] Docker installation.
+- [] Dotfiles configuration.
+
+---
+
 ![](assets/y.png)
