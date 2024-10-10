@@ -10,6 +10,7 @@
 - [] Fix errors during Neovim installation.
 - [] Docker installation.
 - [] Dotfiles configuration.
+- [] ZSH installation.
 
 ---
 
