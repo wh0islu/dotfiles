@@ -16,7 +16,12 @@ install_app() {
     local appname="$1"
     local app="$2"
     echo "${blue}🚀[+]${reset} Installing ${appname}${blue}[+]${reset}"
-    sudo apt install "$app" -y
+    sudo apt install "$app" -y 1>/dev/null 2>/dev/null
+    if [ $? -ne 0 ]; then
+        echo "${red}❌[!]${reset} Failed to install ${appname} ${red}[!]${reset}"
+    else
+        echo "${green}✅[!]${reset} ${appname} installed successfully ${green}[!]${reset}"
+    fi
 }
 
 go_tool() {
@@ -84,9 +89,8 @@ install_go() {
         echo "${blue}⏩[*]${reset} Skipping Go installation ${blue}[*]${reset}"
     fi
 }
-
 install_sectools() {
-    source "$HOME/.zshrc" 2>/dev/null || source "$HOME/.bashrc" 2>/dev/null
+    source "$HOME/.bashrc" 2>/dev/null || source "$HOME/.zshrc" 2>/dev/null
     go_tool "Subfinder" "github.com/projectdiscovery/subfinder/v2/cmd/subfinder"
     go_tool "Chaos" "github.com/projectdiscovery/chaos-client/cmd/chaos"
     go_tool "Httpx" "github.com/projectdiscovery/httpx/cmd/httpx"
@@ -116,32 +120,24 @@ install_sectools() {
     go_tool "getJS" "github.com/003random/getJS"
     go_tool "Mapcidr" "github.com/projectdiscovery/mapcidr/cmd/mapcidr"
     go_tool "Amass" "github.com/owasp-amass/amass/v4/..."
-    go_tool "ffuf" "go install github.com/ffuf/ffuf/v2"
-    go_tool "rayder" "go install github.com/devanshbatham/rayder"
-    go_tool "asnmap" "go install github.com/projectdiscovery/asnmap/cmd/asnmap"
+    go_tool "ffuf" "github.com/ffuf/ffuf/v2"
+    go_tool "rayder" "github.com/devanshbatham/rayder"
+    go_tool "asnmap" "github.com/projectdiscovery/asnmap/cmd/asnmap"
 }
 
 core() {
-    echo
-    sleep 1
     install_go
-    echo "${blue}🐍[*]${reset} Python settings ${blue}[*]${reset}"
-    install_app "Python version 3" "python3"
-    install_app "Python 3.12-venv" "python3.12-venv"
-    install_app "Package manager - pip3" "python3-pip"
-
-    echo
-    echo "${blue}📦[*]${reset} Virtual environment ${blue}[*]${reset}"
-    if [ ! -d "$HOME/.virtualenvs" ]; then
-        mkdir -p "$HOME/.virtualenvs"
-    fi
-    python3 -m venv "$HOME/.virtualenvs/sec"
-    . "$HOME/.virtualenvs/sec/bin/activate"
-    python3 -m pip install --upgrade pip 1>/dev/null 2>pip_error.log
-    echo "${blue}🚀[+]${reset} Installing uro and shodan"
-    pip3 install -r ~/dotfiles/setup/requirements.txt 1>/dev/null 2>pip_error.log
-    echo
-    echo "${blue}🔧[*]${reset} apt tools ${blue}[*]${reset}"
+    echo "${blue}🐍[*]${reset} Setting up Python environment"
+    install_app "Python 3" "python3"
+    install_app "Python venv" "python3.12-venv"
+    install_app "Pip" "python3-pip"
+    
+    echo "${blue}📦[*]${reset} Setting up Virtual Environment"
+    mkdir -p "$HOME/.virtualenvs" && python3 -m venv "$HOME/.virtualenvs/sec"
+    source "$HOME/.virtualenvs/sec/bin/activate"
+    pip install --upgrade pip 1>/dev/null 2>pip_error.log
+    
+    echo "${blue}🔧[*]${reset} Installing apt tools"
     install_app "jq" "jq"
     install_app "git" "git"
     install_app "curl" "curl"
@@ -154,8 +150,6 @@ core() {
     install_app "dnsrecon" "dnsrecon"
     install_app "hping3" "hping3"
     install_app "ncat" "ncat"
-    install_app "amap" "amap"
-    echo
 }
 
 core
