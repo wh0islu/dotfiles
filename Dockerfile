@@ -3,7 +3,7 @@ FROM ubuntu:latest
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y sudo git curl wget bash
+    apt-get install -y sudo git curl wget bash nano
 
 RUN useradd -ms /bin/bash tester && echo "tester:tester" | chpasswd && adduser tester sudo
 
