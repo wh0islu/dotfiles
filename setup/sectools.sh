@@ -155,7 +155,6 @@ core() {
     install_app "hping3" "hping3"
     install_app "ncat" "ncat"
     install_app "amap" "amap"
-    install_app "ncat" "ncat"
     echo
 }
 
