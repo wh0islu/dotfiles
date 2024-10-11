@@ -15,3 +15,5 @@ RUN git clone https://github.com/northbot/dotfiles
 WORKDIR /home/tester/dotfiles
 
 RUN chmod +x install.sh setup/sectools.sh setup/tools.sh
+
+CMD ["bash"]
