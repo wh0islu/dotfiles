@@ -10,7 +10,8 @@ RUN useradd -ms /bin/bash tester && echo "tester:tester" | chpasswd && adduser t
 USER tester
 WORKDIR /home/tester
 
-RUN git clone https://github.com/northbot/dotfiles
+RUN git clone https://github.com/northbot/dotfiles /home/tester/dotfiles && \
+    ls -la /home/tester/dotfiles
 
 WORKDIR /home/tester/dotfiles
 
