@@ -126,14 +126,14 @@ install_sectools() {
 }
 
 metasploit() {
-
-echo "${blue}[+]${reset} Metasploit"
-curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/meta
-sploit-framework-wrappers/msfupdate.erb > msfinstall
-chmod 755 msfinstall
-./msfinstall
-install_app "postgresql" "postgresql"
-install_app "postgresql-contrib" "postgresql-contrib"
+    echo "${blue}[+]${reset} Metasploit"
+    curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall
+    chmod 755 msfinstall
+    ./msfinstall
+    install_app "postgresql" "postgresql"
+    install_app "postgresql-contrib" "postgresql-contrib"
+    sudo service postgresql start
+    msfdb init
 }
 
 core() {
@@ -161,7 +161,7 @@ core() {
     install_app "dnsrecon" "dnsrecon"
     install_app "hping3" "hping3"
     install_app "ncat" "ncat"
-    metasploit()
+    metasploit
 }
 
 core
