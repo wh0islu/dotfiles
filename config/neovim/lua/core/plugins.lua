@@ -39,4 +39,3 @@ require("lazy").setup({
     { "saadparwaiz1/cmp_luasnip" },
     { "rafamadriz/friendly-snippets" },
 })
-
