@@ -140,7 +140,7 @@ core() {
     install_go
     echo "${blue}🐍[*]${reset} Setting up Python environment"
     install_app "Python 3" "python3"
-    install_app "Python venv" "python3.12-venv"
+    install_app "Python venv" "python3.10-venv"
     install_app "Pip" "python3-pip"
     
     echo "${blue}📦[*]${reset} Setting up Virtual Environment"
