@@ -219,8 +219,9 @@ fi
 alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
-alias emax='emacs -nw'
-alias ds='source $HOME/DataScience/jupyter_env/bin/activate && jupyter lab'
+alias n="nvim"
+alias dev="cd $HOME/Git/"
+alias venv="source $HOME/.venv/bin/activate"
 
 # Auto-suggestions
 if [ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
@@ -235,3 +236,4 @@ export STARSHIP_CONFIG=~/.config/starship.toml
 
 # Go
 PATH=$PATH:/usr/local/go/bin
+
