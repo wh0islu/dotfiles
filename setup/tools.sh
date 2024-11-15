@@ -86,6 +86,11 @@ install_go() {
     fi
 }
 
+zsh_config() {
+    chsh -s $(which zsh)
+    yes | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    zsh
+}
 core() {
     echo
     sleep 1
@@ -103,11 +108,12 @@ core() {
     install_app "cmake" "cmake"
     install_app "unzip" "unzip"
     install_app "curl" "curl"
-    install_app "latexmk"
-    install_app "zathura"
-    install_app "zathura-pdf-poppler"
+    install_app "latexmk" "latexmk"
+    install_app "zathura" "zathura"
+    install_app "zathura-pdf-poppler" "zathura-pdf-poppler"
     install_app "build-essential" "build-essential"
     install_app "neofetch" "neofetch"
+    install_app "zsh" "zsh"
     echo "${green}✅[*]${reset} Done. ${green}[*]${reset}"
     sleep 1
 
@@ -115,6 +121,8 @@ core() {
     neovim_config
     echo "${blue}🚀[+]${reset} Go installation ${blue}[+]${reset}"
     install_go
+    echo "${blue}🚀[+]${reset} ZSH config ${blue}[+]${reset}"
+    zsh_config
     echo "${green}✅[*]${reset} Done. ${green}[*]${reset}"
 }
 
