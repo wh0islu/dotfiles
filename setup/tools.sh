@@ -114,6 +114,7 @@ core() {
     install_app "build-essential" "build-essential"
     install_app "neofetch" "neofetch"
     install_app "zsh" "zsh"
+    install_app "openvpn" "openvpn"
     echo "${green}✅[*]${reset} Done. ${green}[*]${reset}"
     sleep 1
 
