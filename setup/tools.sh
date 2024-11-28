@@ -115,6 +115,7 @@ core() {
     install_app "neofetch" "neofetch"
     install_app "zsh" "zsh"
     install_app "openvpn" "openvpn"
+    install_app "ipcalc" "ipcalc"
     echo "${green}✅[*]${reset} Done. ${green}[*]${reset}"
     sleep 1
 
