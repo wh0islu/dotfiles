@@ -6,19 +6,11 @@
 
 ---
 
-### ToDo
-- [] Fix errors during Neovim installation.
-- [] Docker installation.
-- [] Dotfiles configuration.
-- [] ZSH installation.
-
----
-
 ![](assets/y.png)
 
 ---
 
 <h6 align="center">
   <a href="https://raw.githubusercontent.com/northbot/dotfiles/edit/main/LICENSE">MIT</a>
-  © bot
+  © lain
 </h6>
