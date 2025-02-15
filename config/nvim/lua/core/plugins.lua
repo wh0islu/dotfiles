@@ -28,13 +28,11 @@ require("lazy").setup({
 
     { "tpope/vim-fugitive" },
 
-    { "preservim/vim-markdown", ft = "markdown" },
-
     { "williamboman/mason.nvim" },
     { "williamboman/mason-lspconfig.nvim", dependencies = { "neovim/nvim-lspconfig" } },
     { "neovim/nvim-lspconfig" },
 
-    { "hrsh7th/nvim-cmp", 
+    { "hrsh7th/nvim-cmp",
       dependencies = {
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-buffer",
@@ -47,7 +45,6 @@ require("lazy").setup({
     { "saadparwaiz1/cmp_luasnip" },
     { "rafamadriz/friendly-snippets" },
 
-    { "lervag/vimtex", ft = "tex" },
     {
       "nvim-treesitter/nvim-treesitter",
       run = ":TSUpdate",
@@ -65,7 +62,7 @@ require("lazy").setup({
     {
 	"mfussenegger/nvim-dap",
 	config = function()
-	    require("plugins.nvim_dap")
+	   require("plugins.nvim_dap")
 	end,
     },
     {
@@ -76,17 +73,17 @@ require("lazy").setup({
 	"rcarriga/nvim-dap-ui",
 	requires = {"mfussenegger/nvim-dap"},
 	config = function()
-	    local dap, dapui = require("dap"), require("dapui")
-	    dapui.setup()
-	    dap.listeners.after.event_initialized["dapui_config"] = function()
+	   local dap, dapui = require("dap"), require("dapui")
+	   dapui.setup()
+	   dap.listeners.after.event_initialized["dapui_config"] = function()
 		dapui.open()
-	    end
-	    dap.listeners.before.event_terminated["dapui_config"] = function()
+	   end
+	   dap.listeners.before.event_terminated["dapui_config"] = function()
 		dapui.close()
-	    end
-	    dap.listeners.before.event_exited["dapui_config"] = function()
+	   end
+	   dap.listeners.before.event_exited["dapui_config"] = function()
 		dapui.close()
-	    end
+	   end
 	end
     }
 })
