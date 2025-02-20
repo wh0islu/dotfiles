@@ -68,6 +68,9 @@ require("lazy").setup({
     {
 	"nvim-neotest/nvim-nio",
     },
+    {
+	"skywind3000/asyncrun.vim",
+    },
 
     {
 	"rcarriga/nvim-dap-ui",

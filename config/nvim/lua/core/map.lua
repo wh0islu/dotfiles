@@ -1,5 +1,6 @@
 vim.g.mapleader = ","
 vim.cmd([[nnoremap <C-r> :lua Run()<CR>]])
+vim.cmd([[nnoremap <C-l> :AsyncStop<CR>]])
 vim.cmd([[nnoremap <C-s> :w!<CR>]])
 vim.cmd([[nnoremap <C-q> :q<CR>]])
 vim.cmd([[nnoremap <C-x> :x<CR>]])
