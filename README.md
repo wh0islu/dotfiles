@@ -11,7 +11,7 @@ i3wm
 
 ---
 
-hyrpland
+neovim
 ![](assets/nvim.png)
 
 <h6 align="center">
