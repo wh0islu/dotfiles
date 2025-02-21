@@ -6,10 +6,12 @@
 
 ---
 
+i3wm
 ![](assets/y.png)
 
 ---
 
+hyrpland
 ![](assets/nvim.png)
 
 <h6 align="center">
