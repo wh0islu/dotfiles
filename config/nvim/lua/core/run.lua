@@ -11,14 +11,18 @@ function Run()
     elseif filetype == "go" then
         command = "go run " .. vim.fn.expand("%")
     elseif filetype == "js" then
-        command = "node " .. vim.fn.expand("%")
+        if vim.fn.filereadable("yarn.lock") == 1 then
+            command = "yarn dev"
+        else
+            command = "nodemon " .. vim.fn.expand("%")
+        end
     else
         print("Unsupported programming language.")
         return
     end
 
     vim.cmd('w')
-    vim.cmd('!' .. command)
+    vim.cmd('AsyncRun ' .. command)
 end
 
 vim.api.nvim_create_user_command('Run', Run, {})
