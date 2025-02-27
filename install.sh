@@ -12,9 +12,9 @@ Menu() {
     clear
     echo -e "$ascii"
     echo "📋 Menu"
-    echo -e "${blue}[1]${reset} 🛡️ * Install sec tools"
-    echo -e "${blue}[2]${reset} 🛠️ * Install tools"
-    echo -e "${blue}[3]${reset} 🏴 * Configure Arch"
+    echo -e "${blue}[1]${reset} 🛡️ * sec tools [Ubuntu]"
+    echo -e "${blue}[2]${reset} 🛠️ * tools [Ubuntu]"
+    echo -e "${blue}[3]${reset} 🏴 * Configure [Arch]"
     echo -e "${blue}[0]${reset} Exit"
     read -p "Choose an option: " option
     case $option in
