@@ -1,11 +1,11 @@
 {
     "workbench.iconTheme": "material-icon-theme",
-    "workbench.colorTheme": "Default Dark+",
-    "editor.fontFamily": "FiraCode Nerd Font",
+    "workbench.colorTheme": "Dracula Theme",
+    "editor.fontFamily": "GeistMono Nerd Font",
     "editor.fontLigatures": true,
     "files.autoSave": "afterDelay",
     "editor.renderWhitespace": "trailing",
-    "editor.fontSize": 14,
+    "editor.fontSize": 13,
     "editor.minimap.enabled": false,
     "workbench.colorCustomizations": {
         "sideBar.foreground": "#ffffff",
@@ -43,43 +43,4 @@
     },
     "git.autofetch": true,
     "breadcrumbs.enabled": false,
-    "editor.tokenColorCustomizations": {
-    "comments": "#575757",
-    "keywords": "#D890F0",
-    "strings": "#FFA69E",
-    "functions": "#A3DE83",
-    "variables": "#F8CBA6",
-    "numbers": "#8AC6D0",
-    "types": "#F7B7A3",
-    "textMateRules": [
-        {
-            "scope": "comment",
-            "settings": { "foreground": "#575757", "fontStyle": "italic" }
-        },
-        {
-            "scope": "keyword",
-            "settings": { "foreground": "#D890F0", "fontStyle": "bold" }
-        },
-        {
-            "scope": "string",
-            "settings": { "foreground": "#FFA69E" }
-        },
-        {
-            "scope": "constant.numeric",
-            "settings": { "foreground": "#8AC6D0" }
-        },
-        {
-            "scope": "variable",
-            "settings": { "foreground": "#F8CBA6" }
-        },
-        {
-            "scope": "function",
-            "settings": { "foreground": "#A3DE83" }
-        },
-        {
-            "scope": "storage.type",
-            "settings": { "foreground": "#F7B7A3" }
-        }
-    ]
-}
 }
