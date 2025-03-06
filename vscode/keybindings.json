@@ -21,6 +21,19 @@
     "command": "python.execInTerminal",
     "when": "editorLangId == 'python'"
   },
+  {
+    "key": "f5",
+    "command": "workbench.action.debug.start"
+  },
+  {
+    "key": "shift+f5",
+    "command": "workbench.action.debug.stop"
+  },
+  {
+    "key": "f9",
+    "command": "editor.debug.action.toggleBreakpoint",
+    "when": "editorTextFocus"
+  },
 
   { "key": "ctrl+1", "command": "workbench.action.openEditorAtIndex1" },
   { "key": "ctrl+2", "command": "workbench.action.openEditorAtIndex2" },
