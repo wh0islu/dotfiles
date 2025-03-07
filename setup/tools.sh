@@ -113,6 +113,7 @@ core() {
     install_app "make" "make"
     install_app "gcc" "gcc"
     install_app "cmake" "cmake"
+    install_app "PIP3" "python3-pip"
     echo "${green}✅[*]${reset} Done. ${green}[*]${reset}"
     sleep 1
 
