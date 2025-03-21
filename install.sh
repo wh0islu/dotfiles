@@ -1,7 +1,7 @@
-#!/usr/bin/bash
+#!/usr/bin/sh  # Changed from bash to sh, as FreeBSD uses sh by default
 
-blue="\e[34m"
-reset="\e[97m"
+blue="\033[34m"
+reset="\033[97m"
 
 ascii="${blue}
 (::)
@@ -10,37 +10,38 @@ ${reset}
 
 Menu() {
     clear
-    echo -e "$ascii"
+    echo "$ascii"
     echo "📋 Menu"
-    echo -e "${blue}[1]${reset} 🛡️ * sec tools [Ubuntu]"
-    echo -e "${blue}[2]${reset} 🛠️ * tools [Ubuntu]"
-    echo -e "${blue}[3]${reset} 🏴 * Configure [Arch]"
-    echo -e "${blue}[0]${reset} Exit"
-    read -p "Choose an option: " option
+    echo "${blue}[1]${reset} 🛡️ * sec tools [FreeBSD]"
+    echo "${blue}[2]${reset} 🛠️ * tools [FreeBSD]"
+    echo "${blue}[3]${reset} 🏴 * Configure [FreeBSD]"
+    echo "${blue}[0]${reset} Exit"
+    printf "Choose an option: "
+    read option
     case $option in
         1) InstallSecTools ;;
         2) InstallTools ;;
-        3) ConfigureArch ;;
+        3) ConfigureFreeBSD ;;
         0) exit ;;
-        *) echo -e "${red}❌ Wrong option. Try again${reset}"; echo ; Menu ;;
+        *) echo "${red}❌ Wrong option. Try again${reset}"; echo ; Menu ;;
     esac
 }
 
 InstallSecTools() {
     clear
-    echo -e "${blue}🛡️[*]${reset} Sec tools ${blue}[*]${reset}"
+    echo "${blue}🛡️[*]${reset} Sec tools ${blue}[*]${reset}"
     sh setup/sectools.sh
 }
 
 InstallTools() {
     clear
-    echo -e "${blue}🛠️[*]${reset} Tools ${blue}[*]${reset}"
+    echo "${blue}🛠️[*]${reset} Tools ${blue}[*]${reset}"
     sh setup/tools.sh
 }
 
-ConfigureArch() {
+ConfigureFreeBSD() {
     clear
-    echo -e "${blue}🛠️[*]${reset} Arch .dotfiles ${blue}[*]${reset}"
-    sh setup/arch.sh
+    echo "${blue}🛠️[*]${reset} FreeBSD Configuration ${blue}[*]${reset}"
+    sh setup/freebsd.sh
 }
 Menu
