@@ -172,7 +172,7 @@ client.urgent         #1e1e1e #1e1e1e #1e1e1e #1e1e1e
 client.background     $cor_terciaria
 
 # Configurações padrão de borda
-for_window [class="^.*"] border pixel 1
+for_window [class="^.*"] border pixel 2
 
 # Espaçamento interno
 gaps inner 5
