@@ -17,7 +17,7 @@ sudo pacman -Sy --noconfirm
 echo ">>> 📚 Installing basic packages..."
 sudo pacman -S --noconfirm --needed \
   7zip alsa-utils haruna neovim tree-sitter-cli unzip \
-  waybar wget curl wofi zsh reflector
+  polybar wget curl rofi zsh reflector
 
 echo ">>> 🔽 Installing yay (for AUR packages)..."
 if ! command -v yay &> /dev/null; then
