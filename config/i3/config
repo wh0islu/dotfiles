@@ -21,7 +21,7 @@ tiling_drag modifier titlebar
 
 # start a terminal
 #bindsym $mod+Return exec i3-sensible-terminal
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec kitty
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -158,27 +158,21 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 
-# Cores
 set $cor_principal   #1e1e1e
 set $cor_secundaria  #1e1e1e
 set $cor_terciaria   #1e1e1e
 
-# Borda das janelas
 client.focused        #1e1e1e #1e1e1e #1e1e1e #1e1e1e
 client.unfocused      #1e1e1e #1e1e1e #1e1e1e #1e1e1e
 client.urgent         #1e1e1e #1e1e1e #1e1e1e #1e1e1e
 
-# Fundo do container
 client.background     $cor_terciaria
 
-# Configurações padrão de borda
 for_window [class="^.*"] border pixel 2
 
-# Espaçamento interno
 gaps inner 5
 
-exec_always --no-startup-id feh --bg-scale $HOME/Pictures/Wallpapers/kaiju.png
+exec_always --no-startup-id feh --bg-scale $HOME/Images/Wallpapers/wall1.png
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
-exec_always --no-startup-id xbindkeys
 bindsym $mod+Shift+O exec obsidian
 
