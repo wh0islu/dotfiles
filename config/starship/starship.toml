@@ -1,0 +1,53 @@
+format = """
+$directory\
+$nodejs\
+$golang\
+$c\
+$python\
+$git_branch\
+$git_status\
+$character
+"""
+
+[directory]
+style = "cyan"
+truncate_to_repo = false
+
+[nodejs]
+symbol = "  "
+format = "via [$symbol$version]($style) "
+style = "bold yellow"
+detect_extensions = ["js", "ts"]
+detect_files = ["package.json", "node_modules"]
+
+[golang]
+symbol = " "
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+detect_extensions = ["go"]
+detect_files = ["go.mod"]
+
+[c]
+symbol = " "
+format = "via [$symbol$version]($style) "
+style = "bold red"
+detect_extensions = ["c", "h"]
+detect_files = ["Makefile", "CMakeLists.txt"]
+
+[python]
+symbol = " "
+format = "via [$symbol$version]($style) "
+style = "bold green"
+pyenv_version_name = true
+detect_files = ["pyproject.toml", "requirements.txt", ".venv", "venv"]
+
+[git_branch]
+symbol = "󰊢 "
+style = "bold purple"
+
+[git_status]
+style = "red"
+
+[character]
+success_symbol = "[➜](bold green) "
+error_symbol = "[✗](bold red) "
