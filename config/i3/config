@@ -157,22 +157,18 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-
-set $cor_principal   #1e1e1e
-set $cor_secundaria  #1e1e1e
-set $cor_terciaria   #1e1e1e
-
-client.focused        #1e1e1e #1e1e1e #1e1e1e #1e1e1e
-client.unfocused      #1e1e1e #1e1e1e #1e1e1e #1e1e1e
-client.urgent         #1e1e1e #1e1e1e #1e1e1e #1e1e1e
-
-client.background     $cor_terciaria
-
-for_window [class="^.*"] border pixel 2
+# Definir borda apenas para janelas focadas
+for_window [class="^.*"] border none
+client.focused	    #0f0e0e #0f0e0e #0f0e0e #0f0e0e
+client.unfocused    #0f0e0e #0f0e0e #0f0e0e #0f0e0e
+client.urgent	    #0f0e0e #0f0e0e #0f0e0e #0f0e0e
+client.background   #0f0e0e #0f0e0e #0f0e0e #0f0e0e
 
 gaps inner 5
 
 exec_always --no-startup-id feh --bg-scale $HOME/Images/Wallpapers/wall1.png
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+exec --no-startup-id picom --config ~/.config/picom/picom.conf
 bindsym $mod+Shift+O exec obsidian
+
 
