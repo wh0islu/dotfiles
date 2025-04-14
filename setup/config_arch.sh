@@ -20,12 +20,17 @@ PACKAGES=(
     unzip
     polybar
     feh
+    xclip
     wget
+    nvidia-open
+    nvidia-utils
+    nvidia-settings
     curl
     rofi
     python
     python-pip
     python-pynvim
+    papirus-icon-theme
     lua
     luarocks
     ufw
@@ -50,11 +55,16 @@ ZEN_TMP="/tmp/$ZEN_FILENAME"
 ZEN_DIR="/opt/zen"
 ZEN_BIN="$ZEN_DIR/zen"
 
+ZSH_CUSTOM="$HOME/.zsh"
+
 echo "Updating system..."
 sudo pacman -Syyu --noconfirm
 
 echo "Installing packages..."
 sudo pacman -S --noconfirm --needed "${PACKAGES[@]}"
+
+echo "Loading NVIDIA kernel module..."
+sudo modprobe nvidia
 
 echo "Setting Zsh as default shell..."
 if ! grep -q "$(which zsh)" /etc/shells; then
@@ -81,10 +91,10 @@ mv "$DOTFILES_REPO_DIR/config/starship/starship.toml" "$HOME/.config/"
 mv "$DOTFILES_REPO_DIR/config/zsh/.zshrc" "$ZSHRC"
 
 echo "Installing zsh plugins..."
+mkdir -p "$ZSH_CUSTOM"
 git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/zsh-autosuggestions"
 git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/zsh-syntax-highlighting"
 
-# Pyenv setup
 if [ ! -d "$HOME/.pyenv" ]; then
     git clone https://github.com/pyenv/pyenv.git "$HOME/.pyenv"
     cd "$HOME/.pyenv" && src/configure && make -C src
@@ -135,4 +145,12 @@ echo "Cleaning up..."
 find "$FONT_DIR" -name "*.zip" -delete
 
 echo "Setup complete. You may want to restart your system or run 'source ~/.zshrc'."
+read -rp "Would you like to reboot the system now? [y/N]: " REBOOT_ANSWER
+REBOOT_ANSWER=${REBOOT_ANSWER,,}
+if [[ "$REBOOT_ANSWER" == "y" || "$REBOOT_ANSWER" == "yes" ]]; then
+    echo "Rebooting the system..."
+    sudo reboot
+else
+    echo "Reboot cancelled. You can manually reboot later using 'sudo reboot'."
+fi
 
