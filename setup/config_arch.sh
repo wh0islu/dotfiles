@@ -37,6 +37,7 @@ PACKAGES=(
     zsh
     base-devel
     make
+    docker
 )
 
 FONT_DIR="$HOME/.local/share/fonts"
@@ -65,6 +66,11 @@ sudo pacman -S --noconfirm --needed "${PACKAGES[@]}"
 
 echo "Loading NVIDIA kernel module..."
 sudo modprobe nvidia
+
+echo "Setup Docker"
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
+newgrp docker
 
 echo "Setting Zsh as default shell..."
 if ! grep -q "$(which zsh)" /etc/shells; then
@@ -153,4 +159,3 @@ if [[ "$REBOOT_ANSWER" == "y" || "$REBOOT_ANSWER" == "yes" ]]; then
 else
     echo "Reboot cancelled. You can manually reboot later using 'sudo reboot'."
 fi
-
