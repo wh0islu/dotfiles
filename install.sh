@@ -1,4 +1,4 @@
-#!/usr/bin/sh  # Changed from bash to sh, as FreeBSD uses sh by default
+#!/usr/bin/sh
 
 blue="\033[34m"
 reset="\033[97m"
@@ -12,16 +12,16 @@ Menu() {
     clear
     echo "$ascii"
     echo "📋 Menu"
-    echo "${blue}[1]${reset} 🛡️ * sec tools [FreeBSD]"
-    echo "${blue}[2]${reset} 🛠️ * tools [FreeBSD]"
-    echo "${blue}[3]${reset} 🏴 * Configure [FreeBSD]"
+    echo "${blue}[1]${reset} 🛡️ * sec tools [Ubuntu]"
+    echo "${blue}[2]${reset} 🏴 * .config [Arch]"
+    echo "${blue}[3]${reset} 🏴 * .config [Ubuntu]"
     echo "${blue}[0]${reset} Exit"
     printf "Choose an option: "
     read option
     case $option in
         1) InstallSecTools ;;
-        2) InstallTools ;;
-        3) ConfigureFreeBSD ;;
+        2) ConfigArch ;;
+        3) ConfigUbuntu ;;
         0) exit ;;
         *) echo "${red}❌ Wrong option. Try again${reset}"; echo ; Menu ;;
     esac
@@ -33,15 +33,15 @@ InstallSecTools() {
     sh setup/sectools.sh
 }
 
-InstallTools() {
+ConfigArch() {
     clear
-    echo "${blue}🛠️[*]${reset} Tools ${blue}[*]${reset}"
-    sh setup/tools.sh
+    echo "${blue}🛠️[*]${reset} .config Arch ${blue}[*]${reset}"
+    sh setup/config_arch.sh
 }
 
-ConfigureFreeBSD() {
+ConfigUbuntu(){
     clear
-    echo "${blue}🛠️[*]${reset} FreeBSD Configuration ${blue}[*]${reset}"
-    sh setup/freebsd.sh
+    echo "${blue}🛠️[*]${reset} .config Ubuntu ${blue}[*]${reset}"
+    sh setup/config_ubuntu.sh
 }
 Menu
