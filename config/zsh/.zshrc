@@ -26,7 +26,6 @@ source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
-eval "$(dircolors -b ~/.dircolors)"
 alias ls='ls --color=auto'
 alias v="nvim"
 alias dev="cd $HOME/Developments/ ; ls"
