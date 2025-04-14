@@ -10,7 +10,7 @@ $character
 """
 
 [directory]
-style = "cyan"
+style = "bold green"
 truncate_to_repo = false
 
 [nodejs]
@@ -49,5 +49,5 @@ style = "bold purple"
 style = "red"
 
 [character]
-success_symbol = "[➜](bold green) "
+success_symbol = "[➜ ](bold green) "
 error_symbol = "[✗](bold red) "
