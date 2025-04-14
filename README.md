@@ -1,5 +1,11 @@
-# dotfiles
+<div align="center">
+  <samp>i3wm + polybar + kitty + picom + zsh + starship + neovim</samp>
+</div>
+<br>
 
+![i3wm](assets/i3.png)
+
+<br>
 
 ----
 
