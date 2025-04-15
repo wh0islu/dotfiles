@@ -37,3 +37,8 @@ export PATH="$HOME/.local/opt/nodejs/bin:$PATH"
 
 eval "$(starship init zsh)"
 
+# Created by `pipx` on 2025-04-15 01:39:42
+export PATH="$PATH:/home/lu/.local/bin"
+
+# Poetry env activate
+alias pactivate='eval $(poetry env activate)'

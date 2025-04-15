@@ -26,8 +26,10 @@ PACKAGES=(
     rofi
     python
     python-pip
+    python-pipx
     python-pynvim
     papirus-icon-theme
+    noto-fonts-emoji
     thunar
     picom
     lua
