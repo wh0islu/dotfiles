@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Discord
+Comment=All-in-one voice and text chat
+Exec=/opt/discord/Discord
+Icon=/opt/discord/discord.png
+Type=Application
+Categories=Network;InstantMessaging;
