@@ -22,15 +22,13 @@ PACKAGES=(
     feh
     xclip
     wget
-    nvidia-open
-    nvidia-utils
-    nvidia-settings
     curl
     rofi
     python
     python-pip
     python-pynvim
     papirus-icon-theme
+    picom
     lua
     luarocks
     ufw
@@ -64,13 +62,9 @@ sudo pacman -Syyu --noconfirm
 echo "Installing packages..."
 sudo pacman -S --noconfirm --needed "${PACKAGES[@]}"
 
-echo "Loading NVIDIA kernel module..."
-sudo modprobe nvidia
-
 echo "Setup Docker"
 sudo systemctl enable --now docker
 sudo usermod -aG docker $USER
-newgrp docker
 
 echo "Setting Zsh as default shell..."
 if ! grep -q "$(which zsh)" /etc/shells; then
@@ -93,6 +87,7 @@ mkdir -p "$HOME/Developments/Git"
 curl -sS https://starship.rs/install.sh | sh
 mkdir -p "$HOME/.config"
 mv "$DOTFILES_REPO_DIR/config/starship/starship.toml" "$HOME/.config/"
+mv "$DOTFILES_REPO_DIR/config/picom" "$HOME/.config/"
 
 mv "$DOTFILES_REPO_DIR/config/zsh/.zshrc" "$ZSHRC"
 
