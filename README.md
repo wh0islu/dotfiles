@@ -53,8 +53,15 @@ docker cp $HOME/dotfiles/ arch-test:/root/
 
 ----
 
+### ToDo
+
+- [ ] Theme
+
+----
+
 <h6 align="center">
   <a href="https://raw.githubusercontent.com/northbot/dotfiles/edit/main/LICENSE">MIT</a>
   © wired
 </h6>
 /h6>
+
