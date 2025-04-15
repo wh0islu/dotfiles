@@ -28,6 +28,7 @@ PACKAGES=(
     python-pip
     python-pynvim
     papirus-icon-theme
+    thunar
     picom
     lua
     luarocks
