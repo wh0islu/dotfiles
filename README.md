@@ -55,7 +55,8 @@ docker cp $HOME/dotfiles/ arch-test:/root/
 
 ### ToDo
 
-- [ ] Theme
+- [ ] Neovim Theme
+- [ ] Laptop installation
 
 ----
 
