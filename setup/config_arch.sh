@@ -32,6 +32,7 @@ PACKAGES=(
     noto-fonts-emoji
     thunar
     picom
+    flameshot
     lua
     luarocks
     ufw
