@@ -55,7 +55,8 @@ docker cp $HOME/dotfiles/ arch-test:/root/
 
 ### ToDo
 
-- [ ] Theme
+- [ ] Neovim Theme
+- [ ] Laptop installation
 
 ----
 
@@ -63,5 +64,3 @@ docker cp $HOME/dotfiles/ arch-test:/root/
   <a href="https://raw.githubusercontent.com/northbot/dotfiles/edit/main/LICENSE">MIT</a>
   © wired
 </h6>
-/h6>
-
