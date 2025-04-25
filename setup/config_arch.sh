@@ -21,6 +21,8 @@ PACKAGES=(
     polybar
     feh
     xclip
+    mandoc
+    plocate
     wget
     curl
     rofi
