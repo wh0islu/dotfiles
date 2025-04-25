@@ -1,28 +1,30 @@
 function Run()
     local filetype = vim.fn.expand("%:e")
+    local filename = vim.fn.expand("%:p")
     local command = ""
+    vim.cmd('w')
 
     if filetype == "py" then
-        command = "python3 " .. vim.fn.expand("%")
+        command = "python3 " .. filename
     elseif filetype == "c" then
-        command = "gcc " .. vim.fn.expand("%") .. " -o output && ./output"
+        command = "gcc " .. filename .. " -o output && ./output"
     elseif filetype == "rs" then
-        command = "rustc " .. vim.fn.expand("%") .. " && ./output"
+        local bin_name = vim.fn.expand("%:t:r")
+        command = "rustc " .. filename .. " -o " .. bin_name .. " && ./" .. bin_name
     elseif filetype == "go" then
-        command = "go run " .. vim.fn.expand("%")
+        command = "go run " .. filename
     elseif filetype == "js" then
         if vim.fn.filereadable("yarn.lock") == 1 then
             command = "yarn dev"
         else
-            command = "nodemon " .. vim.fn.expand("%")
+            command = "nodemon " .. filename
         end
     else
-        print("Unsupported programming language.")
+        vim.api.nvim_err_writeln("Unsupported programming language: " .. filetype)
         return
     end
 
-    vim.cmd('w')
-    vim.cmd('AsyncRun ' .. command)
+    require("toggleterm").exec(command, 1)
 end
 
 vim.api.nvim_create_user_command('Run', Run, {})
