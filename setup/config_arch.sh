@@ -21,7 +21,7 @@ PACKAGES=(
     polybar
     feh
     xclip
-    mandoc
+    man-db
     plocate
     wget
     curl
