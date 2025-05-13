@@ -42,6 +42,7 @@ PACKAGES=(
     base-devel
     make
     docker
+    zathura
 )
 
 FONT_DIR="$HOME/.local/share/fonts"
