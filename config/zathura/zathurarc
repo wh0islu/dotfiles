@@ -1,0 +1,16 @@
+set default-bg "#1E1E1E"
+set default-fg "#FFFFFF"
+set statusbar-bg "#282828"
+set statusbar-fg "#EBDBB2"
+set highlight-color "#FF5555"
+set highlight-transparency 0.7
+set recolor "true"
+set recolor-darkcolor "#FFFFFF"
+set recolor-lightcolor "#1E1E1E"
+set adjust-open "best-fit"
+set scroll-step 50
+set smooth-scroll "true"
+set page-padding 4
+set statusbar-h-padding 10
+set statusbar-v-padding 5
+set incremental-search "true"
