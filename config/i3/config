@@ -141,5 +141,8 @@ bindsym $mod+n exec --no-startup-id rofi -show run -run-command "nvim {cmd}"
 # Launch Obsidian
 bindsym $mod+Shift+O exec obsidian
 
+# Zathura
+bindsym $mod+p exec rofi -show filebrowser
+
 # Launch Flameshot
 bindsym $mod+Shift+S exec --no-startup-id flameshot gui

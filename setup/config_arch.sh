@@ -43,6 +43,7 @@ PACKAGES=(
     make
     docker
     zathura
+    zathura-pdf-mupdf
 )
 
 FONT_DIR="$HOME/.local/share/fonts"
