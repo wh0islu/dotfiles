@@ -44,7 +44,7 @@ separator = |
 separator-foreground = ${colors.disabled}
 font-0 = JetBrainsMono Nerd Font:bold:size=9
 modules-left = xworkspaces
-modules-right = filesystem pulseaudio memory xkeyboard eth date battery
+modules-right = filesystem pulseaudio memory xkeyboard backlight eth wlan date battery
 cursor-click = pointer
 cursor-scroll = ns-resize
 wm-restack = i3 ; Mantém a barra acima das janelas
@@ -122,3 +122,18 @@ label-charging = %percentage%%
 label-discharging = %percentage%%
 label-full = %percentage%%
 poll-interval = 5
+
+[module/backlight]
+type = internal/backlight
+card = intel_backlight ; ls /sys/class/backlight/
+format = " %percentage%%"
+format-foreground = ${colors.foreground}
+
+[module/wlan]
+type = internal/network
+interface = wlan0 ; pode ser wlp2s0 ou similar (verifique com `ip link`)
+interval = 3
+format-connected = "  %essid% (%signal%%)"
+format-connected-foreground = ${colors.foreground}
+format-disconnected = "睊"
+format-disconnected-foreground = ${colors.disabled}
