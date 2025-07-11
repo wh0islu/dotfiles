@@ -34,6 +34,7 @@ PACKAGES=(
     noto-fonts-emoji
     thunar
     picom
+    github-cli
     flameshot
     lua
     luarocks
