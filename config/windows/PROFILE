@@ -1,0 +1,12 @@
+function dev {
+    Set-Location "$HOME\Documents\Dev"
+}
+
+function gpush {
+    param(
+        [string]$m = "update"
+    )
+    git add .
+    if ($?) { git commit -m "$m" }
+    if ($?) { git push }
+}
