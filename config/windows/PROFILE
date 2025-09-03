@@ -10,3 +10,9 @@ function gpush {
     if ($?) { git commit -m "$m" }
     if ($?) { git push }
 }
+
+Set-PSReadLineOption -HistorySaveStyle SaveAtExit
+Set-PSReadLineOption -HistoryNoDuplicates
+Set-PSReadLineOption -MaximumHistoryCount 5000
+oh-my-posh init pwsh | Invoke-Expression
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\spaceship.omp.json" | Invoke-Expression
