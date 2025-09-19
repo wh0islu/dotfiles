@@ -1,3 +1,7 @@
-127.0.0.1 www.chatgpt.com
-127.0.0.1 www.gemini.google.com
-127.0.0.1 www.deepseek.com
+127.0.0.1 	www.chatgpt.com
+127.0.0.1 	www.gemini.google.com
+127.0.0.1 	www.deepseek.com
+127.0.0.1       www.facebook.com
+127.0.0.1       facebook.com
+127.0.0.1       www.twitch.tv
+127.0.0.1       twitch.tv
