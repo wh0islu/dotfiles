@@ -1,67 +1,43 @@
 #!/bin/bash
 set -e
 
-DOTFILES_REPO_DIR="$HOME/dotfiles"
+DOTFILES_REPO_DIR="$HOME/Downloads/dotfiles-main"
 ZSHRC="$HOME/.zshrc"
 CONFIG_DIRS=(
     i3
     kitty
-    nvim
     polybar
     rofi
 )
 
 PACKAGES=(
-    alsa-utils
-    obsidian
     kitty
-    neovim
     tree-sitter-cli
     unzip
     polybar
-    feh
     xclip
-    man-db
-    plocate
-    wget
     curl
     rofi
     python
-    python-pip
-    python-pipx
-    python-pynvim
     papirus-icon-theme
     noto-fonts-emoji
-    thunar
-    picom
     github-cli
     flameshot
-    lua
-    luarocks
-    ufw
     zsh
     base-devel
     make
     docker
-    zathura
-    zathura-pdf-mupdf
 )
 
 FONT_DIR="$HOME/.local/share/fonts"
-NERD_FONTS_VERSION="v3.3.0"
+NERD_FONTS_VERSION="v3.4.0"
 FONTS_TO_INSTALL=("GeistMono" "JetBrainsMono")
 
-NODE_VERSION="v22.14.0"
+NODE_VERSION="v24.12.0"
 NODE_ARCH="linux-x64"
 NODE_FILENAME="node-$NODE_VERSION-$NODE_ARCH.tar.xz"
 NODE_URL="https://nodejs.org/dist/$NODE_VERSION/$NODE_FILENAME"
 NODE_INSTALL_DIR="$HOME/.local/opt/nodejs"
-
-ZEN_FILENAME="zen.linux-x86_64.tar.xz"
-ZEN_URL="https://github.com/zen-browser/desktop/releases/latest/download/$ZEN_FILENAME"
-ZEN_TMP="/tmp/$ZEN_FILENAME"
-ZEN_DIR="/opt/zen"
-ZEN_BIN="$ZEN_DIR/zen"
 
 ZSH_CUSTOM="$HOME/.zsh"
 
@@ -93,22 +69,12 @@ done
 mkdir -p "$HOME/Images/Wallpapers"
 mkdir -p "$HOME/Developments/Git"
 
-curl -sS https://starship.rs/install.sh | sh
-mkdir -p "$HOME/.config"
-mv "$DOTFILES_REPO_DIR/config/starship/starship.toml" "$HOME/.config/"
-mv "$DOTFILES_REPO_DIR/config/picom" "$HOME/.config/"
-
 mv "$DOTFILES_REPO_DIR/config/zsh/.zshrc" "$ZSHRC"
 
 echo "Installing zsh plugins..."
 mkdir -p "$ZSH_CUSTOM"
 git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/zsh-autosuggestions"
 git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/zsh-syntax-highlighting"
-
-if [ ! -d "$HOME/.pyenv" ]; then
-    git clone https://github.com/pyenv/pyenv.git "$HOME/.pyenv"
-    cd "$HOME/.pyenv" && src/configure && make -C src
-fi
 
 echo "Installing Node.js $NODE_VERSION..."
 mkdir -p "$NODE_INSTALL_DIR"
@@ -131,25 +97,6 @@ for font in "${FONTS_TO_INSTALL[@]}"; do
     unzip -o "$ZIP_PATH" -d "$FONT_DIR"
     rm "$ZIP_PATH"
 done
-
-if [ ! -f "$ZEN_BIN" ]; then
-    echo "Installing Zen Browser..."
-    wget "$ZEN_URL" -O "$ZEN_TMP"
-    sudo mkdir -p "$ZEN_DIR"
-    sudo tar -xJf "$ZEN_TMP" -C "$ZEN_DIR" --strip-components=1
-    rm "$ZEN_TMP"
-
-    if [ -f "$ZEN_DIR/zen-browser" ]; then
-        sudo mv "$ZEN_DIR/zen-browser" "$ZEN_BIN"
-    fi
-
-    mkdir -p "$HOME/.local/bin"
-    ln -sf "$ZEN_BIN" "$HOME/.local/bin/zen"
-
-    if [ -f "$DOTFILES_REPO_DIR/config/desktops/zen.desktop" ]; then
-        sudo mv "$DOTFILES_REPO_DIR/config/desktops/zen.desktop" /usr/share/applications/
-    fi
-fi
 
 echo "Cleaning up..."
 find "$FONT_DIR" -name "*.zip" -delete
