@@ -1,12 +1,37 @@
-setopt autocd correct interactivecomments magicequalsubst \
-       nonomatch notify numericglobsort promptsubst \
-       histignorealldups sharehistory \
-       hist_expire_dups_first hist_ignore_dups hist_ignore_space hist_verify
+############################################################
+# ZSH OPTIONS
+############################################################
 
-HISTFILE=~/.zsh_history
-HISTSIZE=1000
+setopt autocd
+setopt correct
+setopt interactivecomments
+setopt magicequalsubst
+setopt nonomatch
+setopt notify
+setopt numericglobsort
+setopt promptsubst
+
+# Histórico
+setopt histignorealldups
+setopt sharehistory
+setopt hist_expire_dups_first
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt hist_verify
+PROMPT='%{$fg[green]%}%n@%m%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%} $ '
+
+############################################################
+# HISTORY CONFIG
+############################################################
+
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=2000
 SAVEHIST=2000
 alias history="history 0"
+
+############################################################
+# KEYBINDINGS (EMACS MODE)
+############################################################
 
 bindkey -e
 bindkey ' ' magic-space
@@ -19,26 +44,51 @@ bindkey '^[[5~' beginning-of-buffer-or-history
 bindkey '^[[6~' end-of-buffer-or-history
 bindkey '^[[H' beginning-of-line
 bindkey '^[[F' end-of-line
-bindkey '^[[Z' undo
+bindkey '^[[Z' reverse-menu-complete   # Shift + Tab
 
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#44475a'
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+############################################################
+# COMPLETION COLORS
+############################################################
 
+autoload -Uz compinit
+compinit
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
-alias ls='ls --color=auto'
-alias v="nvim"
-alias dev="cd $HOME/Developments/ ; ls"
 
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init - zsh)"
+############################################################
+# ALIASES
+############################################################
+
+alias ls='ls --color=auto'
+alias v='nvim'
+alias dev='cd ~/Developments'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias grep='grep --color=auto'
+
+############################################################
+# PATH
+############################################################
+
+export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/opt/nodejs/bin:$PATH"
 
-eval "$(starship init zsh)"
 
-# Created by `pipx` on 2025-04-15 01:39:42
-export PATH="$PATH:/home/lu/.local/bin"
+# export PYENV_ROOT="$HOME/.pyenv"
+# [[ -d "$PYENV_ROOT/bin" ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+# eval "$(pyenv init - zsh)"
 
-# Poetry env activate
-alias pactivate='eval $(poetry env activate)'
+############################################################
+# STARSHIP PROMPT (OPCIONAL)
+############################################################
+
+# eval "$(starship init zsh)"
+
+############################################################
+# ZSH PLUGINS
+############################################################
+
+# Autosuggestions
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#44475a'
+source "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+source "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
