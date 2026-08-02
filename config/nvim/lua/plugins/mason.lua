@@ -19,9 +19,18 @@ end
 
 local server_specific = {
   lua_ls = {
+    root_dir = function(fname)
+      local config_root = vim.fn.stdpath("config")
+      if fname:find(config_root, 1, true) == 1 then
+        return config_root
+      end
+
+      return require("lspconfig.util").root_pattern(".luarc.json", ".luarc.jsonc", ".git")(fname)
+    end,
     settings = {
       Lua = {
-        diagnostics = { globals = { "vim" } },
+        runtime = { version = "LuaJIT" },
+        diagnostics = { globals = { "vim", "Run" } },
         workspace = {
           library = {
             [vim.fn.expand("$VIMRUNTIME/lua")] = true,

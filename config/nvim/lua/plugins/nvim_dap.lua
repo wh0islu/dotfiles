@@ -1,8 +1,9 @@
 local dap = require("dap")
+local python_path = vim.fn.expand("$HOME/.venv/bin/python3")
 
 dap.adapters.python = {
   type = "executable",
-  command = "$HOME/.venv/bin/python3",
+  command = python_path,
   args = { "-m", "debugpy.adapter" }
 }
 
@@ -13,14 +14,18 @@ dap.configurations.python = {
     name = "Launch file",
     program = "${file}",
     pythonPath = function()
-      return "$HOME/.venv/bin/python3"
+      return python_path
     end,
   },
 }
 
-vim.api.nvim_set_keymap('n', '<F5>', '<Cmd>lua require"dap".continue()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<F10>', '<Cmd>lua require"dap".step_over()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<F11>', '<Cmd>lua require"dap".step_into()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<F12>', '<Cmd>lua require"dap".step_out()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>b', '<Cmd>lua require"dap".toggle_breakpoint()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>B', '<Cmd>lua require"dap".set_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>', { noremap = true, silent = true })
+local opts = { noremap = true, silent = true }
+
+vim.keymap.set("n", "<F5>", dap.continue, opts)
+vim.keymap.set("n", "<F10>", dap.step_over, opts)
+vim.keymap.set("n", "<F11>", dap.step_into, opts)
+vim.keymap.set("n", "<F12>", dap.step_out, opts)
+vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, opts)
+vim.keymap.set("n", "<leader>B", function()
+  dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+end, opts)
