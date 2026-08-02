@@ -1,30 +1,31 @@
 local colors = {
-  bg = "#111318",
-  bg_dark = "#0D0F14",
-  bg_float = "#171A22",
-  bg_soft = "#1C202A",
-  bg_visual = "#2A3140",
-  border = "#303746",
-  fg = "#E6EAF0",
-  fg_soft = "#C9D1DC",
-  muted = "#7D8594",
-  comment = "#5F6878",
-  muted_soft = "#5F6878",
+  bg = "#080808",
+  bg_dark = "#080808",
+  bg_float = "#080808",
+  bg_soft = "#121212",
+  bg_visual = "#222222",
+  border = "#080808",
+  fg = "#E8E8E8",
+  fg_soft = "#C8C8C8",
+  muted = "#7A7A7A",
+  comment = "#5E5E5E",
+  muted_soft = "#4E4E4E",
 
-  red = "#FF6B6B",
-  red_soft = "#E06C75",
-  green = "#7ED7A8",
-  yellow = "#F2C66D",
-  orange = "#FFB86C",
-  blue = "#8FB7FF",
-  blue_soft = "#A8C7FF",
-  purple = "#C7A4FF",
-  pink = "#FF9AC1",
-  teal = "#79D7D2",
-  teal_soft = "#6FC7C2",
+  red = "#FF5F5F",
+  red_soft = "#D75F5F",
+  green = "#7FD88F",
+  yellow = "#E6C76A",
+  orange = "#F0A45D",
+  blue = "#7AA2F7",
+  blue_soft = "#9AB8FF",
+  purple = "#B48EED",
+  pink = "#F38BA8",
+  teal = "#6BD6D6",
+  teal_soft = "#5FBFC0",
 }
 
-vim.g.colors_name = "kaizen"
+vim.g.colors_name = "cyberia"
+vim.g.kaizen_theme_colors = colors
 vim.opt.termguicolors = true
 
 local function hi(group, opts)
@@ -34,8 +35,12 @@ end
 local function apply_theme()
   hi("Normal", { fg = colors.fg, bg = colors.bg })
   hi("NormalNC", { fg = colors.fg_soft, bg = colors.bg })
+  hi("NonText", { fg = colors.bg, bg = colors.bg })
+  hi("Whitespace", { fg = colors.bg, bg = colors.bg })
   hi("EndOfBuffer", { fg = colors.bg, bg = colors.bg })
   hi("SignColumn", { fg = colors.fg_soft, bg = colors.bg })
+  hi("LineNrAbove", { fg = colors.muted_soft, bg = colors.bg })
+  hi("LineNrBelow", { fg = colors.muted_soft, bg = colors.bg })
   hi("FoldColumn", { fg = colors.muted, bg = colors.bg })
   hi("ColorColumn", { bg = colors.bg_soft })
   hi("CursorLine", { bg = colors.bg_soft })
@@ -50,9 +55,9 @@ local function apply_theme()
   hi("PmenuSel", { fg = colors.bg_dark, bg = colors.blue })
   hi("PmenuSbar", { bg = colors.bg_soft })
   hi("PmenuThumb", { bg = colors.border })
-  hi("WinSeparator", { fg = colors.border, bg = colors.bg })
-  hi("VertSplit", { fg = colors.border, bg = colors.bg })
-  hi("FloatBorder", { fg = colors.border, bg = colors.bg_float })
+  hi("WinSeparator", { fg = colors.bg, bg = colors.bg })
+  hi("VertSplit", { fg = colors.bg, bg = colors.bg })
+  hi("FloatBorder", { fg = colors.bg, bg = colors.bg_float })
   hi("NormalFloat", { fg = colors.fg, bg = colors.bg_float })
   hi("Title", { fg = colors.blue, bold = true })
   hi("Directory", { fg = colors.blue })
@@ -105,14 +110,19 @@ local function apply_theme()
 
   hi("StatusLine", { fg = colors.fg, bg = colors.bg_float })
   hi("StatusLineNC", { fg = colors.muted, bg = colors.bg_dark })
+  hi("StatusLineTerm", { fg = colors.fg, bg = colors.bg })
+  hi("StatusLineTermNC", { fg = colors.muted, bg = colors.bg })
   hi("TabLine", { fg = colors.muted, bg = colors.bg_dark })
   hi("TabLineSel", { fg = colors.fg, bg = colors.bg_soft, bold = true })
   hi("TabLineFill", { bg = colors.bg_dark })
+  hi("MsgArea", { fg = colors.fg, bg = colors.bg })
+  hi("ModeMsg", { fg = colors.blue, bg = colors.bg })
+  hi("NormalSB", { fg = colors.fg_soft, bg = colors.bg })
 
   hi("NvimTreeNormal", { fg = colors.fg_soft, bg = colors.bg })
   hi("NvimTreeNormalNC", { fg = colors.fg_soft, bg = colors.bg })
   hi("NvimTreeEndOfBuffer", { fg = colors.bg, bg = colors.bg })
-  hi("NvimTreeWinSeparator", { fg = colors.border, bg = colors.bg })
+  hi("NvimTreeWinSeparator", { fg = colors.bg, bg = colors.bg })
   hi("NvimTreeRootFolder", { fg = colors.blue, bold = true })
   hi("NvimTreeFolderName", { fg = colors.fg_soft })
   hi("NvimTreeOpenedFolderName", { fg = colors.blue, bold = true })
@@ -133,9 +143,9 @@ local function apply_theme()
   hi("NvimTreeExecFile", { fg = colors.green })
 
   hi("TelescopeNormal", { fg = colors.fg, bg = colors.bg_float })
-  hi("TelescopeBorder", { fg = colors.border, bg = colors.bg_float })
+  hi("TelescopeBorder", { fg = colors.bg, bg = colors.bg_float })
   hi("TelescopePromptNormal", { fg = colors.fg, bg = colors.bg_soft })
-  hi("TelescopePromptBorder", { fg = colors.border, bg = colors.bg_soft })
+  hi("TelescopePromptBorder", { fg = colors.bg, bg = colors.bg_soft })
   hi("TelescopePromptPrefix", { fg = colors.blue })
   hi("TelescopeSelection", { fg = colors.fg, bg = colors.bg_soft, bold = true })
   hi("TelescopeMatching", { fg = colors.yellow, bold = true })
@@ -160,6 +170,9 @@ local function apply_theme()
   hi("BufferLineIndicatorSelected", { fg = colors.blue, bg = colors.bg })
   hi("BufferLineSeparator", { fg = colors.bg_dark, bg = colors.bg_dark })
   hi("BufferLineSeparatorSelected", { fg = colors.bg_dark, bg = colors.bg })
+  hi("BufferLineSeparatorVisible", { fg = colors.bg_dark, bg = colors.bg_dark })
+  hi("BufferLineTabSeparator", { fg = colors.bg_dark, bg = colors.bg_dark })
+  hi("BufferLineTabSeparatorSelected", { fg = colors.bg_dark, bg = colors.bg })
   hi("BufferLineModified", { fg = colors.yellow, bg = colors.bg_dark })
   hi("BufferLineModifiedSelected", { fg = colors.yellow, bg = colors.bg })
 
