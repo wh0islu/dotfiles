@@ -1,54 +1,202 @@
 {
-  "workbench.colorTheme": "Theme Darker",
-  "editor.fontFamily": "GeistMono Nerd Font",
+  // ======================================================
+  // EDITOR — Fonte, tipografia e comportamento básico
+  // ======================================================
+  // Fonte monoespaçada com ligaduras para leitura longa
+  "editor.fontFamily": "JetBrainsMono Nerd Font",
   "editor.fontLigatures": true,
+  // Tamanho e espaçamento confortáveis para foco prolongado
+  "editor.fontSize": 15,
+  "editor.lineHeight": 1.6,
+  // Cursor sólido e sem animação (menos estímulo visual)
+  "editor.cursorBlinking": "solid",
+  "editor.cursorSmoothCaretAnimation": "off",
+  // Mostrar apenas espaços finais (ajuda em Python)
+  "editor.renderWhitespace": "trailing",
+  // Remover elementos visuais desnecessários
+  "editor.minimap.enabled": false,
+  "editor.guides.indentation": false,
+  // Realce sutil de pares (útil sem distração)
+  "editor.matchBrackets": "near",
+  // ======================================================
+  // FOCO VISUAL — Redução de ruído cognitivo
+  // ======================================================
+  // Destacar linha atual de forma sutil
+  "editor.renderLineHighlight": "line",
+  "editor.lineHighlightBackground": "#101010",
+  // Evitar múltiplos destaques simultâneos
+  "editor.selectionHighlight": false,
+  "editor.occurrencesHighlight": "off",
+  // Hover mais lento e previsível
+  "editor.hover.delay": 600,
+  "editor.hover.enabled": "on",
+  // Desativar scroll suave (menos animações)
+  "editor.smoothScrolling": false,
+  "workbench.list.smoothScrolling": false,
+  // Remover indicadores intrusivos
+  "editor.lightbulb.enabled": "off",
+  "editor.parameterHints.enabled": false,
+  "editor.codeLens": false,
+  // ======================================================
+  // PYTHON — Análise estática menos agressiva
+  // ======================================================
+  // Evita sublinhados vermelhos constantes
+  // Autocomplete mais previsível
+  "editor.suggestOnTriggerCharacters": true,
+  "editor.tabCompletion": "on",
+  // ======================================================
+  // JUPYTER — Uso de células (# %%)
+  // ======================================================
+  // Interface mais limpa para exploração
+  "jupyter.showVariableView": false,
+  "jupyter.showCellStatusBar": "hover",
+  // Limitar outputs longos
+  "jupyter.output.textLineLimit": 50,
+  // Evitar prompts desnecessários
+  "jupyter.askForKernelRestart": false,
+  // ======================================================
+  // EXPLORER E BUSCA — Ocultar ruído estrutural
+  // ======================================================
+  // Manter .venv visível no Explorer (opcional)
+  "files.exclude": {
+    "**/.venv": false,
+    "**/__pycache__": true,
+    "**/.ipynb_checkpoints": true,
+  },
+  // Nunca buscar dentro de artefatos gerados
+  "search.exclude": {
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/.ipynb_checkpoints": true,
+  },
+  // ======================================================
+  // PRIVACIDADE E TELEMETRIA
+  // ======================================================
+  "telemetry.telemetryLevel": "off",
+  "telemetry.feedback.enabled": false,
+  "redhat.telemetry.enabled": false,
+  // ======================================================
+  // SCROLLBARS — Remover poluição visual
+  // ======================================================
+  "editor.scrollbar.vertical": "hidden",
+  "editor.scrollbar.horizontal": "hidden",
+  // ======================================================
+  // AUTOSAVE — Fluxo contínuo
+  // ======================================================
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,
-  "editor.renderWhitespace": "trailing",
-  "editor.fontSize": 14,
-  "editor.minimap.enabled": false,
-  "workbench.colorCustomizations": {
-    "sideBar.foreground": "#ffffff",
-    "sideBar.background": "#080808",
-    "sideBar.border": "#080808",
-    "sideBarTitle.foreground": "#ffffff",
-    "activityBar.background": "#080808",
-    "activityBar.foreground": "#ffffff",
-    "activityBarBadge.background": "#ff0000",
-    "activityBarBadge.foreground": "#ffffff",
-    "editorGroupHeader.tabsBackground": "#080808",
-    "editorGroupHeader.tabsBorder": "#080808",
-    "tab.activeBackground": "#080808",
-    "tab.activeForeground": "#ffffff",
-    "tab.inactiveBackground": "#0f0f0f",
-    "tab.inactiveForeground": "#ffffff",
-    "editorLineNumber.foreground": "#ffffff",
-    "editorLineNumber.activeForeground": "#ffffff",
-    "editorCursor.foreground": "#ffffff",
-    "editor.selectionBackground": "#413f3f",
-    "editor.background": "#080808",
-    "statusBar.background": "#080808",
-    "statusBar.foreground": "#FFFFFF",
-    "statusBar.noFolderBackground": "#080808",
-    "statusBar.debuggingBackground": "#FF0000",
-    "statusBar.border": "#585858",
-    "titleBar.activeBackground": "#080808",
-    "titleBar.activeForeground": "#FFFFFF",
-    "titleBar.inactiveBackground": "#0f0f0f",
-    "titleBar.inactiveForeground": "#CCCCCC",
-    "window.activeBorder": "#FF0000",
-    "window.inactiveBorder": "#888888"
-  },
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // ======================================================
+  // SUGESTÕES — Menos agressivas
+  // ======================================================
   "editor.quickSuggestions": {
     "other": true,
     "comments": false,
-    "strings": true
+    "strings": true,
   },
+  "editor.quickSuggestionsDelay": 300,
   "editor.suggest.snippetsPreventQuickSuggestions": false,
   "editor.acceptSuggestionOnEnter": "smart",
+  "editor.suggestSelection": "first",
+  "editor.inlineSuggest.enabled": false,
+  // ======================================================
+  // FORMATAÇÃO — Controle explícito
+  // ======================================================
+  // Formatar ao salvar, mas sem forçar formatter global
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // Em Python, formatação manual (black via CLI)
+  "[python]": {
+    "editor.formatOnSave": false,
+  },
+  // ======================================================
+  // GIT — Comportamento silencioso
+  // ======================================================
   "git.autofetch": true,
+  "git.confirmSync": false,
+  // ======================================================
+  // UI — Interface minimalista
+  // ======================================================
   "breadcrumbs.enabled": false,
-  "window.menuBarVisibility": "compact"
+  //"workbench.activityBar.location": "hidden",
+  //"workbench.startupEditor": "none",
+  // Remover barra de comandos e menus visuais
+  "window.commandCenter": false,
+  "window.menuBarVisibility": "hidden",
+  "window.titleBarStyle": "native",
+  // ======================================================
+  // TEMA — Baixo estímulo visual
+  // ======================================================
+  //"workbench.colorCustomizations": {
+  //  "editor.background": "#080808",
+  //  "sideBar.background": "#080808",
+  //  "sideBar.foreground": "#cfcfcf",
+  //  "sideBar.border": "#080808",
+  //  "sideBarTitle.foreground": "#dddddd",
+  //  "activityBar.background": "#080808",
+  //  "activityBar.foreground": "#aaaaaa",
+  //  "activityBarBadge.background": "#7a2a2a",
+  //  "activityBarBadge.foreground": "#ffffff",
+  //  "editorGroupHeader.tabsBackground": "#080808",
+  //  "editorGroupHeader.tabsBorder": "#080808",
+  //  "tab.activeBackground": "#080808",
+  //  "tab.activeForeground": "#ffffff",
+  //  "tab.inactiveBackground": "#0f0f0f",
+  //  "tab.inactiveForeground": "#999999",
+  //  "editorLineNumber.foreground": "#4d4d4d",
+  //  "editorLineNumber.activeForeground": "#9a9a9a",
+  //  "editorCursor.foreground": "#e0e0e0",
+  //  "editor.selectionBackground": "#2a2a2a",
+  //  "statusBar.background": "#080808",
+  //  "statusBar.foreground": "#b0b0b0",
+  //  "statusBar.noFolderBackground": "#080808",
+  //  "statusBar.debuggingBackground": "#7a2a2a",
+  //  "statusBar.border": "#181818",
+  //  "titleBar.activeBackground": "#080808",
+  //  "titleBar.activeForeground": "#bdbdbd",
+  //  "titleBar.inactiveBackground": "#0f0f0f",
+  //  "titleBar.inactiveForeground": "#6f6f6f",
+  //  "window.activeBorder": "#7a2a2a",
+  //  "window.inactiveBorder": "#2a2a2a",
+  //},
+  "jupyter.interactiveWindow.creationMode": "single",
+  "jupyter.interactiveWindow.codeLens.enable": false,
+  "redhat.telemetry.enabled": true,
+  "chat.viewSessions.orientation": "stacked",
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1,
+  },
+  // ======================================================
+  // PYTHON — LSP (Pylance / Pyright)
+  // ======================================================
+  "python.languageServer": "Pylance",
+  // Performance + previsibilidade
+  "python.analysis.indexing": true,
+  "python.analysis.autoImportCompletions": true,
+  // Diagnósticos (baixo ruído)
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.diagnosticMode": "workspace",
+  // Controle fino de avisos
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingImports": "none",
+    "reportUnusedImport": "information",
+    "reportUnusedVariable": "information",
+    "reportGeneralTypeIssues": "warning",
+  },
+  "python.defaultInterpreterPath": "",
+  // Melhor navegação
+  "python.analysis.inlayHints.variableTypes": false,
+  "python.analysis.inlayHints.functionReturnTypes": false,
+  //"python.analysis.inlayHints.callArgumentNames": false,
+  "explorer.confirmDelete": false,
+  "editor.stickyScroll.enabled": false,
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  "workbench.iconTheme": "material-icon-theme",
+  "js/ts.updateImportsOnFileMove.enabled": "always",
+  "git.openRepositoryInParentFolders": "always",
+  "python.terminal.activateEnvironment": true,
+  "terminal.integrated.enablePersistentSessions": false,
+  "terminal.integrated.stickyScroll.enabled": false,
+  "explorer.confirmDragAndDrop": false,
+  "workbench.colorTheme": "Tokyo Night",
 }
