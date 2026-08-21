@@ -1,0 +1,61 @@
+local ok, which_key = pcall(require, "which-key")
+if not ok then
+    return
+end
+
+which_key.setup({
+    preset = "modern",
+    delay = 250,
+    win = {
+        border = "single",
+    },
+})
+
+which_key.add({
+    { "<leader>a", group = "AI" },
+    { "<leader>ac", desc = "Open Codex in project" },
+    { "<leader>ai", desc = "Codex sidebar" },
+    { "<leader>ak", desc = "Close Codex" },
+    { "<leader>ar", desc = "Restart Codex" },
+    { "<leader>c", group = "Code" },
+    { "<leader>ca", desc = "Code action" },
+    { "<leader>d", group = "Debug" },
+    { "<leader>f", group = "Find" },
+    { "<leader>ff", desc = "Find files" },
+    { "<leader>fg", desc = "Find text" },
+    { "<leader>fb", desc = "Buffers" },
+    { "<leader>fo", desc = "Recent files" },
+    { "<leader>fd", desc = "Diagnostics" },
+    { "<leader>fs", desc = "Document symbols" },
+    { "<leader>fS", desc = "Workspace symbols" },
+    { "<leader>g", group = "Git" },
+    { "<leader>gb", desc = "Line blame" },
+    { "<leader>gc", desc = "Git commit" },
+    { "<leader>gd", desc = "Hunk diff" },
+    { "<leader>gg", desc = "Git status" },
+    { "<leader>gl", desc = "Git pull" },
+    { "<leader>gp", desc = "Preview hunk" },
+    { "<leader>gP", desc = "Git push" },
+    { "<leader>gr", desc = "Reset hunk" },
+    { "<leader>gs", desc = "Stage hunk" },
+    { "<leader>gt", desc = "Lazygit" },
+    { "<leader>j", group = "Java" },
+    { "<leader>jc", desc = "Extract constant" },
+    { "<leader>jm", desc = "Extract method" },
+    { "<leader>jn", desc = "Test nearest method" },
+    { "<leader>jo", desc = "Organize imports" },
+    { "<leader>jt", desc = "Test class" },
+    { "<leader>jv", desc = "Extract variable" },
+    { "<leader>l", group = "LSP" },
+    { "<leader>ld", desc = "List diagnostics" },
+    { "<leader>q", group = "Session" },
+    { "<leader>qd", desc = "Stop session save" },
+    { "<leader>ql", desc = "Restore last session" },
+    { "<leader>qs", desc = "Restore session" },
+    { "<leader>t", group = "Terminal" },
+    { "<leader>td", desc = "TODOs" },
+    { "<leader>tg", desc = "Lazygit" },
+    { "<leader>tn", desc = "npm run dev" },
+    { "<leader>tr", desc = "Django runserver" },
+    { "<leader>ts", desc = "New Spring Boot project" },
+})

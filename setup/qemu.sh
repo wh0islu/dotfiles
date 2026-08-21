@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 echo "=== Instalando QEMU/KVM no Arch Linux ==="
