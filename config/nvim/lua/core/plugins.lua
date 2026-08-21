@@ -14,15 +14,16 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+    { "nvim-tree/nvim-web-devicons", lazy = false, config = true },
     { "nvim-lualine/lualine.nvim", dependencies = { "nvim-tree/nvim-web-devicons" } },
     { "akinsho/bufferline.nvim", version = "*", dependencies = { 'nvim-tree/nvim-web-devicons' } },
-    { "norcalli/nvim-colorizer.lua" },
+    { "catgoose/nvim-colorizer.lua" },
     { "numToStr/Comment.nvim" },
 
     { "nvim-telescope/telescope.nvim", tag = "0.1.6", dependencies = { "nvim-lua/plenary.nvim" } },
     { "nvim-telescope/telescope-ui-select.nvim" },
 
-    { "nvim-tree/nvim-tree.lua" },
+    { "nvim-tree/nvim-tree.lua", dependencies = { "nvim-tree/nvim-web-devicons" } },
 
     { "akinsho/toggleterm.nvim", version = "*" },
 
@@ -47,43 +48,29 @@ require("lazy").setup({
 
     {
       "nvim-treesitter/nvim-treesitter",
-      run = ":TSUpdate",
+      branch = "main",
+      build = ":TSUpdate",
       config = function()
-        require'nvim-treesitter.configs'.setup {
-          highlight = {
-            enable = true,
-            additional_vim_regex_highlighting = false,
-          },
-          ensure_installed = { "latex" },
-        }
+        require("nvim-treesitter").setup({})
+
+        vim.api.nvim_create_autocmd("FileType", {
+          pattern = "*",
+          callback = function()
+            pcall(vim.treesitter.start)
+          end,
+        })
+
+        local has_parser_compiler = vim.fn.executable("tree-sitter") == 1
+          and (vim.fn.executable("cc") == 1
+            or vim.fn.executable("gcc") == 1
+            or vim.fn.executable("clang") == 1
+            or vim.fn.executable("cl") == 1
+            or vim.fn.executable("zig") == 1)
+
+        if has_parser_compiler then
+          require("nvim-treesitter").install({ "latex" })
+        end
       end,
     },
 
-    {
-	"mfussenegger/nvim-dap",
-	config = function()
-	   require("plugins.nvim_dap")
-	end,
-    },
-    {
-	"nvim-neotest/nvim-nio",
-    },
-
-    {
-	"rcarriga/nvim-dap-ui",
-	requires = {"mfussenegger/nvim-dap"},
-	config = function()
-	   local dap, dapui = require("dap"), require("dapui")
-	   dapui.setup()
-	   dap.listeners.after.event_initialized["dapui_config"] = function()
-		dapui.open()
-	   end
-	   dap.listeners.before.event_terminated["dapui_config"] = function()
-		dapui.close()
-	   end
-	   dap.listeners.before.event_exited["dapui_config"] = function()
-		dapui.close()
-	   end
-	end
-    }
 })
