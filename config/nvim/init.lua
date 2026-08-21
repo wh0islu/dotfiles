@@ -1,7 +1,11 @@
 require("core.sets")
 require("core.map")
 require("core.run")
+require("core.spring")
+require("core.commands")
+require("core.diagnostics")
 require("core.plugins")
+<<<<<<< HEAD
 require("plugins.lualine")
 require("plugins.ntree")
 require("plugins.telescope")
@@ -13,3 +17,8 @@ require("plugins.comment")
 require("plugins.colorizer")
 require("plugins.bufferline")
 require("themes.kaizen")
+=======
+require("core.dashboard")
+require("plugins.markdown")
+require("themes.cyberia")
+>>>>>>> 686dc5b250e2caddb086ff55b7447e33eac44f13
