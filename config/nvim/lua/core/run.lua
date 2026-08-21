@@ -1,24 +1,29 @@
 function Run()
-    local filetype = vim.fn.expand("%:e")
-    local command = ""
+    local extension = vim.fn.expand("%:e")
+    local file = vim.fn.shellescape(vim.fn.expand("%:p"))
+    local basename = vim.fn.expand("%:p:r")
+    local is_windows = vim.fn.has("win32") == 1
+    local command = nil
 
-    if filetype == "py" then
-        command = "python3 " .. vim.fn.expand("%")
-    elseif filetype == "c" then
-        command = "gcc " .. vim.fn.expand("%") .. " -o output && ./output"
-    elseif filetype == "rs" then
-        command = "rustc " .. vim.fn.expand("%") .. " && ./output"
-    elseif filetype == "go" then
-        command = "go run " .. vim.fn.expand("%")
-    elseif filetype == "js" then
-        command = "node " .. vim.fn.expand("%")
+    if extension == "py" then
+        command = (is_windows and "python " or "python3 ") .. file
+    elseif extension == "c" then
+        local output = vim.fn.shellescape(basename .. (is_windows and ".exe" or ""))
+        command = "gcc " .. file .. " -o " .. output .. " && " .. output
+    elseif extension == "rs" then
+        local output = vim.fn.shellescape(basename .. (is_windows and ".exe" or ""))
+        command = "rustc " .. file .. " -o " .. output .. " && " .. output
+    elseif extension == "go" then
+        command = "go run " .. file
+    elseif extension == "js" then
+        command = "node " .. file
     else
         print("Unsupported programming language.")
         return
     end
 
-    vim.cmd('w')
-    vim.cmd('!' .. command)
+    vim.cmd("w")
+    vim.cmd("!" .. command)
 end
 
-vim.api.nvim_create_user_command('Run', Run, {})
+vim.api.nvim_create_user_command("Run", Run, {})

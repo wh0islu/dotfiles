@@ -16,3 +16,26 @@ vim.opt.clipboard = "unnamedplus"
 vim.opt.cursorline = true
 vim.opt.termguicolors = true
 vim.opt.cmdheight = 0
+vim.opt.fillchars:append({
+    eob = " ",
+})
+
+local function apply_interface_highlights()
+    local bg = "#0f0f0f"
+
+    vim.api.nvim_set_hl(0, "WinSeparator", {
+        fg = bg,
+        bg = bg,
+    })
+    vim.api.nvim_set_hl(0, "VertSplit", {
+        fg = bg,
+        bg = bg,
+    })
+end
+
+apply_interface_highlights()
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+    group = vim.api.nvim_create_augroup("UserInterfaceHighlights", { clear = true }),
+    callback = apply_interface_highlights,
+})
