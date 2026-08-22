@@ -1,24 +1,11 @@
 require("nvim-tree").setup({
     view = {
-        width = 28,
+        width = 30,
         side = 'left',
         signcolumn = "no",
     },
     renderer = {
         highlight_opened_files = "none",
-        full_name = true,
-        root_folder_label = false,
-        icons = {
-            show = {
-                file = true,
-                folder = true,
-                folder_arrow = true,
-                git = true,
-                modified = true,
-                diagnostics = true,
-                bookmarks = true,
-            },
-        },
     },
     actions = {
         open_file = {

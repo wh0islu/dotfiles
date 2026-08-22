@@ -20,30 +20,6 @@ vim.opt.clipboard = "unnamedplus"
 vim.opt.cursorline = true
 vim.opt.termguicolors = true
 vim.opt.cmdheight = 0
-<<<<<<< HEAD
-vim.opt.fillchars:append({
-    eob = " ",
-})
-
-local function apply_interface_highlights()
-    local bg = "#0f0f0f"
-
-    vim.api.nvim_set_hl(0, "WinSeparator", {
-        fg = bg,
-        bg = bg,
-    })
-    vim.api.nvim_set_hl(0, "VertSplit", {
-        fg = bg,
-        bg = bg,
-    })
-end
-
-apply_interface_highlights()
-
-vim.api.nvim_create_autocmd("ColorScheme", {
-    group = vim.api.nvim_create_augroup("UserInterfaceHighlights", { clear = true }),
-    callback = apply_interface_highlights,
-=======
 
 local function apply_window_numbers()
     local disabled_filetypes = {
@@ -72,5 +48,4 @@ end
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "FileType" }, {
     group = vim.api.nvim_create_augroup("KaizenWindowOptions", { clear = true }),
     callback = apply_window_numbers,
->>>>>>> 686dc5b250e2caddb086ff55b7447e33eac44f13
 })

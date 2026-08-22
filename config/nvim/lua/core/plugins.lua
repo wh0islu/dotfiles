@@ -20,13 +20,6 @@ end
 vim.g.kaizen_lazy_loaded = true
 
 require("lazy").setup({
-<<<<<<< HEAD
-    { "nvim-tree/nvim-web-devicons", lazy = false, config = true },
-    { "nvim-lualine/lualine.nvim", dependencies = { "nvim-tree/nvim-web-devicons" } },
-    { "akinsho/bufferline.nvim", version = "*", dependencies = { 'nvim-tree/nvim-web-devicons' } },
-    { "catgoose/nvim-colorizer.lua" },
-    { "numToStr/Comment.nvim" },
-=======
     {
       "nvim-lualine/lualine.nvim",
       event = "VeryLazy",
@@ -92,7 +85,6 @@ require("lazy").setup({
         require("plugins.persistence")
       end,
     },
->>>>>>> 686dc5b250e2caddb086ff55b7447e33eac44f13
 
     {
       "nvim-telescope/telescope.nvim",
@@ -106,9 +98,6 @@ require("lazy").setup({
     },
     { "nvim-telescope/telescope-ui-select.nvim", lazy = true },
 
-<<<<<<< HEAD
-    { "nvim-tree/nvim-tree.lua", dependencies = { "nvim-tree/nvim-web-devicons" } },
-=======
     {
       "nvim-tree/nvim-tree.lua",
       cmd = { "NvimTreeToggle", "NvimTreeOpen", "NvimTreeFocus" },
@@ -116,7 +105,6 @@ require("lazy").setup({
         require("plugins.ntree")
       end,
     },
->>>>>>> 686dc5b250e2caddb086ff55b7447e33eac44f13
 
     {
       "akinsho/toggleterm.nvim",
@@ -203,33 +191,6 @@ require("lazy").setup({
 
     {
       "nvim-treesitter/nvim-treesitter",
-<<<<<<< HEAD
-      branch = "main",
-      build = ":TSUpdate",
-      config = function()
-        require("nvim-treesitter").setup({})
-
-        vim.api.nvim_create_autocmd("FileType", {
-          pattern = "*",
-          callback = function()
-            pcall(vim.treesitter.start)
-          end,
-        })
-
-        local has_parser_compiler = vim.fn.executable("tree-sitter") == 1
-          and (vim.fn.executable("cc") == 1
-            or vim.fn.executable("gcc") == 1
-            or vim.fn.executable("clang") == 1
-            or vim.fn.executable("cl") == 1
-            or vim.fn.executable("zig") == 1)
-
-        if has_parser_compiler then
-          require("nvim-treesitter").install({ "latex" })
-        end
-      end,
-    },
-
-=======
       branch = "master",
       build = ":TSUpdate",
       event = { "BufReadPost", "BufNewFile" },
@@ -279,5 +240,4 @@ require("lazy").setup({
     rocks = {
       enabled = false,
     },
->>>>>>> 686dc5b250e2caddb086ff55b7447e33eac44f13
 })
