@@ -1,1 +1,0 @@
--- LSP servers are configured from lua/plugins/mason.lua.

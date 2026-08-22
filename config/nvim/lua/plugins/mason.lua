@@ -45,7 +45,7 @@ local server_specific = {
 }
 
 mlsp.setup({
-  ensure_installed = { "pyright", "clangd", "lua_ls", "ts_ls", "jdtls" },
+  ensure_installed = { "pyright", "clangd", "lua_ls", "ts_ls" },
   automatic_installation = true,
 
   handlers = {
@@ -60,6 +60,7 @@ mlsp.setup({
 
       require("lspconfig")[server_name].setup(opts)
     end,
+
   },
 })
 
