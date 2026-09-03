@@ -1,135 +1,130 @@
 configuration {
-    display-drun: "Aplication: ";
-    display-filebrowser: "File: ";
+    display-drun: "Apps";
+    display-filebrowser: "Files";
+    display-run: "Run";
+    display-window: "Windows";
     show-icons: true;
     icon-theme: "Papirus";
-    font: "JetBrainsMono Nerd Font Medium 10";
+    font: "GeistMono Nerd Font 10";
     modes: [window, drun, run, filebrowser];
 }
 
 * {
-    background-color: #0f0e0e;
-    text-color:       #ffffff;
-    border-color:     #0f0e0e;
+    bg:       #080808;
+    surface:  #18181B;
+    selected: #29292D;
+    accent:   #9FBEA0;
+    text:     #D7D7DA;
+    muted:    #85858B;
+
+    background-color: transparent;
+    text-color:       @text;
+    border-color:     #48484E;
 }
 
 window {
-    background-color: #0f0e0e;
-    border: 0;
-    padding: 5;
+    background-color: @bg;
+    border: 1px;
+    padding: 10px;
     border-radius: 10px;
-    width: 500;
+    width: 540px;
     location: center;
 }
 
 mainbox {
     border: 0;
-    padding: 0;
+    padding: 2px;
+    spacing: 8px;
+    background-color: transparent;
 }
 
-message {
-    border: 0;
-    padding: 1px;
-    background-color: #0f0e0e;
-    text-color: #ffffff;
+inputbar {
+    spacing: 8px;
+    padding: 9px 10px;
+    background-color: @surface;
+    text-color: @text;
+    border-radius: 8px;
+    children: [ prompt, entry ];
 }
 
-textbox {
-    background-color: #0f0e0e;
-    text-color: #ffffff;
+prompt {
+    background-color: transparent;
+    text-color: @accent;
+    spacing: 0;
+}
+
+entry {
+    background-color: transparent;
+    text-color: @text;
+    placeholder-color: @muted;
 }
 
 listview {
     fixed-height: 0;
     border: 0;
-    spacing: 2px;
-    scrollbar: true;
-    padding: 2px 0px 0px;
+    spacing: 4px;
+    scrollbar: false;
+    padding: 0;
+    background-color: transparent;
 }
 
 element {
     border: 0;
-    padding: 2px;
-    background-color: #0f0e0e;
-    text-color: #ffffff;
+    padding: 7px 9px;
+    background-color: transparent;
+    text-color: @text;
+    border-radius: 7px;
+}
+
+element-icon {
+    size: 18px;
+    background-color: transparent;
 }
 
 element-text {
-    background-color: inherit;
+    background-color: transparent;
     text-color: inherit;
 }
 
-element.normal.normal {
-    background-color: #0f0e0e;
-    text-color: #ffffff;
-}
-
-element.normal.urgent {
-    background-color: #0f0e0e;
-    text-color: #ffffff;
-}
-
-element.normal.active {
-    background-color: #0f0e0e;
-    text-color: #ffffff;
-}
-
-element.selected.normal {
-    background-color: #2a2a2a;
-    text-color: #ffffff;
-    border-radius: 5px;
-}
-
-element.selected.urgent {
-    background-color: #2a2a2a;
-    text-color: #ffffff;
-}
-
-element.selected.active {
-    background-color: #2a2a2a;
-    text-color: #ffffff;
-}
-
-element.alternate.normal {
-    background-color: #0f0e0e;
-    text-color: #ffffff;
-}
-
-element.alternate.urgent {
-    background-color: #0f0e0e;
-    text-color: #ffffff;
-}
-
+element.normal.normal,
+element.alternate.normal,
+element.normal.active,
 element.alternate.active {
-    background-color: #0f0e0e;
-    text-color: #ffffff;
+    background-color: transparent;
+    text-color: @text;
+}
+
+element.normal.urgent,
+element.alternate.urgent {
+    background-color: transparent;
+    text-color: @text;
+}
+
+element.selected.normal,
+element.selected.active,
+element.selected.urgent {
+    background-color: @selected;
+    text-color: @text;
+}
+
+message {
+    border: 0;
+    padding: 6px;
+    background-color: @surface;
+    text-color: @text;
+    border-radius: 8px;
+}
+
+textbox {
+    background-color: transparent;
+    text-color: @text;
 }
 
 scrollbar {
-    width: 4px;
+    width: 3px;
     border: 0;
-    handle-width: 8px;
+    handle-width: 3px;
     padding: 0;
-    background-color: #0f0e0e;
-    handle-color: #2a2a2a;
-}
-
-inputbar {
-    spacing: 0;
-    padding: 2px;
-    background-color: #0f0e0e;
-    text-color: #ffffff;
-    children: [ prompt, entry ];
-}
-
-entry {
-    background-color: #0f0e0e;
-    text-color: #686868;
-    placeholder-color: #686868;
-}
-
-prompt {
-    background-color: #0f0e0e;
-    text-color: #ffffff;
-    spacing: 0;
+    background-color: transparent;
+    handle-color: @selected;
 }
