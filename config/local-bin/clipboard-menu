@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+selection="$(cliphist list | rofi -dmenu -p 'Clipboard')"
+[[ -n "$selection" ]] || exit 0
+
+printf '%s' "$selection" | cliphist decode | wl-copy
+notify-send -a Clipboard -t 1500 'Copied' 'Item sent to the clipboard'

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+pgrep -x hyprlock >/dev/null || exec hyprlock --immediate-render

@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "${1:-}" in
+  up)   wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+ ;;
+  down) wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- ;;
+  mute) wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle ;;
+  set)
+    [[ "${2:-}" == 100 ]] || { printf 'Use 100.\n' >&2; exit 2; }
+    wpctl set-volume @DEFAULT_AUDIO_SINK@ "${2}%"
+    ;;
+  *) printf 'Usage: volume-control {up|down|mute|set 100}\n' >&2; exit 2 ;;
+esac
+
+state="$(wpctl get-volume @DEFAULT_AUDIO_SINK@)"
+volume="$(awk '{printf "%d", $2 * 100}' <<< "$state")"
+
+if [[ "$state" == *MUTED* ]]; then
+  icon="󰖁"
+  label="Audio muted"
+else
+  icon=""
+  label="Volume ${volume}%"
+fi
+
+notify-send -a System -t 1200 \
+  -h string:x-dunst-stack-tag:volume \
+  -h int:value:"$volume" \
+  "$icon  $label"

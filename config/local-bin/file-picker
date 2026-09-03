@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+roots=(
+  "$HOME/Documentos"
+  "$HOME/Downloads"
+  "$HOME/Images"
+  "$HOME/Videos"
+  "$HOME/Área de trabalho"
+)
+
+file="$(find "${roots[@]}" -type f \
+  -not -path '*/.git/*' \
+  -not -path '*/node_modules/*' \
+  -not -path '*/__pycache__/*' 2>/dev/null |
+  fzf --prompt='File › ' \
+      --header='Enter opens • Esc cancels')" || exit 0
+
+[[ -n "$file" ]] && setsid -f xdg-open "$file" >/dev/null 2>&1
