@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+mapfile -t sinks < <(wpctl status -n | awk '
+  /Sinks:/ {inside=1; next}
+  inside && /Sources:/ {exit}
+  inside && match($0, /[0-9]+\./) {
+    line=$0
+    gsub(/[│*├─]/, "", line)
+    sub(/^[[:space:]]+/, "", line)
+    print line
+  }')
+
+(( ${#sinks[@]} )) || { notify-send -a System 'Audio' 'No output found'; exit 1; }
+choice="$(printf '%s\n' "${sinks[@]}" | rofi -dmenu -i -p 'Audio output')"
+[[ -n "$choice" ]] || exit 0
+
+id="${choice%%.*}"
+wpctl set-default "$id"
+notify-send -a System -t 1600 'Audio output' "${choice#*. }"

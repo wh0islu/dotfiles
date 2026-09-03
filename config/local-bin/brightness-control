@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "${1:-}" in
+  up)   brightnessctl set +5% >/dev/null ;;
+  down) brightnessctl set 5%- >/dev/null ;;
+  *) printf 'Usage: brightness-control {up|down}\n' >&2; exit 2 ;;
+esac
+
+brightness="$(brightnessctl -m | awk -F, '{gsub("%", "", $4); print $4}')"
+
+notify-send -a System -t 1200 \
+  -h string:x-dunst-stack-tag:brightness \
+  -h int:value:"$brightness" \
+  "󰃠  Brightness ${brightness}%"

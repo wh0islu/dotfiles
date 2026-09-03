@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+choice="$(printf '%s\n' \
+  '󰓃  Choose output' \
+  '󰕾  Application volume' \
+  '󰝝  Normalizar aplicativos em 100%' \
+  '󰕾  Set master volume to 100%' |
+  rofi -dmenu -i -p 'Audio')"
+
+case "$choice" in
+  *'Choose output') "$HOME/.local/bin/audio-output-menu" ;;
+  *'Application volume') pavucontrol --tab=1 ;;
+  *'Normalizar aplicativos'*)
+    while read -r id; do pactl set-sink-input-volume "$id" 100%; done < <(pactl list short sink-inputs | awk '{print $1}')
+    notify-send -a System 'Audio' 'Applications set to 100%' ;;
+  *'Set master volume to 100%'*) "$HOME/.local/bin/volume-control" set 100 ;;
+esac

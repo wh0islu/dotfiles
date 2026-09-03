@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+choice="$(printf '%s\n' \
+  'Super + Enter       Terminal' \
+  'Super + D           Aplicativos' \
+  'Super + Shift + E   Search files' \
+  'Super + V           Clipboard history' \
+  'Super + Shift + S   Screenshot' \
+  'Super + Shift + L   Lock screen' \
+  'Super + Shift + P   Power menu' \
+  'Super + A           Audio controls' \
+  'Super + F           Fullscreen' \
+  'Super + Space       Floating window' \
+  'Super + H/J/K/L     Move focus' \
+  'Super + 1…0         Trocar workspace' \
+  'Super + Shift + 1…0 Move window' |
+  rofi -dmenu -i -p 'Shortcuts')"
+
+case "$choice" in
+  *Terminal)               alacritty ;;
+  *Aplicativos)            rofi -show drun ;;
+  *'Search files')          alacritty -e "$HOME/.local/bin/file-picker" ;;
+  *clipboard)              "$HOME/.local/bin/clipboard-menu" ;;
+  *Screenshot)             env QT_QPA_PLATFORM=wayland XDG_CURRENT_DESKTOP=Hyprland flameshot screen --number 0 --edit ;;
+  *'Lock screen')           "$HOME/.local/bin/lockscreen" ;;
+  *'Power menu')            "$HOME/.local/bin/power-menu" ;;
+  *'Audio controls')        "$HOME/.local/bin/audio-menu" ;;
+  *Fullscreen)             hyprctl dispatch fullscreen 0 ;;
+  *'Floating window')      hyprctl dispatch togglefloating ;;
+esac
