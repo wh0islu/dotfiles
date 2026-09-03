@@ -1,23 +1,23 @@
 #!/bin/bash
 set -e
 
-echo "=== Instalando QEMU/KVM no Arch Linux ==="
+echo "=== Installing QEMU/KVM on Arch Linux ==="
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-echo -e "${YELLOW}[1/5] Verificando suporte à virtualização...${NC}"
+echo -e "${YELLOW}[1/5] Checking virtualization support...${NC}"
 if grep -E '(vmx|svm)' /proc/cpuinfo > /dev/null; then
-    echo -e "${GREEN}✓ Virtualização suportada${NC}"
+    echo -e "${GREEN}✓ Virtualization supported${NC}"
 else
-    echo -e "${RED}✗ Virtualização não detectada!${NC}"
-    echo "Verifique se está habilitada na BIOS/UEFI"
+    echo -e "${RED}✗ Virtualization not detected!${NC}"
+    echo "Check whether it is enabled in the BIOS/UEFI"
     exit 1
 fi
 
-echo -e "${YELLOW}[2/5] Instalando pacotes QEMU/KVM...${NC}"
+echo -e "${YELLOW}[2/5] Installing QEMU/KVM packages...${NC}"
 sudo pacman -S --needed \
     qemu-full \
     libvirt \
@@ -29,37 +29,37 @@ sudo pacman -S --needed \
     iptables-nft \
     openbsd-netcat
 
-echo -e "${YELLOW}[3/5] Configurando serviço libvirt...${NC}"
+echo -e "${YELLOW}[3/5] Configuring the libvirt service...${NC}"
 sudo systemctl enable libvirtd.service
 sudo systemctl start libvirtd.service
 
-echo -e "${YELLOW}[4/5] Adicionando usuário aos grupos...${NC}"
+echo -e "${YELLOW}[4/5] Adding the user to groups...${NC}"
 sudo usermod -aG libvirt $USER
 sudo usermod -aG kvm $USER
 
-echo -e "${YELLOW}[5/5] Configurando rede padrão...${NC}"
+echo -e "${YELLOW}[5/5] Configuring the default network...${NC}"
 sudo virsh net-autostart default
-sudo virsh net-start default 2>/dev/null || echo "Rede já iniciada"
+sudo virsh net-start default 2>/dev/null || echo "Network already started"
 
 echo ""
-echo -e "${GREEN}=== Instalação Concluída! ===${NC}"
+echo -e "${GREEN}=== Installation Completed! ===${NC}"
 echo ""
-echo "Status dos serviços:"
+echo "Service status:"
 systemctl status libvirtd.service --no-pager -l | head -3
 
 echo ""
-echo "Grupos do usuário:"
+echo "User groups:"
 groups $USER
 
 echo ""
-echo -e "${YELLOW}IMPORTANTE:${NC}"
-echo "1. Faça logout e login novamente para aplicar as permissões de grupo"
-echo "2. Ou execute: newgrp libvirt"
+echo -e "${YELLOW}IMPORTANT:${NC}"
+echo "1. Log out and sign in again to apply the group permissions"
+echo "2. Or run: newgrp libvirt"
 echo ""
-echo "Comandos úteis:"
-echo "  virt-manager          - Interface gráfica"
-echo "  virsh list --all      - Listar VMs"
-echo "  virsh net-list        - Listar redes"
+echo "Useful commands:"
+echo "  virt-manager          - Graphical interface"
+echo "  virsh list --all      - List VMs"
+echo "  virsh net-list        - List networks"
 echo ""
-echo "Para testar:"
+echo "To test:"
 echo "  virsh version"
