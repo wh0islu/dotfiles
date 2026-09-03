@@ -1,92 +1,92 @@
 {
   // ======================================================
-  // EDITOR — Fonte, tipografia e comportamento básico
+  // EDITOR — Font, typography, and basic behavior
   // ======================================================
-  // Fonte monoespaçada com ligaduras para leitura longa
+  // Monospaced font with ligatures for extended reading
   "editor.fontFamily": "JetBrainsMono Nerd Font",
   "editor.fontLigatures": true,
-  // Tamanho e espaçamento confortáveis para foco prolongado
+  // Comfortable size and spacing for prolonged focus
   "editor.fontSize": 15,
   "editor.lineHeight": 1.6,
-  // Cursor sólido e sem animação (menos estímulo visual)
+  // Solid cursor without animation (less visual stimulation)
   "editor.cursorBlinking": "solid",
   "editor.cursorSmoothCaretAnimation": "off",
-  // Mostrar apenas espaços finais (ajuda em Python)
+  // Show trailing whitespace only (useful in Python)
   "editor.renderWhitespace": "trailing",
-  // Remover elementos visuais desnecessários
+  // Remove unnecessary visual elements
   "editor.minimap.enabled": false,
   "editor.guides.indentation": false,
-  // Realce sutil de pares (útil sem distração)
+  // Subtle matching-pair highlight (useful without distraction)
   "editor.matchBrackets": "near",
   // ======================================================
-  // FOCO VISUAL — Redução de ruído cognitivo
+  // VISUAL FOCUS — Reduced cognitive noise
   // ======================================================
-  // Destacar linha atual de forma sutil
+  // Subtly highlight the current line
   "editor.renderLineHighlight": "line",
   "editor.lineHighlightBackground": "#101010",
-  // Evitar múltiplos destaques simultâneos
+  // Avoid multiple simultaneous highlights
   "editor.selectionHighlight": false,
   "editor.occurrencesHighlight": "off",
-  // Hover mais lento e previsível
+  // Slower, more predictable hover
   "editor.hover.delay": 600,
   "editor.hover.enabled": "on",
-  // Desativar scroll suave (menos animações)
+  // Disable smooth scrolling (fewer animations)
   "editor.smoothScrolling": false,
   "workbench.list.smoothScrolling": false,
-  // Remover indicadores intrusivos
+  // Remove intrusive indicators
   "editor.lightbulb.enabled": "off",
   "editor.parameterHints.enabled": false,
   "editor.codeLens": false,
   // ======================================================
-  // PYTHON — Análise estática menos agressiva
+  // PYTHON — Less aggressive static analysis
   // ======================================================
-  // Evita sublinhados vermelhos constantes
-  // Autocomplete mais previsível
+  // Avoid constant red underlines
+  // More predictable autocomplete
   "editor.suggestOnTriggerCharacters": true,
   "editor.tabCompletion": "on",
   // ======================================================
-  // JUPYTER — Uso de células (# %%)
+  // JUPYTER — Cell usage (# %%)
   // ======================================================
-  // Interface mais limpa para exploração
+  // Cleaner interface for exploration
   "jupyter.showVariableView": false,
   "jupyter.showCellStatusBar": "hover",
-  // Limitar outputs longos
+  // Limit long outputs
   "jupyter.output.textLineLimit": 50,
-  // Evitar prompts desnecessários
+  // Avoid unnecessary prompts
   "jupyter.askForKernelRestart": false,
   // ======================================================
-  // EXPLORER E BUSCA — Ocultar ruído estrutural
+  // EXPLORER AND SEARCH — Hide structural noise
   // ======================================================
-  // Manter .venv visível no Explorer (opcional)
+  // Keep .venv visible in Explorer (optional)
   "files.exclude": {
     "**/.venv": false,
     "**/__pycache__": true,
     "**/.ipynb_checkpoints": true,
   },
-  // Nunca buscar dentro de artefatos gerados
+  // Never search generated artifacts
   "search.exclude": {
     "**/.venv": true,
     "**/__pycache__": true,
     "**/.ipynb_checkpoints": true,
   },
   // ======================================================
-  // PRIVACIDADE E TELEMETRIA
+  // PRIVACY AND TELEMETRY
   // ======================================================
   "telemetry.telemetryLevel": "off",
   "telemetry.feedback.enabled": false,
   "redhat.telemetry.enabled": false,
   // ======================================================
-  // SCROLLBARS — Remover poluição visual
+  // SCROLLBARS — Remove visual clutter
   // ======================================================
   "editor.scrollbar.vertical": "hidden",
   "editor.scrollbar.horizontal": "hidden",
   // ======================================================
-  // AUTOSAVE — Fluxo contínuo
+  // AUTOSAVE — Continuous workflow
   // ======================================================
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,
   // ======================================================
-  // SUGESTÕES — Menos agressivas
+  // SUGGESTIONS — Less aggressive
   // ======================================================
   "editor.quickSuggestions": {
     "other": true,
@@ -99,32 +99,32 @@
   "editor.suggestSelection": "first",
   "editor.inlineSuggest.enabled": false,
   // ======================================================
-  // FORMATAÇÃO — Controle explícito
+  // FORMATTING — Explicit control
   // ======================================================
-  // Formatar ao salvar, mas sem forçar formatter global
+  // Format on save without forcing a global formatter
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  // Em Python, formatação manual (black via CLI)
+  // Use manual formatting for Python (Black via CLI)
   "[python]": {
     "editor.formatOnSave": false,
   },
   // ======================================================
-  // GIT — Comportamento silencioso
+  // GIT — Quiet behavior
   // ======================================================
   "git.autofetch": true,
   "git.confirmSync": false,
   // ======================================================
-  // UI — Interface minimalista
+  // UI — Minimal interface
   // ======================================================
   "breadcrumbs.enabled": false,
   //"workbench.activityBar.location": "hidden",
   //"workbench.startupEditor": "none",
-  // Remover barra de comandos e menus visuais
+  // Remove the command center and visual menus
   "window.commandCenter": false,
   "window.menuBarVisibility": "hidden",
   "window.titleBarStyle": "native",
   // ======================================================
-  // TEMA — Baixo estímulo visual
+  // THEME — Low visual stimulation
   // ======================================================
   //"workbench.colorCustomizations": {
   //  "editor.background": "#080808",
@@ -169,13 +169,13 @@
   // PYTHON — LSP (Pylance / Pyright)
   // ======================================================
   "python.languageServer": "Pylance",
-  // Performance + previsibilidade
+  // Performance and predictability
   "python.analysis.indexing": true,
   "python.analysis.autoImportCompletions": true,
-  // Diagnósticos (baixo ruído)
+  // Diagnostics (low noise)
   "python.analysis.typeCheckingMode": "basic",
   "python.analysis.diagnosticMode": "workspace",
-  // Controle fino de avisos
+  // Fine-grained warning control
   "python.analysis.diagnosticSeverityOverrides": {
     "reportMissingImports": "none",
     "reportUnusedImport": "information",
@@ -183,7 +183,7 @@
     "reportGeneralTypeIssues": "warning",
   },
   "python.defaultInterpreterPath": "",
-  // Melhor navegação
+  // Better navigation
   "python.analysis.inlayHints.variableTypes": false,
   "python.analysis.inlayHints.functionReturnTypes": false,
   //"python.analysis.inlayHints.callArgumentNames": false,

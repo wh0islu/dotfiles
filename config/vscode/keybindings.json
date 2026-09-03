@@ -1,6 +1,6 @@
 [
     // =====================================================
-    // TERMINAL / PAINEL
+    // TERMINAL / PANEL
     // =====================================================
     {
         "key": "ctrl+q",
@@ -22,7 +22,7 @@
         "when": "terminalFocus"
     },
     // =====================================================
-    // JANELAS / ABAS
+    // WINDOWS / TABS
     // =====================================================
     {
         "key": "ctrl+w",
@@ -38,7 +38,7 @@
         "key": "ctrl+shift+w",
         "command": "workbench.action.closeOtherEditors"
     },
-    // TAB → próxima aba
+    // TAB → next tab
     {
         "key": "tab",
         "command": "-vscode-neovim.send",
@@ -49,7 +49,7 @@
         "command": "workbench.action.nextEditor",
         "when": "editorTextFocus && neovim.mode != 'insert'"
     },
-    // SHIFT + TAB → aba anterior
+    // SHIFT + TAB → previous tab
     {
         "key": "shift+tab",
         "command": "-vscode-neovim.send",
@@ -61,7 +61,7 @@
         "when": "editorTextFocus && neovim.mode != 'insert'"
     },
     // =====================================================
-    // NAVEGAÇÃO VERTICAL (UI)
+    // VERTICAL NAVIGATION (UI)
     // =====================================================
     {
         "key": "ctrl+shift+k",
@@ -72,7 +72,7 @@
         "command": "workbench.action.navigateDown"
     },
     // =====================================================
-    // ARQUIVOS
+    // FILES
     // =====================================================
     {
         "key": "ctrl+t",
@@ -111,14 +111,14 @@
         "when": "editorTextFocus"
     },
     // =====================================================
-    // EDIÇÃO
+    // EDITING
     // =====================================================
     {
         "key": "ctrl+shift+d",
         "command": "editor.action.duplicateSelection"
     },
     // =====================================================
-    // ABAS POR ÍNDICE (estilo browser)
+    // TABS BY INDEX (browser style)
     // =====================================================
     {
         "key": "ctrl+1",
@@ -156,7 +156,7 @@
         "key": "ctrl+9",
         "command": "workbench.action.openEditorAtIndex9"
     },
-    // Remove conflitos de grupos
+    // Remove group conflicts
     {
         "key": "ctrl+1",
         "command": "-workbench.action.focusFirstEditorGroup"
