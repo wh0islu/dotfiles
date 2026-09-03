@@ -1,0 +1,68 @@
+{
+  "layer": "top",
+  "position": "bottom",
+  "height": 23,
+  "margin-bottom": 0,
+  "spacing": 0,
+  "modules-left": ["hyprland/workspaces"],
+  "modules-right": ["backlight", "battery", "pulseaudio", "hyprland/language", "custom/capslock", "tray", "clock", "custom/power"],
+
+  "hyprland/workspaces": {
+    "disable-scroll": true,
+    "all-outputs": true,
+    "format": "{name}",
+    "persistent-workspaces": {"*": 2}
+  },
+  "backlight": {
+    "format": "󰃠",
+    "tooltip-format": "Brilho: {percent}%",
+    "on-click": "/home/kz/.local/bin/brightness-control up",
+    "on-click-right": "/home/kz/.local/bin/brightness-control down",
+    "on-scroll-up": "/home/kz/.local/bin/brightness-control up",
+    "on-scroll-down": "/home/kz/.local/bin/brightness-control down"
+  },
+  "battery": {
+    "interval": 9,
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-full": "󰁹 {capacity}%",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+    "states": {"warning": 30, "critical": 15},
+    "tooltip-format": "Bateria: {capacity}%\n{time}"
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰖁",
+    "format-icons": {"default": ["", "", ""]},
+    "tooltip-format": "Volume: {volume}%\nClique para silenciar",
+    "on-click": "/home/kz/.local/bin/volume-control mute",
+    "on-scroll-up": "/home/kz/.local/bin/volume-control up",
+    "on-scroll-down": "/home/kz/.local/bin/volume-control down"
+  },
+  "hyprland/language": {
+    "format": "{short}",
+    "keyboard-name": "at-translated-set-2-keyboard",
+    "tooltip-format": "Teclado: {long}"
+  },
+  "custom/capslock": {
+    "exec": "/home/kz/.config/waybar/capslock.sh",
+    "return-type": "json",
+    "interval": 0.15,
+    "tooltip": false
+  },
+  "tray": {
+    "icon-size": 13,
+    "spacing": 5
+  },
+  "clock": {
+    "interval": 1,
+    "format": "{:%H:%M}",
+    "format-alt": "{:%d/%m  %H:%M:%S}",
+    "tooltip-format": "<big>{:%A, %d de %B}</big>\n<tt><small>{calendar}</small></tt>"
+  },
+  "custom/power": {
+    "format": "󰐥",
+    "tooltip": false,
+    "on-click": "/home/kz/.local/bin/power-menu"
+  }
+}
