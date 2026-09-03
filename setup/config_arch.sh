@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-set -euo pipefail  # Melhor que só set -e: trata erros em pipelines, variáveis não definidas, etc.
+set -euo pipefail  # Handles pipeline errors, undefined variables, and other failures.
 
-# ====================== Configurações ======================
+# ====================== Configuration ======================
 DOTFILES_REPO_DIR="$HOME/Downloads/dotfiles-main"
 ZSHRC="$HOME/.zshrc"
 
@@ -29,22 +29,22 @@ PACKAGES=(
     base-devel
     make
     docker
-    docker-compose  # opcional, mas útil
+    docker-compose  # optional, but useful
 )
 
 FONT_DIR="$HOME/.local/share/fonts"
-NERD_FONTS_VERSION="v3.2.1"  # Atualizada (v3.4.0 não existe ainda em jan/2026, última é ~v3.2)
+NERD_FONTS_VERSION="v3.2.1"  # Selected compatible release.
 FONTS_TO_INSTALL=("GeistMono" "JetBrainsMono")
 
-NODE_VERSION="22.13.1"  # LTS mais recente e estável (evite versões muito novas em scripts)
+NODE_VERSION="22.13.1"  # Stable LTS release for this setup script.
 NODE_ARCH="linux-x64"
 NODE_FILENAME="node-v$NODE_VERSION-$NODE_ARCH.tar.xz"
 NODE_URL="https://nodejs.org/dist/v$NODE_VERSION/$NODE_FILENAME"
 NODE_INSTALL_DIR="$HOME/.local/opt/nodejs"
 
-ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.zsh/custom}"  # Respeita variável padrão do Oh My Zsh se existir
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.zsh/custom}"  # Honor the standard Oh My Zsh variable when set.
 
-# ====================== Funções auxiliares ======================
+# ====================== Helper functions ======================
 log() {
     echo "[+] $1"
 }
@@ -53,31 +53,31 @@ error() {
     echo "[!] $1" >&2
 }
 
-# ====================== Início do script ======================
-log "Atualizando o sistema..."
+# ====================== Script start ======================
+log "Updating the system..."
 sudo pacman -Syyu --noconfirm
 
-log "Instalando pacotes essenciais..."
+log "Installing essential packages..."
 sudo pacman -S --noconfirm --needed "${PACKAGES[@]}"
 
-log "Configurando Docker..."
-sudo systemctl enable --now docker.socket  # Mais leve que enable --now docker
+log "Configuring Docker..."
+sudo systemctl enable --now docker.socket  # Lighter than enabling the full Docker service.
 sudo usermod -aG docker "$USER"
-newgrp docker << EOF || true  # Tenta aplicar grupo sem logout (não crítico se falhar)
+newgrp docker << EOF || true  # Try to apply the group without logging out; failure is non-critical.
 EOF
 
-log "Configurando Zsh como shell padrão..."
+log "Setting Zsh as the default shell..."
 if ! grep -q "$(which zsh)" /etc/shells; then
     which zsh | sudo tee -a /etc/shells >/dev/null
 fi
 chsh -s "$(which zsh)" "$USER"
 
-log "Configurando dotfiles..."
+log "Configuring dotfiles..."
 for dir in "${CONFIG_DIRS[@]}"; do
     target="$HOME/.config/$dir"
     source_dir="$DOTFILES_REPO_DIR/config/$dir"
 
-    [[ -d "$target" ]] && rm -rf "$target"  # Remove sem sudo (é do usuário)
+    [[ -d "$target" ]] && rm -rf "$target"  # User-owned directory; sudo is not required.
     mkdir -p "$HOME/.config"
     mv "$source_dir" "$target"
 done
@@ -85,14 +85,14 @@ done
 mkdir -p "$HOME/Images/Wallpapers" "$HOME/Developments/Git"
 mv "$DOTFILES_REPO_DIR/config/zsh/.zshrc" "$ZSHRC"
 
-log "Instalando plugins do Zsh..."
+log "Installing Zsh plugins..."
 mkdir -p "$ZSH_CUSTOM/plugins"
 git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions \
     "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
 git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting \
     "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
 
-log "Instalando Node.js $NODE_VERSION..."
+log "Installing Node.js $NODE_VERSION..."
 mkdir -p "$NODE_INSTALL_DIR"
 if [[ ! -x "$NODE_INSTALL_DIR/bin/node" ]]; then
     tmp_file="/tmp/$NODE_FILENAME"
@@ -100,11 +100,11 @@ if [[ ! -x "$NODE_INSTALL_DIR/bin/node" ]]; then
     tar -xJf "$tmp_file" -C "$NODE_INSTALL_DIR" --strip-components=1
     rm "$tmp_file"
 
-    # Adiciona ao PATH só se não existir
+    # Add it to PATH only when it is not already present.
     grep -qF "$NODE_INSTALL_DIR/bin" "$ZSHRC" || echo "export PATH=\"$NODE_INSTALL_DIR/bin:\$PATH\"" >> "$ZSHRC"
 fi
 
-log "Instalando Nerd Fonts..."
+log "Installing Nerd Fonts..."
 mkdir -p "$FONT_DIR"
 for font in "${FONTS_TO_INSTALL[@]}"; do
     zip_file="$FONT_DIR/$font.zip"
@@ -115,19 +115,19 @@ for font in "${FONTS_TO_INSTALL[@]}"; do
     rm "$zip_file"
 done
 
-# Atualiza cache de fontes
+# Update the font cache.
 fc-cache -fv >/dev/null
 
-log "Limpeza final..."
+log "Final cleanup..."
 find "$FONT_DIR" -name "*.zip" -delete 2>/dev/null || true
 
-log "Setup concluído com sucesso!"
+log "Setup completed successfully!"
 
-read -rp "Deseja reiniciar o sistema agora? [y/N]: " answer
+read -rp "Do you want to restart the system now? [y/N]: " answer
 answer=${answer,,}
 if [[ "$answer" == y* || "$answer" == "yes" ]]; then
-    log "Reiniciando..."
+    log "Restarting..."
     sudo reboot
 else
-    log "Reboot cancelado. Reinicie manualmente quando conveniente."
+    log "Restart canceled. Restart manually when convenient."
 fi
