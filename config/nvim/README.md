@@ -1,191 +1,655 @@
-# My Neovim Configuration
+# Minha Configuracao Neovim
 
-This modular Lua configuration lives in `~/.config/nvim`. The `init.lua` entry
-point loads general options, keymaps, the project runner, plugins, and the local
-`cyberia` theme.
+Esta configuracao fica em `~/.config/nvim` e usa Lua com carregamento modular.
+O arquivo de entrada e `init.lua`, que carrega opcoes gerais, atalhos, runner,
+plugins e o tema local `cyberia`.
 
-## Foundation
+## Estrutura
 
-Neovim uses `lazy.nvim` as its plugin manager and clones it automatically when
-needed. Plugins are loaded on demand to keep startup lightweight. Opening
-Neovim without a file displays a minimalist dashboard with project, file,
-search, session, configuration, plugin-manager, and quit actions.
+```text
+init.lua
+lazy-lock.json
+lua/
+  core/
+    dashboard.lua
+    commands.lua
+    diagnostics.lua
+    sets.lua
+    map.lua
+    run.lua
+    plugins.lua
+  plugins/
+    bufferline.lua
+    claudecode.lua
+    cmp.lua
+    colorizer.lua
+    comment.lua
+    conform.lua
+    fugitive.lua
+    gitsigns.lua
+    java.lua
+    lualine.lua
+    markdown.lua
+    mason.lua
+    ntree.lua
+    persistence.lua
+    telescope.lua
+    todo_comments.lua
+    toggleterm.lua
+    which_key.lua
+  themes/
+    cyberia.lua
+    kaizen.lua
+```
 
-General options include UTF-8, line numbers, cursor-line highlighting, system
-clipboard integration, true colors, four-space indentation, and a compact
-command line.
+## Base
 
-## Keymaps
+O Neovim usa `lazy.nvim` como gerenciador de plugins. Caso o Lazy nao exista em
+`~/.local/share/nvim/lazy/lazy.nvim`, ele e clonado automaticamente.
 
-The leader key is `,`.
+Os plugins sao carregados sob demanda quando possivel. Telescope, NvimTree,
+ToggleTerm, completion, LSP, DAP, Git helpers e outras ferramentas entram apenas
+quando um comando, tecla ou evento precisa deles. Isso mantem o startup mais
+leve.
 
-| Key | Action |
+Quando o Neovim abre sem arquivo, `lua/core/dashboard.lua` cria uma tela inicial
+minimalista com logo central em ASCII e um menu de acoes rapidas.
+
+As opcoes principais ficam em `lua/core/sets.lua`:
+
+- encoding em UTF-8
+- numeracao de linhas ativa
+- cursorline ativa
+- clipboard integrado com o sistema via `unnamedplus`
+- `termguicolors` ativo
+- tabline sempre visivel
+- indentacao configurada com largura 4
+- `cmdheight = 0` para uma linha de comando mais compacta
+
+## Atalhos
+
+O leader esta definido como `,`.
+
+| Atalho | Acao |
 | --- | --- |
-| `<C-r>` | Run the current file or project |
-| `<C-s>` | Save |
-| `<C-q>` | Close the current window |
-| `<C-x>` | Save and close |
-| `<C-n>` | Toggle NvimTree |
-| `<C-t>` | Toggle the project terminal |
-| `<leader>ai` | Toggle Codex in a side terminal |
-| `<leader>ff` | Find files |
-| `<leader>fg` | Search project text |
-| `<leader>fb` | List buffers |
-| `<leader>fo` | List recent files |
-| `<leader>fd` | List diagnostics |
-| `<leader>fs` | List document symbols |
-| `<leader>fS` | List workspace symbols |
-| `<leader>gt` | Open lazygit |
-| `<leader>gg` | Open Fugitive Git status |
-| `<leader>gc` | Open Git commit |
-| `<leader>gP` | Push changes |
-| `<leader>gl` | Pull changes |
-| `<leader>gs` | Stage the current hunk |
-| `<leader>gr` | Reset the current hunk |
-| `<leader>gp` | Preview the current hunk |
-| `<leader>gb` | Show blame for the current line |
-| `<leader>qs` | Restore the project session |
-| `<leader>ql` | Restore the last session |
-| `<leader>qd` | Stop saving the current session |
-| `<leader>ac` | Open Codex in the current project |
-| `<leader>td` | Search TODO, FIXME, and NOTE comments |
-| `<leader>ts` | Create a Spring Boot project |
+| `<C-r>` | executa a funcao `Run()` para o arquivo atual |
+| `<C-s>` | salva com `:w!` |
+| `<C-q>` | fecha a janela atual com `:q` |
+| `<C-x>` | salva e fecha com `:x` |
+| `g` | vai para o inicio do arquivo com `gg` |
+| `<C-n>` | abre/fecha o NvimTree |
+| `<leader>ee` | cria um arquivo na pasta atual (pergunta o nome) |
+| `<leader>ed` | cria uma pasta na pasta atual (pergunta o nome) |
+| `<C-t>` | abre/fecha o ToggleTerm |
+| `<leader>ai` | abre/fecha o Codex em terminal lateral |
+| `<C-f>` | abre o Telescope |
+| `<leader>f` | abre o grupo Find no which-key |
+| `<leader>ff` | busca arquivos com Telescope |
+| `<leader>fg` | busca texto no arquivo atual com Telescope |
+| `<leader>fb` | lista buffers abertos |
+| `<leader>fo` | lista arquivos recentes |
+| `<leader>fd` | lista diagnostics |
+| `<leader>fs` | lista symbols do arquivo atual |
+| `<leader>fS` | lista symbols do workspace |
+| `<leader>fr` | substitui nos arquivos da quickfix list (`:cfdo`) |
+| `<leader>gt` | abre lazygit |
+| `<leader>gg` | abre Git status com Fugitive |
+| `<leader>gc` | abre Git commit |
+| `<leader>gP` | executa Git push |
+| `<leader>gl` | executa Git pull |
+| `<leader>gs` | stage do hunk atual |
+| `<leader>gr` | reset do hunk atual |
+| `<leader>gp` | preview do hunk atual |
+| `<leader>gb` | blame da linha atual |
+| `[d` | diagnostic anterior |
+| `]d` | proximo diagnostic |
+| `<leader>ld` | lista diagnostics no quickfix |
+| `<leader>lh` | mostra/oculta inlay hints (qualquer LSP com suporte) |
+| `<leader>/` | comenta/descomenta a linha ou selecao |
+| `<C-k>` ao inserir Python | mostra a assinatura da funcao atual |
+| `<leader>qs` | restaura sessao do projeto |
+| `<leader>ql` | restaura ultima sessao |
+| `<leader>qd` | desativa salvamento da sessao atual |
+| `<leader>ac` | abre Codex no projeto atual |
+| `<leader>ar` | reinicia Codex |
+| `<leader>ak` | fecha Codex |
+| `<leader>cc` | abre/fecha o Claude |
+| `<leader>cs` | envia a selecao visual para o Claude |
+| `<leader>cw` | foca a janela do Claude |
+| `<leader>td` | busca TODO/FIXME/NOTE com Telescope |
+| `<leader>tr` | roda `python manage.py runserver` |
+| `<leader>tn` | roda `npm run dev` |
+| `<leader>ts` | cria projeto Spring Boot padronizado |
+| `<leader>tg` | abre lazygit |
+| `<C-w>` no terminal | sai do modo terminal e troca de janela |
+| `<C-w>` no modo normal | troca de janela |
+| `<Tab>` | proximo buffer no Bufferline |
+| `<S-Tab>` | buffer anterior no Bufferline |
+| `K` | abre o hover do LSP sob demanda |
+| `gd` | ir para definicao pelo LSP |
+| `<leader>ca` | code action do LSP |
+| `p` na tela inicial | lista repositorios em `~/Developments/Git` |
+| `f` na tela inicial | busca arquivos no projeto atual |
+| `g` na tela inicial | busca texto no projeto atual |
+| `s` na tela inicial | lista arquivos recentes com Telescope |
+| `c` na tela inicial | abre `~/.config/nvim/init.lua` |
+| `L` na tela inicial | abre o Lazy |
+| `q` na tela inicial | sai do Neovim |
 
-## Project Runner
+## Runner
 
-`lua/core/run.lua` provides `:Run` and `<C-r>`. It detects Django, Node.js,
-Maven, Gradle, Rust, and Go projects before falling back to the current file
-type. Python, C, Rust, Go, JavaScript, TypeScript, and Java files are supported.
-The file is saved before its command runs in a horizontal ToggleTerm instance.
+O arquivo `lua/core/run.lua` cria o comando `:Run` e tambem e chamado por
+`<C-r>`.
 
-Java and Spring Boot commands use `/usr/lib/jvm/java-21-openjdk` when available.
-For Maven projects, the runner finds the `@SpringBootApplication` class and
-passes it explicitly to the Maven plugin.
+O runner tenta detectar primeiro o tipo de projeto:
 
-Run `:NewSpringBoot` or press `<leader>ts` to create a project under
-`~/Developments/Git`. Defaults are `web,validation,lombok,devtools`; JPA and
-PostgreSQL are optional. A starter `HomeController` provides `GET /` and returns
-`Spring Boot OK`.
+| Arquivo do projeto | Comando |
+| --- | --- |
+| `manage.py` + `pyproject.toml` | `poetry run python manage.py runserver` |
+| `manage.py` | `python manage.py runserver` |
+| `package.json` | `npm run dev` |
+| `mvnw` + `pom.xml` | `./mvnw spring-boot:run` |
+| `gradlew` + `build.gradle` | `./gradlew bootRun` |
+| `pom.xml` | `mvn spring-boot:run` |
+| `build.gradle` | `gradle bootRun` |
+| `Cargo.toml` | `cargo run` |
+| `go.mod` | `go run .` |
 
-## LSP, Completion, and Debugging
+Para comandos Java/Spring Boot, o runner usa `JAVA_HOME=/usr/lib/jvm/java-21-openjdk`
+quando esse JDK estiver instalado. Isso evita erro de Maven como
+`release version 21 not supported` quando o Java default do sistema ainda for 17.
 
-Mason configures `pyright`, `clangd`, `lua_ls`, and `ts_ls`. Java uses
-`nvim-jdtls`, `java-debug-adapter`, and `java-test`, detects Maven or Gradle
-roots, and stores workspaces in `~/.local/share/nvim/jdtls-workspace/`.
+Em projetos Maven Spring Boot, o runner tambem procura a classe com
+`@SpringBootApplication` em `src/main/java` e passa explicitamente
+`-Dspring-boot.run.main-class=...`. Isso evita falhas do plugin Maven ao tentar
+inferir a classe principal.
 
-Completion uses LSP, LuaSnip, and the current buffer. `<C-b>` and `<C-f>` scroll
-documentation, `<C-o>` opens completion, `<C-e>` cancels, and `<CR>` confirms.
+Se nao encontrar um projeto conhecido, ele roda pelo tipo do arquivo atual:
 
-Python debugging uses `~/.venv/bin/python3`, which must include `debugpy`.
-`<F5>` continues, `<F10>` steps over, `<F11>` steps into, `<F12>` steps out,
-and `<leader>b` toggles a breakpoint. DAP UI follows the debugging session.
+| Extensao | Comando |
+| --- | --- |
+| `.py` | `python3 arquivo.py` ou `poetry run python arquivo.py` |
+| `.c` | `gcc arquivo.c -o output && ./output` |
+| `.rs` | `rustc arquivo.rs -o output && ./output` |
+| `.go` | `go run arquivo.go` |
+| `.js` | `node arquivo.js` |
+| `.ts` | `npx ts-node arquivo.ts` |
+| `.java` | `java arquivo.java` |
+
+Antes de executar, o arquivo atual e salvo automaticamente e o comando roda em
+um terminal horizontal do ToggleTerm.
+
+## Spring Boot
+
+Criar um projeto Spring Boot padronizado:
+
+```vim
+:NewSpringBoot
+```
+
+Atalho:
+
+```text
+,ts
+```
+
+O comando cria o projeto em `~/Developments/Git` usando Spring Initializr.
+Por padrao, as dependencias sao:
+
+```text
+web,validation,lombok,devtools
+```
+
+Banco de dados nao vem ativo por padrao para evitar erro inicial de DataSource.
+Se responder `y` em `Include JPA/PostgreSQL?`, o comando tambem inclui:
+
+```text
+data-jpa,postgresql
+```
+
+O comando tambem cria um `HomeController` inicial com `GET /`, retornando
+`Spring Boot OK`. Isso evita a pagina Whitelabel 404 ao abrir
+`http://localhost:8080` logo depois de subir o projeto.
+
+## Plugins
+
+Plugins declarados em `lua/core/plugins.lua`:
+
+- `nvim-lualine/lualine.nvim`: statusline
+- `akinsho/bufferline.nvim`: abas/buffers no topo
+- `NvChad/nvim-colorizer.lua`: preview de cores em CSS, RGB, HSL e hex
+- `numToStr/Comment.nvim`: comenta/descomenta via `<leader>/` (mapeamentos padrao do plugin desativados)
+- `folke/which-key.nvim`: menu visual de atalhos com leader
+- `lewis6991/gitsigns.nvim`: sinais e acoes Git por hunk
+- `folke/todo-comments.nvim`: destaque e busca de TODO/FIXME/NOTE
+- `folke/persistence.nvim`: sessoes por projeto
+- `nvim-telescope/telescope.nvim`: busca e seletores
+- `nvim-telescope/telescope-ui-select.nvim`: UI select usando Telescope
+- `nvim-tree/nvim-tree.lua`: explorador de arquivos
+- `akinsho/toggleterm.nvim`: terminal integrado
+- `tpope/vim-fugitive`: integracao Git
+- `williamboman/mason.nvim`: instalador de ferramentas LSP
+- `williamboman/mason-lspconfig.nvim`: integracao Mason + LSP
+- `WhoIsSethDaniel/mason-tool-installer.nvim`: instala ferramentas extras do Mason
+- `neovim/nvim-lspconfig`: configuracao de servidores LSP
+- `mfussenegger/nvim-jdtls`: Java LSP via Eclipse JDT LS
+- `hrsh7th/nvim-cmp`: autocomplete
+- `L3MON4D3/LuaSnip`: snippets
+- `saadparwaiz1/cmp_luasnip`: fonte LuaSnip para completion
+- `rafamadriz/friendly-snippets`: snippets prontos
+- `nvim-treesitter/nvim-treesitter`: highlight por parser para Lua, Python, JS, TS e C
+- `coder/claudecode.nvim`: integracao com a CLI do Claude Code via WebSocket/MCP
+- `folke/snacks.nvim`: dependencia do claudecode.nvim
+- `windwp/nvim-autopairs`: fecha parenteses/aspas/colchetes automaticamente
+- `lukas-reineke/indent-blankline.nvim`: guias de indentacao
+
+## LSP
+
+O LSP e configurado em `lua/plugins/mason.lua`.
+
+Servidores garantidos pelo Mason:
+
+- `basedpyright`
+- `clangd`
+- `lua_ls`
+- `ts_ls`
+
+O `lua_ls` conhece `vim` como global, usa a pasta `lua` da propria configuracao
+como biblioteca e desativa telemetria.
+
+O `basedpyright` detecta o Python do projeto automaticamente: primeiro olha
+`$VIRTUAL_ENV`, depois procura `.venv/bin/python` ou `venv/bin/python` a
+partir da raiz do projeto (`pyproject.toml`, `setup.py`, `setup.cfg`,
+`requirements.txt`, `Pipfile` ou `pyrightconfig.json`).
+
+`ruff` tambem e habilitado como LSP, fora do Mason: usa o binario `ruff` do
+sistema (igual aos formatadores externos do conform.nvim) so para
+diagnosticos, com o hover desativado para nao duplicar o do `basedpyright`.
+Veja a secao [Python](#python) para detalhes.
+
+Java usa `nvim-jdtls` em vez do handler generico do `lspconfig`. Ao abrir um
+arquivo `.java`, ele procura um projeto Maven/Gradle por `pom.xml`, `mvnw`,
+`build.gradle`, `gradlew` ou `.git`, cria um workspace em
+`~/.local/share/nvim/jdtls-workspace/` e usa as ferramentas instaladas pelo
+Mason:
+
+- `jdtls`
+
+O `jdtls` usa `/usr/lib/jvm/java-21-openjdk/bin/java` quando esse Java estiver
+instalado. Isso permite manter outro Java como default do sistema e ainda assim
+rodar o language server moderno.
+
+Atalhos Java:
+
+| Atalho | Acao |
+| --- | --- |
+| `<leader>jo` | organiza imports |
+| `<leader>jv` | extrai variavel no modo visual |
+| `<leader>jc` | extrai constante no modo visual |
+| `<leader>jm` | extrai metodo no modo visual |
+
+Atalhos extras quando um LSP anexa ao buffer:
+
+| Atalho | Acao |
+| --- | --- |
+| `gD` | declaracao |
+| `gd` | definicao |
+| `K` | hover |
+| `gi` | implementacao |
+| `<space>wa` | adiciona workspace folder |
+| `<space>wr` | remove workspace folder |
+| `<space>wl` | lista workspace folders |
+| `<space>D` | type definition |
+| `<space>rn` | rename |
+| `<space>ca` | code action |
+| `gr` | referencias |
+| `<space>f` | formatacao async |
+
+## Autocomplete
+
+O autocomplete fica em `lua/plugins/cmp.lua`.
+
+Fontes ativas:
+
+- LSP via `nvim_lsp`
+- snippets via `luasnip`
+- buffer atual
+
+Atalhos no menu de completion:
+
+| Atalho | Acao |
+| --- | --- |
+| `<C-b>` | rola documentacao para cima |
+| `<C-f>` | rola documentacao para baixo |
+| `<C-o>` | abre o completion |
+| `<C-e>` | fecha/cancela |
+| `<CR>` | confirma item selecionado |
 
 ## Interface
 
-- NvimTree opens on the left, follows the focused file, and updates the working
-  directory.
-- Telescope provides file, text, buffer, diagnostic, and symbol pickers.
-- Which-key shows the AI, Code, Debug, Git, and Terminal groups.
-- Gitsigns provides hunk navigation, staging, resetting, previews, blame, and
-  diffs.
-- ToggleTerm keeps regular terminal and Codex sessions separate.
-- Persistence restores project sessions and falls back to recent files.
-- Bufferline shows numbered buffers and LSP diagnostics.
-- Lualine shows Git, diagnostic, file, progress, and position information.
+### NvimTree
 
-## Theme and Markdown
+Configurado em `lua/plugins/ntree.lua`:
 
-The active Cyberia theme is in `lua/themes/cyberia.lua` and uses `#080808` as
-its base background.
+- largura de 30 colunas
+- lado esquerdo
+- sem signcolumn
+- atualiza o arquivo focado
+- atualiza o cwd conforme o arquivo focado
+- nao usa window picker ao abrir arquivo
+- nao hijacka diretorios
 
-## Plugin Reference
+### Criar arquivo rapido
 
-### Interface
+Configurado em `lua/core/newfile.lua`, atalho `<leader>ee`.
 
-- `lualine.nvim`: displays mode, file, Git, diagnostics, and cursor position in the status line.
-- `bufferline.nvim`: displays open buffers as numbered tabs.
-- `nvim-tree.lua`: provides the sidebar file explorer.
-- `nvim-web-devicons`: supplies file icons used by other plugins.
-- `which-key.nvim`: displays available keymaps after the leader key is pressed.
-- `indent-blankline.nvim`: displays guides for indentation levels.
-- `nvim-colorizer.lua`: previews color values such as `#080808` and `rgb()`.
+Pergunta o nome do arquivo (aceita caminhos com `/` para criar subpastas junto)
+e cria vazio na pasta atual:
 
-### Search and Navigation
+- se o foco estiver no NvimTree, usa a pasta do item sob o cursor (a propria
+  pasta, se for uma pasta, ou a pasta-pai do arquivo selecionado)
+- caso contrario, usa a pasta do arquivo que esta sendo editado
+- sem buffer nomeado, cai no diretorio de trabalho atual
 
-- `telescope.nvim`: searches files, text, buffers, symbols, and diagnostics.
-- `telescope-ui-select.nvim`: renders Neovim selection menus through Telescope.
-- `plenary.nvim`: provides shared Lua utilities required by Telescope and other plugins.
-- `persistence.nvim`: saves and restores project sessions and open buffers.
+Depois de criar, abre o arquivo para edicao (numa janela separada da NvimTree,
+se necessario) e recarrega a arvore de arquivos se estiver aberta.
 
-### Editing
+### Criar pasta rapida
 
-- `Comment.nvim`: comments and uncomments lines and selections.
-- `nvim-autopairs`: automatically closes parentheses, brackets, braces, and quotes.
-- `nvim-treesitter`: provides syntax-tree-aware highlighting and code analysis.
-- `conform.nvim`: formats files with tools such as Ruff, Prettier, and Stylua.
-- `todo-comments.nvim`: highlights and searches `TODO`, `FIXME`, `BUG`, and `NOTE` comments.
+Configurado em `lua/core/newdir.lua`, atalho `<leader>ed`.
 
-### Completion and Snippets
+Mesma logica do `<leader>ee` para decidir onde criar (item sob o cursor no
+NvimTree, pasta do arquivo atual, ou diretorio de trabalho), mas cria uma
+pasta (`mkdir -p`, aceita `/` para subpastas aninhadas) em vez de um arquivo.
+Depois de criar, recarrega a arvore de arquivos e foca na pasta nova, se o
+NvimTree estiver aberto.
 
-- `nvim-cmp`: provides the main completion menu.
-- `cmp-buffer`: suggests words from the current buffer.
-- `cmp-cmdline`: adds completion to the Neovim command line.
-- `cmp-nvim-lsp`: adds LSP suggestions to `nvim-cmp`.
-- `cmp-path`: completes file and directory paths.
-- `cmp_luasnip`: exposes snippets through the completion menu.
-- `LuaSnip`: expands and manages snippets.
-- `friendly-snippets`: provides a ready-made snippet collection for many languages.
+### Telescope
 
-### Language Support
+Configurado em `lua/plugins/telescope.lua` com `ui-select` em modo dropdown.
 
-- `mason.nvim`: installs and manages language servers and development tools.
-- `mason-lspconfig.nvim`: connects Mason-installed servers to Neovim LSP.
-- `mason-tool-installer.nvim`: installs tools declared by the configuration.
-- `nvim-lspconfig`: provides configurations for connecting Neovim to language servers.
-- `nvim-jdtls`: provides specialized Java support for JDT LS, Maven, and Gradle projects.
+No dashboard, a tecla `p` usa Telescope para listar repositorios encontrados em
+`~/Developments/Git`. Ao selecionar um projeto, o Neovim muda o diretorio de
+trabalho para o repositorio escolhido e abre o NvimTree.
 
-### Git, Terminals, and AI
+Atalhos principais:
 
-- `gitsigns.nvim`: shows changed lines and provides hunk staging, resetting, preview, and blame.
-- `vim-fugitive`: provides Git commands and status views inside Neovim.
-- `toggleterm.nvim`: manages project terminals, command runners, Codex, and lazygit.
-- `claudecode.nvim`: integrates Claude Code into Neovim.
-- `snacks.nvim`: provides UI components required by `claudecode.nvim`.
+- `<leader>ff`: busca arquivos
+- `<leader>fg`: busca texto no arquivo atual
+- `<leader>fb`: lista buffers
+- `<leader>fo`: lista arquivos recentes
+- `<leader>fd`: lista diagnostics
+- `<leader>fs`: lista symbols do arquivo atual
+- `<leader>fS`: lista symbols do workspace
 
-### Plugin Management
+### Buscar e substituir no projeto
 
-- `lazy.nvim`: installs, updates, lazily loads, and removes plugins.
+Sem plugin dedicado: usa o Telescope + a quickfix list nativa do Vim.
 
-### Mason Tools
+1. `<leader>fg` para buscar (ou qualquer outro picker do Telescope).
+2. `<C-q>` na janela de resultados, tanto no modo de insercao quanto no modo
+   normal, manda tudo pra quickfix e abre a lista (ou selecione varios com
+   `<Tab>` antes de mandar).
+3. `<leader>fr` (`lua/core/quickfix_replace.lua`) pergunta o termo de busca e
+   o de substituicao, e roda `:cfdo %s/busca/troca/g | update` em todos os
+   arquivos da quickfix list.
 
-- `basedpyright`: active Python language server for completion, diagnostics, and inlay hints.
-- `pyright`: an additional Python language server; redundant while BasedPyright is active.
-- `clangd`: language server for C and C++.
-- `jdtls`: language server for Java.
-- `lua-language-server`: language server for Lua and the Neovim configuration.
-- `typescript-language-server`: language server for JavaScript and TypeScript.
+### Autopairs
 
-### Unconfigured Residue
+Configurado em `lua/plugins/autopairs.lua`, usando `windwp/nvim-autopairs`.
+Fecha parenteses, colchetes, chaves e aspas automaticamente ao digitar,
+usando Treesitter (`check_ts = true`) para evitar pares incorretos dentro de
+strings/comentarios. Integrado ao `nvim-cmp`: aceitar uma funcao no menu de
+completion ja fecha os parenteses.
 
-- `grug-far.nvim`: its directory is present in the Lazy data directory, but the plugin is not
-  declared or loaded by this configuration. `:Lazy clean` can remove it.
+### Indent guides
 
-## Useful Commands
+Configurado em `lua/plugins/indent_blankline.lua`, usando
+`lukas-reineke/indent-blankline.nvim`. Guias de indentacao discretas (cor
+`border` do tema) com destaque do escopo atual (cor `muted`). Desativado em
+`NvimTree`, dashboard, Lazy, Mason, help e terminal.
 
-| Command | Action |
+### Diagnostics
+
+Estilo definido em `lua/core/diagnostics.lua` via `vim.diagnostic.config()`:
+sinais discretos, virtual text sem o nome da fonte (`[basedpyright]` etc.) e
+janela flutuante com borda arredondada, no mesmo estilo do hover.
+
+### Which-key
+
+Configurado em `lua/plugins/which_key.lua`.
+
+Ao pressionar `,`, o Neovim mostra um painel com os atalhos disponiveis. Os
+grupos principais sao IA, Codigo, Git e Terminal.
+
+### Gitsigns
+
+Configurado em `lua/plugins/gitsigns.lua`.
+
+- mostra sinais de linhas adicionadas, alteradas e removidas
+- `]h` e `[h` navegam entre hunks
+- `<leader>gs` faz stage do hunk
+- `<leader>gr` reseta o hunk
+- `<leader>gp` mostra preview do hunk
+- `<leader>gb` mostra blame da linha
+- `<leader>gd` abre diff do arquivo
+
+### Python
+
+O `basedpyright` mostra automaticamente a assinatura da funcao em uma janela
+flutuante ao digitar `(` ou `,`. Use `<C-k>` no modo de insercao para abrir a
+assinatura manualmente. Somente nomes de argumentos ficam visiveis inline;
+tipos de variaveis e retornos permanecem ocultos para nao poluir o codigo. Use
+`<leader>lh` para mostrar ou ocultar os inlay hints.
+
+O ambiente virtual do projeto (`$VIRTUAL_ENV`, `.venv/` ou `venv/` na raiz) e
+detectado automaticamente para o `basedpyright` e o nome do ambiente aparece
+na Lualine quando o filetype e Python. Diagnosticos de lint vem do `ruff`
+(LSP separado, so diagnostico); a formatacao continua via `ruff_format` no
+conform.nvim.
+
+### Todo comments
+
+Configurado em `lua/plugins/todo_comments.lua`.
+
+Destaca `TODO`, `FIXME`, `BUG`, `HACK`, `NOTE`, `INFO`, `WARN` e `WARNING`.
+Use `<leader>td` para buscar essas marcacoes com Telescope.
+
+### ToggleTerm
+
+Configurado em `lua/plugins/toggleterm.lua`:
+
+- tamanho 20
+- direcao horizontal
+- atalho nativo do plugin: `<C-\>`
+- `<C-t>` abre o terminal horizontal para comandos do projeto
+- `<leader>ai` abre o Codex em um terminal vertical lateral maior no diretorio atual
+- `<leader>ac` abre o Codex no projeto atual
+- `<leader>ar` reinicia o Codex
+- `<leader>ak` fecha o Codex
+- `<leader>tr` roda `python manage.py runserver`
+- `<leader>tn` roda `npm run dev`
+- `<leader>tg` ou `<leader>gt` abre lazygit
+- o terminal comum e o terminal do Codex usam sessoes separadas
+- o terminal comum fica no rodape; o Codex fica na lateral direita
+
+### Claude
+
+Configurado em `lua/plugins/claudecode.lua`, usando o plugin
+`coder/claudecode.nvim`. Diferente do Codex (que roda so num terminal comum),
+esse plugin conecta a CLI `claude` ao Neovim via WebSocket/MCP, entao o Claude
+recebe o buffer/selecao atual como contexto de verdade em vez de precisar de
+copiar e colar.
+
+Pre-requisito: a CLI `claude` (Claude Code) instalada e configurada.
+
+Atalhos:
+
+| Atalho | Modo | Acao |
+| --- | --- | --- |
+| `<leader>cc` | normal | abre/fecha o Claude |
+| `<leader>cs` | visual | envia a selecao para o Claude |
+| `<leader>cw` | normal | foca a janela do Claude |
+
+Comandos adicionais disponiveis sem atalho dedicado:
+
+- `:ClaudeCodeAdd <arquivo>` adiciona um arquivo inteiro ao contexto
+- `:ClaudeCodeSelectModel` troca o modelo usado pela sessao
+
+### Persistence
+
+Configurado em `lua/plugins/persistence.lua`.
+
+- `<leader>qs` restaura a sessao do projeto atual
+- `<leader>ql` restaura a ultima sessao
+- `<leader>qd` desativa o salvamento da sessao atual
+
+No dashboard, `s` tenta restaurar a sessao do projeto atual. Se o plugin nao
+estiver disponivel, cai para `Telescope oldfiles`.
+
+### Fugitive
+
+Configurado em `lua/plugins/fugitive.lua`.
+
+- `<leader>gg` abre `:Git`
+- `<leader>gc` abre `:Git commit`
+- `<leader>gP` executa `:Git push`
+- `<leader>gl` executa `:Git pull`
+
+### Bufferline
+
+A barra de buffers fica oculta enquanto houver apenas um arquivo aberto.
+
+Configurado em `lua/plugins/bufferline.lua`:
+
+- buffers numerados por ordem
+- diagnosticos do LSP
+- sem icones de fechar
+- separador em estilo `slant`
+- offset para o NvimTree com texto `File Explorer`
+
+### Lualine
+
+Configurado em `lua/plugins/lualine.lua`:
+
+- statusline global
+- mostra modo, branch, diff, diagnosticos, arquivo, ambiente virtual Python
+  (so em arquivos `.py`), filetype, progresso e posicao
+- desabilitado para `NvimTree`
+
+## Tema Kaizen
+
+O tema ativo esta em `lua/themes/cyberia.lua`.
+
+O fundo base do tema Cyberia e:
+
+```text
+#080808
+```
+
+O tema antigo permanece em `lua/themes/kaizen.lua`.
+
+Ele foi feito para combinar com o Alacritty atual:
+
+| Uso | Cor |
 | --- | --- |
-| `:Lazy` | Open the plugin manager |
-| `:Lazy sync` | Synchronize plugins |
-| `:Mason` | Open Mason |
-| `:checkhealth` | Check Neovim health |
-| `:Format` | Format with the active LSP |
-| `:Lint` | Open diagnostics in quickfix |
-| `:ReloadConfig` | Reload the local configuration |
-| `:Run` | Run the current file or project |
+| fundo | `#111318` |
+| texto | `#E6EAF0` |
+| comentarios/docstrings | `#5F6878` |
+| strings | `#7ED7A8` |
+| funcoes | `#8FB7FF` |
+| keywords | `#C7A4FF` |
+| types | `#79D7D2` |
+| numeros/booleanos | `#FFB86C` |
+| erros | `#FF6B6B` |
+| avisos | `#F2C66D` |
 
-## Notes
+O tema cobre grupos base do Vim, Treesitter, diagnostics, NvimTree, Telescope,
+completion, Bufferline, statusline, floats e selecao.
 
-- `lazy-lock.json` pins plugin versions.
-- `nvim-treesitter` uses `master` for the classic `nvim-treesitter.configs` API.
-- Markdown Treesitter is disabled to avoid parser and injection errors on newer
-  Neovim versions; Markdown continues to use native highlighting.
+## Markdown
+
+Configurado em `lua/plugins/markdown.lua`:
+
+- folding desativado
+- conceal desativado
+- frontmatter ativado
+
+## Terminal
+
+O terminal principal configurado no ambiente e o Alacritty.
+
+Arquivo:
+
+```text
+~/.config/alacritty/alacritty.toml
+```
+
+Configuracao atual relevante:
+
+- fonte: `JetBrainsMono Nerd Font`
+- tamanho: `11.5`
+- fundo: `#111318`
+- texto: `#E6EAF0`
+- opacidade: `1.0`
+- padding: `x = 14`, `y = 12`
+- decoracao de janela: `None`
+
+## Comandos uteis
+
+Abrir o gerenciador de plugins:
+
+```vim
+:Lazy
+```
+
+Sincronizar plugins:
+
+```vim
+:Lazy sync
+```
+
+Abrir Mason:
+
+```vim
+:Mason
+```
+
+Checar saude do Neovim:
+
+```vim
+:checkhealth
+```
+
+Formatar o buffer atual usando o LSP ativo:
+
+```vim
+:Format
+```
+
+Abrir diagnostics do buffer atual no quickfix:
+
+```vim
+:Lint
+```
+
+Recarregar a configuracao local sem fechar o Neovim:
+
+```vim
+:ReloadConfig
+```
+
+Executar arquivo atual:
+
+```vim
+:Run
+```
+
+## Observacoes
+
+- O arquivo `lazy-lock.json` fixa as versoes dos plugins instalados.
+- O `nvim-treesitter` esta fixado na branch `master`, pois ela mantem a API
+  `nvim-treesitter.configs` usada pela configuracao atual.
+- O Treesitter de Markdown fica bloqueado em `lua/plugins/markdown.lua` porque
+  a branch classica do `nvim-treesitter` pode gerar erro de parser/injecao em
+  versoes novas do Neovim. Markdown continua usando highlight nativo.
