@@ -1,0 +1,119 @@
+@define-color base #080808;
+@define-color surface #101012;
+@define-color raised #18181b;
+@define-color border #48484e;
+@define-color text #d7d7da;
+@define-color muted #85858b;
+@define-color accent #9fbea0;
+@define-color secondary #a9afb3;
+@define-color warning #d2bd8c;
+@define-color critical #d89a9a;
+
+* {
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  font-family: "GeistMono Nerd Font", "JetBrainsMono Nerd Font", monospace;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+window#waybar {
+  color: @text;
+  background: @base;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+#workspaces {
+  min-height: 22px;
+  padding: 1px 4px;
+  background: transparent;
+}
+
+#workspaces button {
+  min-width: 18px;
+  padding: 0 4px;
+  margin: 2px 1px;
+  color: @muted;
+  background: transparent;
+  border-radius: 5px;
+  transition: color 120ms ease, background-color 120ms ease;
+}
+
+#workspaces button.active {
+  color: @text;
+  background: transparent;
+  box-shadow: inset 0 -1px @accent;
+}
+
+#workspaces button.occupied {
+  color: @text;
+}
+
+#workspaces button.urgent {
+  color: #120f16;
+  background: @critical;
+}
+
+#backlight,
+#battery,
+#pulseaudio,
+#language,
+#custom-capslock,
+#tray,
+#clock,
+#custom-power {
+  min-height: 22px;
+  padding: 0 7px;
+  margin: 0;
+  color: @text;
+  background: transparent;
+}
+
+#backlight {
+  color: @secondary;
+}
+
+#battery { color: @text; }
+#pulseaudio { color: @secondary; }
+#language { color: @muted; }
+#custom-capslock { color: @muted; }
+#custom-capslock.locked {
+  color: #080808;
+  background: @warning;
+  padding: 0 7px;
+}
+#custom-capslock.unlocked {
+  min-width: 0;
+  padding: 0;
+}
+#clock { color: @text; }
+
+#battery.charging { color: @accent; }
+#battery.warning:not(.charging) { color: @warning; }
+#battery.critical:not(.charging) { color: @critical; }
+
+#custom-power {
+  padding: 0 8px;
+  color: @muted;
+}
+
+#custom-power:hover,
+#backlight:hover,
+#pulseaudio:hover,
+#clock:hover {
+  color: @text;
+  background: @raised;
+}
+
+tooltip {
+  color: @text;
+  background: @surface;
+  border: 1px solid @border;
+  border-radius: 7px;
+}
+
+tooltip label {
+  padding: 5px 7px;
+}
