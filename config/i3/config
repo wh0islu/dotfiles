@@ -1,7 +1,7 @@
-# Definir o modificador como Mod4 (Super, tecla Windows)
+# Set the modifier to Mod4 (Super/Windows key)
 set $mod Mod4
 
-# Fonte
+# Font
 set $font pango:FiraMono Nerd Font Medium 8
 
 # Run auto-start applications
@@ -74,7 +74,7 @@ set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
 
-# Switch workspaces (mod+number) - Alterando os atalhos para mod+numero
+# Switch workspaces (mod+number)
 bindsym $mod+1 workspace $ws1
 bindsym $mod+2 workspace $ws2
 bindsym $mod+3 workspace $ws3
