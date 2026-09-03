@@ -15,11 +15,11 @@
   },
   "backlight": {
     "format": "󰃠",
-    "tooltip-format": "Brilho: {percent}%",
-    "on-click": "/home/kz/.local/bin/brightness-control up",
-    "on-click-right": "/home/kz/.local/bin/brightness-control down",
-    "on-scroll-up": "/home/kz/.local/bin/brightness-control up",
-    "on-scroll-down": "/home/kz/.local/bin/brightness-control down"
+    "tooltip-format": "Brightness: {percent}%",
+    "on-click": "$HOME/.local/bin/brightness-control up",
+    "on-click-right": "$HOME/.local/bin/brightness-control down",
+    "on-scroll-up": "$HOME/.local/bin/brightness-control up",
+    "on-scroll-down": "$HOME/.local/bin/brightness-control down"
   },
   "battery": {
     "interval": 9,
@@ -28,24 +28,24 @@
     "format-full": "󰁹 {capacity}%",
     "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
     "states": {"warning": 30, "critical": 15},
-    "tooltip-format": "Bateria: {capacity}%\n{time}"
+    "tooltip-format": "Battery: {capacity}%\n{time}"
   },
   "pulseaudio": {
     "format": "{icon} {volume}%",
     "format-muted": "󰖁",
     "format-icons": {"default": ["", "", ""]},
-    "tooltip-format": "Volume: {volume}%\nClique para silenciar",
-    "on-click": "/home/kz/.local/bin/volume-control mute",
-    "on-scroll-up": "/home/kz/.local/bin/volume-control up",
-    "on-scroll-down": "/home/kz/.local/bin/volume-control down"
+    "tooltip-format": "Volume: {volume}%\nClick to mute",
+    "on-click": "$HOME/.local/bin/volume-control mute",
+    "on-scroll-up": "$HOME/.local/bin/volume-control up",
+    "on-scroll-down": "$HOME/.local/bin/volume-control down"
   },
   "hyprland/language": {
     "format": "{short}",
     "keyboard-name": "at-translated-set-2-keyboard",
-    "tooltip-format": "Teclado: {long}"
+    "tooltip-format": "Keyboard: {long}"
   },
   "custom/capslock": {
-    "exec": "/home/kz/.config/waybar/capslock.sh",
+    "exec": "$HOME/.config/waybar/capslock.sh",
     "return-type": "json",
     "interval": 0.15,
     "tooltip": false
@@ -63,6 +63,6 @@
   "custom/power": {
     "format": "󰐥",
     "tooltip": false,
-    "on-click": "/home/kz/.local/bin/power-menu"
+    "on-click": "$HOME/.local/bin/power-menu"
   }
 }
