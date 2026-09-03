@@ -1,0 +1,92 @@
+[global]
+    monitor = 0
+    follow = keyboard
+    width = 280
+    height = (0, 160)
+    origin = top-right
+    offset = (8, 8)
+    scale = 0
+    notification_limit = 5
+
+    progress_bar = true
+    progress_bar_height = 4
+    progress_bar_frame_width = 0
+    progress_bar_min_width = 120
+    progress_bar_max_width = 260
+
+    indicate_hidden = yes
+    separator_height = 1
+    padding = 8
+    horizontal_padding = 10
+    text_icon_padding = 8
+    frame_width = 1
+    frame_color = "#48484E"
+    gap_size = 5
+    corner_radius = 6
+
+    sort = yes
+    font = GeistMono Nerd Font 9
+    line_height = 2
+    markup = full
+    format = "<b>%s</b>\n%b"
+    alignment = left
+    vertical_alignment = center
+    show_age_threshold = 60
+    ellipsize = middle
+    ignore_newline = no
+    stack_duplicates = true
+    hide_duplicate_count = false
+    show_indicators = yes
+
+    icon_position = left
+    min_icon_size = 24
+    max_icon_size = 40
+    enable_recursive_icon_lookup = true
+
+    sticky_history = yes
+    history_length = 20
+    browser = xdg-open
+    always_run_script = true
+    title = Dunst
+    class = Dunst
+    mouse_left_click = close_current
+    mouse_middle_click = do_action, close_current
+    mouse_right_click = close_all
+
+[urgency_low]
+    background = "#080808"
+    foreground = "#85858B"
+    frame_color = "#303034"
+    timeout = 3
+
+[urgency_normal]
+    background = "#101012"
+    foreground = "#D7D7DA"
+    frame_color = "#48484E"
+    timeout = 5
+
+[urgency_critical]
+    background = "#080808"
+    foreground = "#F5F5F7"
+    frame_color = "#D89A9A"
+    timeout = 0
+
+[browsers]
+    appname = "Firefox|Google Chrome|Chromium"
+    frame_color = "#A9AFB3"
+
+[messengers]
+    appname = "Discord|discord|TelegramDesktop|Telegram Desktop"
+    frame_color = "#AAA0B0"
+
+[media]
+    appname = "Spotify|spotify|Player"
+    frame_color = "#9FBEA0"
+
+[system]
+    appname = "System|NetworkManager|nm-applet|Flameshot|Update|Downloads|Battery
+    frame_color = "#9FB9B4"
+
+[terminal]
+    appname = "Terminal|Claude|Codex"
+    frame_color = "#D2BD8C"
