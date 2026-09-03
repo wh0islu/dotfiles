@@ -2,38 +2,38 @@ local M = {}
 local project_root = vim.fn.expand("~/Developments/Git")
 
 local header = {
-  [[                  ;i.                     ]],
-  [[                  M$L                    .;i.]],
-  [[                  M$Y;                .;iii;;.]],
-  [[                 ;$YY$i._           .iiii;;;;;]],
-  [[                .iiiYYYYYYiiiii;;;;i;iii;; ;;;]],
-  [[              .;iYYYYYYiiiiiiYYYiiiiiii;;  ;;;]],
-  [[           .YYYY$$$$YYYYYYYYYYYYYYYYiii;; ;;;;]],
-  [[         .YYY$$$$$$YYYYYY$$$$iiiY$$$$$$$ii;;;;]],
-  [[        :YYYF`,  TYYYYY$$$$$YYYYYYYi$$$$$iiiii;]],
-  [[        Y$MM: \  :YYYY$$P"````"T$YYMMMMMMMMiiYY.]],
-  [[     `.;$$M$$b.,dYY$$Yi; .(     .YYMMM$$$MMMMYY]],
-  [[   .._$MMMMM$!YYYYYYYYYi;.`"  .;iiMMM$MMMMMMMYY]],
-  [[    ._$MMMP` ```""4$$$$$iiiiiiii$MMMMMMMMMMMMMY;]],
-  [[     MMMM$:       :$$$$$$$MMMMMMMMMMM$$MMMMMMMYYL]],
-  [[    :MMMM$$.    .;PPb$$$$MMMMMMMMMM$$$$MMMMMMiYYU:]],
-  [[     iMM$$;;: ;;;;i$$$$$$$MMMMM$$$$MMMMMMMMMMYYYYY]],
-  [[     `$$$$i .. ``:iiii!*"``.$$$$$$$$$MMMMMMM$YiYYY]],
-  [[      :Y$$iii;;;.. ` ..;;i$$$$$$$$$MMMMMM$$YYYYiYY:]],
-  [[       :$$$$$iiiiiii$$$$$$$$$$$MMMMMMMMMMYYYYiiYYYY.]],
-  [[        `$$$$$$$$$$$$$$$$$$$$MMMMMMMM$YYYYYiiiYYYYYY]],
-  [[         YY$$$$$$$$$$$$$$$$MMMMMMM$$YYYiiiiiiYYYYYYY]],
-  [[        :YYYYYY$$$$$$$$$$$$$$$$$$YYYYYYYiiiiYYYYYYi']],
+[[                  ;i.                     ]],
+[[                  M$L                    .;i.]],
+[[                  M$Y;                .;iii;;.]],
+[[                 ;$YY$i._           .iiii;;;;;]],
+[[                .iiiYYYYYYiiiii;;;;i;iii;; ;;;]],
+[[              .;iYYYYYYiiiiiiYYYiiiiiii;;  ;;;]],
+[[           .YYYY$$$$YYYYYYYYYYYYYYYYiii;; ;;;;]],
+[[         .YYY$$$$$$YYYYYY$$$$iiiY$$$$$$$ii;;;;]],
+[[        :YYYF`,  TYYYYY$$$$$YYYYYYYi$$$$$iiiii;]],
+[[        Y$MM: \  :YYYY$$P"````"T$YYMMMMMMMMiiYY.]],
+[[     `.;$$M$$b.,dYY$$Yi; .(     .YYMMM$$$MMMMYY]],
+[[   .._$MMMMM$!YYYYYYYYYi;.`"  .;iiMMM$MMMMMMMYY]],
+[[    ._$MMMP` ```""4$$$$$iiiiiiii$MMMMMMMMMMMMMY;]],
+[[     MMMM$:       :$$$$$$$MMMMMMMMMMM$$MMMMMMMYYL]],
+[[    :MMMM$$.    .;PPb$$$$MMMMMMMMMM$$$$MMMMMMiYYU:]],
+[[     iMM$$;;: ;;;;i$$$$$$$MMMMM$$$$MMMMMMMMMMYYYYY]],
+[[     `$$$$i .. ``:iiii!*"``.$$$$$$$$$MMMMMMM$YiYYY]],
+[[      :Y$$iii;;;.. ` ..;;i$$$$$$$$$MMMMMM$$YYYYiYY:]],
+[[       :$$$$$iiiiiii$$$$$$$$$$$MMMMMMMMMMYYYYiiYYYY.]],
+[[        `$$$$$$$$$$$$$$$$$$$$MMMMMMMM$YYYYYiiiYYYYYY]],
+[[         YY$$$$$$$$$$$$$$$$MMMMMMM$$YYYiiiiiiYYYYYYY]],
+[[        :YYYYYY$$$$$$$$$$$$$$$$$$YYYYYYYiiiiYYYYYYi']],
 }
 
 local menu = {
-  { icon = "󰏗", label = "Projects", key = "p", action = function() M.projects() end },
-  { icon = "󰱼", label = "Find Files", key = "f", action = "<cmd>Telescope find_files<CR>" },
-  { icon = "󰱽", label = "Live Grep", key = "g", action = "<cmd>Telescope live_grep<CR>" },
-  { icon = "󰦛", label = "Restore Session", key = "s", action = function() M.restore_session() end },
-  { icon = "", label = "Config", key = "c", action = "<cmd>edit ~/.config/nvim/init.lua<CR>" },
-  { icon = "󰒲", label = "Lazy", key = "L", action = "<cmd>Lazy<CR>" },
-  { icon = "󰗼", label = "Quit", key = "q", action = "<cmd>qa<CR>" },
+{ icon = "󰏗", label = "Projects", key = "p", action = function() M.projects() end },
+{ icon = "󰱼", label = "Find Files", key = "f", action = "<cmd>Telescope find_files<CR>" },
+{ icon = "󰱽", label = "Live Grep", key = "g", action = "<cmd>Telescope live_grep<CR>" },
+{ icon = "󰦛", label = "Restore Session", key = "s", action = function() M.restore_session() end },
+{ icon = "", label = "Config", key = "c", action = "<cmd>edit ~/.config/nvim/init.lua<CR>" },
+{ icon = "󰒲", label = "Lazy", key = "L", action = "<cmd>Lazy<CR>" },
+{ icon = "󰗼", label = "Quit", key = "q", action = "<cmd>qa<CR>" },
 }
 
 local function pad(line, width)
@@ -233,7 +233,11 @@ function M.open()
   vim.bo[buf].buflisted = false
   vim.bo[buf].swapfile = false
   vim.bo[buf].modifiable = true
-  vim.bo[buf].filetype = "kaizen_dashboard"
+  vim.api.nvim_buf_set_var(
+  buf,
+  "kaizen_dashboard_branch",
+  git_branch() or ""
+)
 
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, build_lines())
   vim.bo[buf].modifiable = false
