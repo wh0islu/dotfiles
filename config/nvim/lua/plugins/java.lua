@@ -35,28 +35,6 @@ local workspace_dir = vim.fn.stdpath("data") .. "/jdtls-workspace/" .. project_n
 local java_21 = "/usr/lib/jvm/java-21-openjdk/bin/java"
 local java_cmd = vim.fn.executable(java_21) == 1 and java_21 or "java"
 
-local function collect_bundles()
-    local bundles = {}
-    local debug_bundle = vim.fn.glob(
-        mason_dir .. "/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar",
-        true,
-        true
-    )
-
-    for _, bundle in ipairs(debug_bundle) do
-        table.insert(bundles, bundle)
-    end
-
-    local test_bundles = vim.fn.glob(mason_dir .. "/packages/java-test/extension/server/*.jar", true, true)
-    for _, bundle in ipairs(test_bundles) do
-        table.insert(bundles, bundle)
-    end
-
-    return bundles
-end
-
-local bundles = collect_bundles()
-
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 local cmp_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
 if cmp_ok then
@@ -111,24 +89,15 @@ local config = {
             },
         },
     },
-    init_options = {
-        bundles = bundles,
-    },
 }
 
 jdtls.start_or_attach(config)
-
-if #bundles > 0 then
-    pcall(jdtls.setup_dap, { hotcodereplace = "auto" })
-end
 
 pcall(require("jdtls.setup").add_commands)
 
 local opts = { buffer = true, silent = true, noremap = true }
 
 vim.keymap.set("n", "<leader>jo", jdtls.organize_imports, opts)
-vim.keymap.set("n", "<leader>jt", jdtls.test_class, opts)
-vim.keymap.set("n", "<leader>jn", jdtls.test_nearest_method, opts)
 vim.keymap.set("v", "<leader>jv", function()
     jdtls.extract_variable(true)
 end, opts)
