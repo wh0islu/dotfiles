@@ -27,6 +27,16 @@ local colors = {
 vim.g.colors_name = "kaizen"
 vim.opt.termguicolors = true
 
+-- lua/themes/kaizen.lua
+
+vim.api.nvim_set_hl(0, "Visual", {
+    bg = "#264F78",
+})
+
+vim.api.nvim_set_hl(0, "VisualNOS", {
+    bg = "#264F78",
+})
+
 local function hi(group, opts)
   vim.api.nvim_set_hl(0, group, opts)
 end
