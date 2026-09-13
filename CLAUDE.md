@@ -4,40 +4,39 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Personal dotfiles for an Arch Linux + Hyprland desktop. It is not an application — there is no build/lint/test toolchain in the traditional sense. "Testing" a change means running `install-arch.sh` (often inside a disposable Arch Docker container, see below) and verifying the resulting `~/.config/<app>` looks right, or opening the app itself (e.g. Neovim) and checking `:checkhealth` / `:Lazy` / `:Mason`. The repo previously also carried Ubuntu/FreeBSD/QEMU setup scripts and a menu-driven `install.sh`; these were removed as unused — the repo is Arch/Hyprland only now.
+Personal dotfiles for an Arch Linux + Hyprland desktop, used on more than one machine (a desktop and a ThinkPad). It is not an application — there is no build/lint/test toolchain. "Testing" a change means running `install-arch.sh` (ideally in a disposable Arch container, see `TEST.md`) and checking the result, or opening the affected app.
 
-Config sources under `config/` are deployed into `~/.config/<app>` (and a few other XDG locations) by **symlinking**, all from the single entry point `install-arch.sh` — the same pattern `~/.config/nvim` already used before this script existed (`nvim -> /home/darth/dotfiles/config/nvim`). Always edit the source under `config/`, never a live copy in `~/.config` — every app's source of truth is `config/<app>` here, and the deployed path is just a symlink to it.
-
-The repo targets **Hyprland only**. The legacy X11 stack (i3, kitty, polybar, picom, the standalone `40-libinput.conf`) has been removed from the repo entirely — it's still recoverable from git history, but there is nothing to reconcile with in the working tree.
+Everything under `config/` is deployed by **symlinking** into `~/.config/<app>` (plus `~/.zshrc`, `~/.local/bin/*`, `~/.config/starship.toml`, `~/.config/systemd/user/hypridle.service`). The deployed paths are symlinks, so editing either side edits the repo. Some apps write back to their own config (Flameshot does), which shows up as a dirty working tree.
 
 ## Entry point
 
-- `./install-arch.sh [--dry-run] [--java] [--go] [--rust] [--nix] [--extras]` — the only entry point: on a fresh Arch machine this installs every package, font, dotfile symlink, zsh plugin, and systemd service needed, then asks a single question at the end (reboot now or not). Normal runs only print installation progress; the full list of packages/symlinks/steps is documented as comments in the script itself and only printed on screen when `--dry-run` is passed (which then exits without touching the system) — this exists because `pacman` runs with `--noconfirm`, which skips its own confirmation listing. Re-running it is safe: existing non-symlink targets are backed up (`<path>.bak-<timestamp>`), not overwritten or deleted. Language groups (`--java`/`--go`/`--rust`/`--nix`) and `--extras` (lazygit, Poetry) are additive and optional. AUR apps (discord/zen-browser) and their `config/desktops/*.desktop` entries are intentionally not installed yet — left for a later pass.
-- `TEST.md` describes the Docker-based Arch test workflow: pull `archlinux`, run a privileged container, `docker cp` the repo in, run `./install-arch.sh` inside it. Use this instead of running the installer against the host when validating changes to it.
+- `./install-arch.sh [--dry-run] [--java] [--go] [--rust] [--nix] [--extras]` — the only installer. Installs packages (`pacman --noconfirm`), Nerd Fonts, zsh plugins, symlinks, Docker, `i2c-dev` and user services, then asks one question: reboot or not. The package/step list lives as comments in the script and is printed only with `--dry-run`, which exits without changing anything.
+- Re-running is safe: a target that already exists and is not the expected symlink is moved to `<path>.bak-<timestamp>`, never deleted.
+- Steps that need systemd as PID 1 (`docker.socket`, `hypridle.service`) are skipped with a warning when it isn't running, so the script works in containers and chroots.
+- It must run as a normal user (it refuses root and uses `sudo` itself).
 
-## Neovim config (`config/nvim/`)
+## Per-machine settings
 
-This is the most actively developed and structured part of the repo (see `config/nvim/README.md`, in Portuguese, for the canonical description).
+`config/hypr/hyprland.lua` defaults to a generic machine (`monitor preferred`, `kb_layout us`). Machine-specific values go in `config/hypr/local.lua` (gitignored), which returns a table that overrides `monitors`, `kb_layout`, `kb_model` and `wallpaper`. `local.lua.example` is the template. Never hardcode a monitor name, refresh rate or keyboard model in `hyprland.lua`.
 
-- Entry point `init.lua` loads, in order: `core.sets` → `core.plugins` → `core.map` → `core.run` → `core.spring` → `core.commands` → `core.newfile` → `core.newdir` → `core.quickfix_replace` → `core.diagnostics` → `core.dashboard` → `plugins.markdown` → `themes.cyberia`. Leader key is `,`.
-- `lua/core/` holds non-plugin editor behavior (options, keymaps, custom commands, dashboard, diagnostics, file/dir creation helpers, a "spring"/runner module). `lua/plugins/` holds one file per plugin (lazy.nvim-style specs — LSP via Mason, completion, telescope, gitsigns, lualine, bufferline, toggleterm, conform for formatting, claudecode.lua for Claude Code integration, etc.). `lua/themes/` holds colorscheme definitions (`cyberia` is the active theme, `kaizen` also present).
-- Plugin manager is lazy.nvim; `lazy-lock.json` pins plugin revisions — use `:Lazy restore` to sync to the lockfile.
-- LSP/tooling is installed via Mason (basedpyright, clangd, lua_ls, ts_ls, jdtls) triggered on first file open; Ruff, StyLua, and Prettier are installed by `install-arch.sh` itself, not Mason. Treesitter parsers install lazily on file open.
-- Java support needs a JDK 21 resolved in this order: `NVIM_JAVA_HOME` env var → `JAVA_HOME` → a JDK 21 under `/usr/lib/jvm` → `java` on PATH.
-- Optional environment variables consumed by the config: `NVIM_PROJECTS_DIR` (used by dashboard and the Spring runner, defaults to `~/Developments/Git`), `NVIM_JAVA_HOME` (see above). `vim.g.format_timeout_ms` can be set before plugin load to raise the 1000ms default format-on-save timeout (see `:ConformInfo`).
-- Claude Code and the `codex` CLI are expected on PATH for the corresponding editor integrations/keymaps to work.
+## Neovim (`config/nvim/`)
 
-## Other config areas (deploy targets under `config/`)
+See `config/nvim/README.md` (Portuguese) for the canonical description.
 
-Each subdirectory under `config/` mirrors a single application's config directory verbatim and is deployed as a unit by `install-arch.sh` — there is no cross-app abstraction layer to understand:
+- `init.lua` loads `core.*` modules, then `plugins.markdown` and `themes.cyberia`. Leader is `,`.
+- lazy.nvim bootstraps itself on first launch and installs the revisions pinned in `lazy-lock.json`. Mason installs basedpyright, clangd, lua_ls, ts_ls and jdtls; `mason-lspconfig` skips auto-install when there is no UI (`--headless`), so headless tests don't prove LSP installation.
+- Ruff, StyLua and Prettier come from pacman, not Mason.
+- `core/environment.lua` resolves `NVIM_PROJECTS_DIR` (default `~/Developments/Git`) and the JDK (`NVIM_JAVA_HOME` → `JAVA_HOME` → JDK 21 under `/usr/lib/jvm`).
 
-- `hypr/` (Hyprland — note `hyprland.lua`: this Arch build of Hyprland reads native Lua config via the `hl.*` API, this is not a third-party wrapper; plus `hyprlock.conf`, `hypridle.conf`), `waybar/`, `rofi/`, `dunst/`, `alacritty/`, `flameshot/`, `starship/` (single file, symlinked to `~/.config/starship.toml`, not a directory symlink like the others), `zathura/`, `kz/` (a neutral color palette reference; not currently sourced by any other config), `zsh/`.
-- `local-bin/` — standalone shell scripts (audio/brightness/power/lockscreen menus, shortcut center, file picker) symlinked into `~/.local/bin` and invoked from Hyprland/waybar keybindings.
-- `desktops/` — custom `.desktop` launcher entries (discord, zen browser) pointing at `/opt/discord` and `/opt/zen`; **not currently deployed** by `install-arch.sh` (no AUR helper step either) — intentionally left out for now.
-- `systemd/user/hypridle.service` — user-level systemd unit for the idle daemon.
-- `windows/PROFILE` — a PowerShell profile for a separate Windows machine; unrelated to `install-arch.sh`.
-- `hosts` — a personal `/etc/hosts` blocklist (distraction sites); not deployed by any script, kept as reference only.
+## Other configs
 
-Wallpapers: `assets/wallpapers/` holds the versioned wallpaper images (none committed by default); `install-arch.sh` symlinks whatever is in there into `~/Images/Wallpapers`, and `config/hypr/hyprland.lua`'s startup hook picks the first file found there via `swaybg`, falling back to a solid color when the directory is empty.
+- `hypr/hyprland.lua` uses Hyprland's native Lua API (`hl.*`). The startup hook starts waybar, dunst and `swaybg` with the `wallpaper` from `local.lua` or the first image in `~/Images/Wallpapers`, falling back to a solid color.
+- `waybar/` — `custom/capslock` is a long-running script that prints only on state change; polling it at 0.15s kept waybar at ~15% CPU. Keep custom modules event- or signal-driven. `custom/brightness` runs `brightness-control status` once and refreshes on `SIGRTMIN+9`.
+- `local-bin/brightness-control` uses `brightnessctl` when `/sys/class/backlight` exists (laptop) and `ddcutil` over DDC/CI otherwise (external monitor). Its module stays hidden when neither works.
+- `flameshot/flameshot.ini` has no `savePath` on purpose: Flameshot does not expand `$HOME`/`~`, and an invalid value makes it rewrite the file with an absolute path. The save folder is passed with `--path` in the screenshot binds (`hyprland.lua`, `shortcut-center`).
+- `dunst/dunstrc` — the scripts notify with `-a System`, matched by the `[system]` rule. `notify-send` comes from `libnotify`.
+- `zsh/.zshrc` — `LS_COLORS` is built from the `kz` palette in truecolor; there is no `dircolors` call.
+- `kz/palette.conf` is the shared color reference (alacritty, waybar, dunst and `LS_COLORS` use these values by hand).
+- `assets/wallpapers/` is versioned and symlinked into `~/Images/Wallpapers`.
 
-When changing a keybinding or menu script, check both `config/hypr/hyprland.lua` (or `waybar/config.jsonc`) for the binding and `config/local-bin/` for the script it invokes — they are wired together only by matching script names/paths, not by any indirection layer.
+Keybindings and menu scripts are wired only by path: a bind in `hyprland.lua` or `waybar/config.jsonc` calls a script in `local-bin/`, and the shortcut list is repeated in `local-bin/shortcut-center` (Super+F1 menu) and `README.md`. Change them together.
