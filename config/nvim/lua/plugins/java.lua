@@ -32,8 +32,7 @@ end
 
 local project_name = vim.fn.fnamemodify(root_dir, ":p:h:t")
 local workspace_dir = vim.fn.stdpath("data") .. "/jdtls-workspace/" .. project_name
-local java_21 = "/usr/lib/jvm/java-21-openjdk/bin/java"
-local java_cmd = vim.fn.executable(java_21) == 1 and java_21 or "java"
+local java_cmd = require("core.environment").java_command()
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 local cmp_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")

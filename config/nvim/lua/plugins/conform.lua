@@ -82,7 +82,7 @@ conform.setup({
 
   -- Formata automaticamente antes de salvar.
   format_on_save = {
-    timeout_ms = 1000,
+    timeout_ms = vim.g.format_timeout_ms or 1000,
   },
 
   notify_on_error = true,

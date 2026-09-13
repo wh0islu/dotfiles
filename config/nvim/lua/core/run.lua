@@ -19,9 +19,9 @@ local function current_file()
 end
 
 local function java_home_prefix()
-    local java_21_home = "/usr/lib/jvm/java-21-openjdk"
+    local java_21_home = require("core.environment").java_home()
 
-    if vim.fn.executable(java_21_home .. "/bin/java") == 1 then
+    if java_21_home then
         return "JAVA_HOME=" .. shellescape(java_21_home) .. " PATH=" .. shellescape(java_21_home .. "/bin") .. ":$PATH "
     end
 
@@ -82,11 +82,20 @@ local function spring_main_property()
     return ""
 end
 
+local function project_contains(name, text)
+    local path = project_file(name)
+    return file_exists(path) and table.concat(vim.fn.readfile(path), "\n"):find(text, 1, true) ~= nil
+end
+
+local function uses_poetry()
+    return project_contains("pyproject.toml", "[tool.poetry") or file_exists(project_file("poetry.lock"))
+end
+
 local function command_for_file()
     local ext = vim.fn.expand("%:e")
 
     if ext == "py" then
-        if file_exists(project_file("pyproject.toml")) and vim.fn.executable("poetry") == 1 then
+        if uses_poetry() and vim.fn.executable("poetry") == 1 then
             return "poetry run python " .. current_file()
         end
 
@@ -125,43 +134,50 @@ local function command_for_file()
 end
 
 local function project_command()
-    if file_exists(project_file("mvnw")) and file_exists(project_file("pom.xml")) then
-        return java_home_prefix() .. "./mvnw" .. spring_main_property() .. " spring-boot:run"
-    end
-
-    if file_exists(project_file("gradlew")) and (file_exists(project_file("build.gradle")) or file_exists(project_file("build.gradle.kts"))) then
-        return java_home_prefix() .. "./gradlew bootRun"
-    end
-
     if file_exists(project_file("pom.xml")) then
-        return java_home_prefix() .. "mvn" .. spring_main_property() .. " spring-boot:run"
+        if not project_contains("pom.xml", "spring-boot-maven-plugin") then
+            return nil, "Maven project has no Spring Boot plugin. Run its build/run command in the terminal."
+        end
+        local mvn = file_exists(project_file("mvnw")) and "sh ./mvnw" or "mvn"
+        return java_home_prefix() .. mvn .. spring_main_property() .. " spring-boot:run"
     end
 
     if file_exists(project_file("build.gradle")) or file_exists(project_file("build.gradle.kts")) then
-        return java_home_prefix() .. "gradle bootRun"
+        if not (project_contains("build.gradle", "org.springframework.boot")
+            or project_contains("build.gradle.kts", "org.springframework.boot")) then
+            return nil, "Gradle project has no explicit Spring Boot plugin. Run its task in the terminal."
+        end
+        local gradle = file_exists(project_file("gradlew")) and "sh ./gradlew" or "gradle"
+        return java_home_prefix() .. gradle .. " bootRun"
     end
 
     if file_exists(project_file("manage.py")) then
-        if file_exists(project_file("pyproject.toml")) and vim.fn.executable("poetry") == 1 then
+        if uses_poetry() and vim.fn.executable("poetry") == 1 then
             return "poetry run python manage.py runserver"
         end
-
         return "python manage.py runserver"
     end
 
     if file_exists(project_file("package.json")) then
-        return "npm run dev"
+        local ok, package = pcall(vim.json.decode, table.concat(vim.fn.readfile(project_file("package.json")), "\n"))
+        if not ok or type(package) ~= "table" then
+            return nil, "Invalid package.json."
+        end
+        local scripts = type(package.scripts) == "table" and package.scripts or {}
+        for _, name in ipairs({ "dev", "start" }) do
+            if type(scripts[name]) == "string" and scripts[name] ~= "" then
+                return "npm run " .. name
+            end
+        end
+        return nil, "package.json has no dev or start script."
     end
 
     if file_exists(project_file("Cargo.toml")) then
         return "cargo run"
     end
-
     if file_exists(project_file("go.mod")) then
         return "go run ."
     end
-
-    return nil
 end
 
 local function run_in_terminal(command)
@@ -185,14 +201,21 @@ local function run_in_terminal(command)
 end
 
 function Run()
-    local command = project_command() or command_for_file()
+    if vim.bo.buftype == "" and vim.api.nvim_buf_get_name(0) ~= "" then
+        vim.cmd("write")
+    end
+    local command, reason = project_command()
+    if reason then
+        vim.notify(reason, vim.log.levels.WARN)
+        return
+    end
+    command = command or command_for_file()
 
     if not command then
         vim.notify("No run command found for this file or project.", vim.log.levels.WARN)
         return
     end
 
-    vim.cmd("write")
     run_in_terminal(command)
 end
 

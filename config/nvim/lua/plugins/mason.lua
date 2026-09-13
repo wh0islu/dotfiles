@@ -17,6 +17,10 @@ if ok then
   capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 end
 
+-- Ruff and basedpyright must agree on character offsets in shared buffers.
+capabilities.general = capabilities.general or {}
+capabilities.general.positionEncodings = { "utf-16" }
+
 local function project_python(root_dir)
   local candidates = {}
   if vim.env.VIRTUAL_ENV then
@@ -35,6 +39,10 @@ local function project_python(root_dir)
 end
 
 local server_specific = {
+  clangd = {
+    -- Compound Doxygen filetypes require an additional filetype plugin.
+    filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
+  },
   basedpyright = {
     before_init = function(_, config)
       local python = project_python(config.root_dir)
@@ -154,6 +162,20 @@ end
 mlsp.setup({
   ensure_installed = servers,
   automatic_enable = servers,
+})
+
+-- The first buffer can acquire its filetype before the LSP FileType handler
+-- is registered. Recheck it after startup using the public enable API.
+vim.api.nvim_create_autocmd("VimEnter", {
+  group = vim.api.nvim_create_augroup("UserLspStartup", { clear = true }),
+  once = true,
+  callback = function()
+    for _, name in ipairs({ "basedpyright", "clangd", "lua_ls", "ts_ls", "ruff" }) do
+      if vim.lsp.is_enabled(name) then
+        vim.lsp.enable(name)
+      end
+    end
+  end,
 })
 
 -- =========================================================

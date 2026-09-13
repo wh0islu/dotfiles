@@ -1,5 +1,5 @@
 local M = {}
-local project_root = vim.fn.expand("~/Developments/Git")
+local project_root = require("core.environment").projects_root()
 
 local header = {
 [[                  ;i.                     ]],
@@ -31,7 +31,7 @@ local menu = {
 { icon = "󰱼", label = "Find Files", key = "f", action = "<cmd>Telescope find_files<CR>" },
 { icon = "󰱽", label = "Live Grep", key = "g", action = "<cmd>Telescope live_grep<CR>" },
 { icon = "󰦛", label = "Restore Session", key = "s", action = function() M.restore_session() end },
-{ icon = "", label = "Config", key = "c", action = "<cmd>edit ~/.config/nvim/init.lua<CR>" },
+{ icon = "", label = "Config", key = "c", action = function() vim.cmd.edit(vim.fn.stdpath("config") .. "/init.lua") end },
 { icon = "󰒲", label = "Lazy", key = "L", action = "<cmd>Lazy<CR>" },
 { icon = "󰗼", label = "Quit", key = "q", action = "<cmd>qa<CR>" },
 }
@@ -259,7 +259,6 @@ function M.open()
     vim.keymap.set("n", item.key, item.action, { buffer = buf, silent = true })
   end
 
-  vim.keymap.set("n", "<leader>f", "<cmd>Telescope find_files<CR>", { buffer = buf, silent = true })
 end
 
 vim.api.nvim_create_autocmd("VimEnter", {
