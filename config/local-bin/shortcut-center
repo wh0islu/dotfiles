@@ -5,7 +5,6 @@ choice="$(printf '%s\n' \
   'Super + Enter       Terminal' \
   'Super + D           Aplicativos' \
   'Super + Shift + E   Search files' \
-  'Super + V           Clipboard history' \
   'Super + Shift + S   Screenshot' \
   'Super + Shift + L   Lock screen' \
   'Super + Shift + P   Power menu' \
@@ -21,8 +20,7 @@ case "$choice" in
   *Terminal)               alacritty ;;
   *Aplicativos)            rofi -show drun ;;
   *'Search files')          alacritty -e "$HOME/.local/bin/file-picker" ;;
-  *clipboard)              "$HOME/.local/bin/clipboard-menu" ;;
-  *Screenshot)             env QT_QPA_PLATFORM=wayland XDG_CURRENT_DESKTOP=Hyprland flameshot screen --number 0 --edit ;;
+  *Screenshot)             env QT_QPA_PLATFORM=wayland XDG_CURRENT_DESKTOP=Hyprland flameshot screen --number 0 --edit --path "$HOME/Images/Captures" ;;
   *'Lock screen')           "$HOME/.local/bin/lockscreen" ;;
   *'Power menu')            "$HOME/.local/bin/power-menu" ;;
   *'Audio controls')        "$HOME/.local/bin/audio-menu" ;;
