@@ -20,7 +20,7 @@ case "$choice" in
   *Terminal)               alacritty ;;
   *Aplicativos)            rofi -show drun ;;
   *'Search files')          alacritty -e "$HOME/.local/bin/file-picker" ;;
-  *Screenshot)             env QT_QPA_PLATFORM=wayland XDG_CURRENT_DESKTOP=Hyprland flameshot screen --number 0 --edit --path "$HOME/Images/Captures" ;;
+  *Screenshot)             env QT_QPA_PLATFORM=wayland XDG_CURRENT_DESKTOP=Hyprland flameshot screen --number 0 --edit ;;
   *'Lock screen')           "$HOME/.local/bin/lockscreen" ;;
   *'Power menu')            "$HOME/.local/bin/power-menu" ;;
   *'Audio controls')        "$HOME/.local/bin/audio-menu" ;;

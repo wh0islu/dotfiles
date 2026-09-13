@@ -30,6 +30,8 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("waybar")
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
     hl.exec_cmd("systemctl --user restart dunst.service")
+    -- Mantem o clipboard quando o app que copiou fecha (ex.: o editor do flameshot).
+    hl.exec_cmd("wl-clip-persist --clipboard regular")
     do
         local wallpaper_dir = home .. "/Images/Wallpapers"
         local wallpaper = machine.wallpaper
@@ -124,7 +126,7 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(home .. "/.local/bin/brightness
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
-hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("env QT_QPA_PLATFORM=wayland XDG_CURRENT_DESKTOP=Hyprland flameshot screen --number 0 --edit --path " .. home .. "/Images/Captures"))
+hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("env QT_QPA_PLATFORM=wayland XDG_CURRENT_DESKTOP=Hyprland flameshot screen --number 0 --edit"))
 
 for workspace = 1, 10 do
     local key = workspace % 10
