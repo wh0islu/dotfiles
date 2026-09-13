@@ -49,7 +49,8 @@ bindkey '^[[Z' reverse-menu-complete
 # PATH
 ############################################################
 
-export PATH="$HOME/.local/bin:$HOME/.local/opt/nodejs/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+path=($HOME/.local/share/gem/ruby/*/bin(N/) $path)
 
 # Android SDK (Arch/Linux)
 #export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
@@ -97,7 +98,6 @@ alias dev='cd ~/Developments'
 alias gitp='cd ~/Developments/Git/'
 alias ..='cd ..'
 alias ...='cd ../..'
-alias psh="poetry shell"
 ############################################################
 # PROMPT
 ############################################################
@@ -246,5 +246,3 @@ source "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # Do not load this at startup; use it only when needed:
 # source <(ng completion script)
-
-export PATH="$(ruby -e 'print Gem.user_dir')/bin:$PATH"
