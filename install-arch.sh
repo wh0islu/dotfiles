@@ -18,7 +18,7 @@ EOF
 packages=(
     # Hyprland / Wayland
     hyprland xdg-desktop-portal-hyprland waybar dunst alacritty rofi flameshot
-    swaybg hyprpolkitagent brightnessctl ddcutil playerctl libnotify
+    swaybg hyprpolkitagent brightnessctl playerctl libnotify wl-clip-persist
     pipewire pipewire-pulse wireplumber pavucontrol hyprlock hypridle fzf
     xdg-utils papirus-icon-theme
     # Base / dev tooling
@@ -73,9 +73,8 @@ show_summary() {
     echo "  - scripts de config/local-bin/ em ~/.local/bin"
     echo "  - servico systemd --user hypridle.service habilitado"
     echo "  - docker.socket habilitado + usuario adicionado ao grupo docker"
-    echo "  - modulo i2c-dev carregado no boot (brilho de monitor externo via ddcutil)"
     echo "  - wallpapers de assets/wallpapers/ symlinkados em ~/Images/Wallpapers"
-    echo "  - pastas ~/Images/Captures e ~/Developments/Git"
+    echo "  - pasta ~/Developments/Git"
     echo
 }
 
@@ -93,9 +92,8 @@ fi
 #   - scripts de config/local-bin/ symlinkados em ~/.local/bin
 #   - servico systemd --user hypridle.service habilitado
 #   - docker.socket habilitado + usuario adicionado ao grupo docker
-#   - modulo i2c-dev carregado no boot (brilho de monitor externo via ddcutil)
 #   - wallpapers de assets/wallpapers/ symlinkados em ~/Images/Wallpapers
-#   - pastas ~/Images/Captures e ~/Developments/Git
+#   - pasta ~/Developments/Git
 
 repo="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 warnings=()
@@ -210,14 +208,8 @@ setup_docker() {
     fi
 }
 
-setup_ddc() {
-    log "Habilitando i2c-dev para controle de brilho via DDC/CI..."
-    echo i2c-dev | sudo tee /etc/modules-load.d/i2c-dev.conf >/dev/null
-    sudo modprobe i2c-dev 2>/dev/null || warn "Nao foi possivel carregar o i2c-dev agora; ele carrega no proximo boot."
-}
-
 setup_dirs() {
-    mkdir -p "$HOME/Developments/Git" "$HOME/Images/Captures"
+    mkdir -p "$HOME/Developments/Git"
 }
 
 setup_services() {
@@ -236,7 +228,6 @@ install_fonts
 link_configs
 setup_wallpapers
 setup_docker
-setup_ddc
 setup_dirs
 setup_services
 
