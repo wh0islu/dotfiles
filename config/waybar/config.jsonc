@@ -10,7 +10,7 @@
     "disk",
     "memory",
     "temperature",
-    "custom/brightness",
+    "backlight",
     "battery",
     "pulseaudio",
     "hyprland/language",
@@ -57,11 +57,9 @@
     "format": "󰔏 {temperatureC}°",
     "tooltip-format": "CPU: {temperatureC}°C",
   },
-  "custom/brightness": {
-    "exec": "$HOME/.local/bin/brightness-control status",
-    "return-type": "json",
-    "interval": "once",
-    "signal": 9,
+  "backlight": {
+    "format": "󰃠",
+    "tooltip-format": "Brightness: {percent}%",
     "on-click": "$HOME/.local/bin/brightness-control up",
     "on-click-right": "$HOME/.local/bin/brightness-control down",
     "on-scroll-up": "$HOME/.local/bin/brightness-control up",
