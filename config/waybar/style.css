@@ -60,7 +60,7 @@ window#waybar {
 #disk,
 #memory,
 #temperature,
-#backlight,
+#custom-brightness,
 #battery,
 #pulseaudio,
 #language,
@@ -75,7 +75,7 @@ window#waybar {
   background: transparent;
 }
 
-#backlight {
+#custom-brightness {
   color: @secondary;
 }
 
@@ -118,7 +118,7 @@ window#waybar {
 }
 
 #custom-power:hover,
-#backlight:hover,
+#custom-brightness:hover,
 #pulseaudio:hover,
 #network:hover,
 #disk:hover,

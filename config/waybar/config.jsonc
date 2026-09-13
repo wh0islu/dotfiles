@@ -1,7 +1,7 @@
 {
   "layer": "top",
   "position": "bottom",
-  "height": 23,
+  "height": 24,
   "margin-bottom": 0,
   "spacing": 0,
   "modules-left": ["hyprland/workspaces"],
@@ -10,7 +10,7 @@
     "disk",
     "memory",
     "temperature",
-    "backlight",
+    "custom/brightness",
     "battery",
     "pulseaudio",
     "hyprland/language",
@@ -57,9 +57,11 @@
     "format": "󰔏 {temperatureC}°",
     "tooltip-format": "CPU: {temperatureC}°C",
   },
-  "backlight": {
-    "format": "󰃠",
-    "tooltip-format": "Brightness: {percent}%",
+  "custom/brightness": {
+    "exec": "$HOME/.local/bin/brightness-control status",
+    "return-type": "json",
+    "interval": "once",
+    "signal": 9,
     "on-click": "$HOME/.local/bin/brightness-control up",
     "on-click-right": "$HOME/.local/bin/brightness-control down",
     "on-scroll-up": "$HOME/.local/bin/brightness-control up",
