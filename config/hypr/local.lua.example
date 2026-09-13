@@ -1,0 +1,12 @@
+-- Copie para local.lua (ignorado pelo git) e ajuste para esta maquina.
+-- Qualquer chave omitida usa o padrao do hyprland.lua.
+return {
+    -- Nomes e modos disponiveis: hyprctl monitors
+    monitors = {
+        { output = "DP-1", mode = "1920x1080@240", position = "auto", scale = 1 },
+    },
+    kb_layout = "us",
+    -- kb_model = "thinkpad",
+    -- Nome de um arquivo em ~/Images/Wallpapers ou caminho absoluto.
+    -- wallpaper = "ni.png",
+}
