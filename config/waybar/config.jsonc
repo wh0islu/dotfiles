@@ -5,13 +5,57 @@
   "margin-bottom": 0,
   "spacing": 0,
   "modules-left": ["hyprland/workspaces"],
-  "modules-right": ["backlight", "battery", "pulseaudio", "hyprland/language", "custom/capslock", "tray", "clock", "custom/power"],
+  "modules-right": [
+    "network",
+    "disk",
+    "memory",
+    "temperature",
+    "backlight",
+    "battery",
+    "pulseaudio",
+    "hyprland/language",
+    "custom/capslock",
+    "tray",
+    "clock",
+    "custom/power",
+  ],
 
   "hyprland/workspaces": {
     "disable-scroll": true,
     "all-outputs": true,
     "format": "{name}",
-    "persistent-workspaces": {"*": 2}
+    "persistent-workspaces": { "*": 2 },
+  },
+  "network": {
+    "interval": 5,
+    "format-ethernet": "󰈀",
+    "format-wifi": "󰤨",
+    "format-linked": "󰈀",
+    "format-disconnected": "󰤮",
+    "tooltip-format-ethernet": "{ifname}  {ipaddr}/{cidr}\n󰇚 {bandwidthDownBytes}  󰕒 {bandwidthUpBytes}",
+    "tooltip-format-wifi": "{essid} ({signalStrength}%)  {ipaddr}/{cidr}\n󰇚 {bandwidthDownBytes}  󰕒 {bandwidthUpBytes}",
+    "tooltip-format-disconnected": "Disconnected",
+  },
+  "disk": {
+    "interval": 60,
+    "path": "/",
+    "format": "󰋊 {percentage_used}%",
+    "states": { "warning": 80, "critical": 92 },
+    "tooltip-format": "Disk: {used} / {total} ({percentage_used}%)\nFree: {free}",
+  },
+  "memory": {
+    "interval": 5,
+    "format": "󰍛 {percentage}%",
+    "states": { "warning": 75, "critical": 90 },
+    "tooltip-format": "RAM: {used:0.1f}G / {total:0.1f}G\nSwap: {swapUsed:0.1f}G / {swapTotal:0.1f}G",
+  },
+  "temperature": {
+    "interval": 5,
+    "hwmon-path-abs": "/sys/devices/platform/coretemp.0/hwmon",
+    "input-filename": "temp1_input",
+    "critical-threshold": 80,
+    "format": "󰔏 {temperatureC}°",
+    "tooltip-format": "CPU: {temperatureC}°C",
   },
   "backlight": {
     "format": "󰃠",
@@ -19,7 +63,7 @@
     "on-click": "$HOME/.local/bin/brightness-control up",
     "on-click-right": "$HOME/.local/bin/brightness-control down",
     "on-scroll-up": "$HOME/.local/bin/brightness-control up",
-    "on-scroll-down": "$HOME/.local/bin/brightness-control down"
+    "on-scroll-down": "$HOME/.local/bin/brightness-control down",
   },
   "battery": {
     "interval": 9,
@@ -27,42 +71,41 @@
     "format-charging": "󰂄 {capacity}%",
     "format-full": "󰁹 {capacity}%",
     "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
-    "states": {"warning": 30, "critical": 15},
-    "tooltip-format": "Battery: {capacity}%\n{time}"
+    "states": { "warning": 30, "critical": 15 },
+    "tooltip-format": "Battery: {capacity}%\n{time}",
   },
   "pulseaudio": {
     "format": "{icon} {volume}%",
-    "format-muted": "󰖁",
-    "format-icons": {"default": ["", "", ""]},
+    "format-muted": "󰖁 ",
+    "format-icons": { "default": [" ", " ", "  "] },
     "tooltip-format": "Volume: {volume}%\nClick to mute",
     "on-click": "$HOME/.local/bin/volume-control mute",
     "on-scroll-up": "$HOME/.local/bin/volume-control up",
-    "on-scroll-down": "$HOME/.local/bin/volume-control down"
+    "on-scroll-down": "$HOME/.local/bin/volume-control down",
   },
   "hyprland/language": {
     "format": "{short}",
-    "keyboard-name": "at-translated-set-2-keyboard",
-    "tooltip-format": "Keyboard: {long}"
+    "tooltip-format": "Keyboard: {long}",
   },
   "custom/capslock": {
     "exec": "$HOME/.config/waybar/capslock.sh",
     "return-type": "json",
-    "interval": 0.15,
-    "tooltip": false
+    "restart-interval": 5,
+    "tooltip": false,
   },
   "tray": {
     "icon-size": 13,
-    "spacing": 5
+    "spacing": 5,
   },
   "clock": {
     "interval": 1,
     "format": "{:%H:%M}",
     "format-alt": "{:%d/%m  %H:%M:%S}",
-    "tooltip-format": "<big>{:%A, %d de %B}</big>\n<tt><small>{calendar}</small></tt>"
+    "tooltip-format": "<big>{:%A, %d de %B}</big>\n<tt><small>{calendar}</small></tt>",
   },
   "custom/power": {
     "format": "󰐥",
     "tooltip": false,
-    "on-click": "$HOME/.local/bin/power-menu"
-  }
+    "on-click": "$HOME/.local/bin/power-menu",
+  },
 }

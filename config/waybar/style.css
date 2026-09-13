@@ -56,6 +56,10 @@ window#waybar {
   background: @critical;
 }
 
+#network,
+#disk,
+#memory,
+#temperature,
 #backlight,
 #battery,
 #pulseaudio,
@@ -74,6 +78,20 @@ window#waybar {
 #backlight {
   color: @secondary;
 }
+
+#network { color: @muted; }
+#network.disconnected { color: @critical; }
+
+#disk { color: @muted; }
+#disk.warning { color: @warning; }
+#disk.critical { color: @critical; }
+
+#memory { color: @muted; }
+#memory.warning { color: @warning; }
+#memory.critical { color: @critical; }
+
+#temperature { color: @muted; }
+#temperature.critical { color: @critical; }
 
 #battery { color: @text; }
 #pulseaudio { color: @secondary; }
@@ -102,6 +120,10 @@ window#waybar {
 #custom-power:hover,
 #backlight:hover,
 #pulseaudio:hover,
+#network:hover,
+#disk:hover,
+#memory:hover,
+#temperature:hover,
 #clock:hover {
   color: @text;
   background: @raised;
