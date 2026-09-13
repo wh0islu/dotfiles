@@ -1,7 +1,7 @@
 local home = os.getenv("HOME")
 local mod = "SUPER"
 
-hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })
+hl.monitor({ output = "DP-1", mode = "1920x1080@240", position = "auto", scale = 1 })
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
 
 hl.on("hyprland.start", function()
@@ -11,15 +11,26 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("waybar")
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
     hl.exec_cmd("systemctl --user restart dunst.service")
-    hl.exec_cmd("wl-paste --type text --watch cliphist store")
-    hl.exec_cmd("wl-paste --type image --watch cliphist store")
-    hl.exec_cmd("swaybg -c '#080808'")
+    do
+        local wallpaper_dir = home .. "/Images/Wallpapers"
+        local first_wallpaper = nil
+        local handle = io.popen("ls -1 '" .. wallpaper_dir .. "' 2>/dev/null | head -n1")
+        if handle then
+            first_wallpaper = handle:read("*l")
+            handle:close()
+        end
+        if first_wallpaper and first_wallpaper ~= "" then
+            hl.exec_cmd("swaybg -i '" .. wallpaper_dir .. "/" .. first_wallpaper .. "' -m fill")
+        else
+            hl.exec_cmd("swaybg -c '#080808'")
+        end
+    end
 end)
 
 hl.config({
     input = {
-        kb_layout = "br",
-        kb_model = "thinkpad",
+        kb_layout = "us",
+        -- kb_model = "thinkpad", -- descomente ao instalar no ThinkPad
         follow_mouse = 1,
         sensitivity = 0,
         touchpad = {
@@ -56,7 +67,6 @@ hl.animation({ leaf = "workspaces", enabled = true, speed = 3, bezier = "default
 hl.bind(mod .. " + Return", hl.dsp.exec_cmd("alacritty"))
 hl.bind(mod .. " + D", hl.dsp.exec_cmd("rofi -show drun"))
 hl.bind(mod .. " + SHIFT + E", hl.dsp.exec_cmd("alacritty -e " .. home .. "/.local/bin/file-picker"))
-hl.bind(mod .. " + V", hl.dsp.exec_cmd(home .. "/.local/bin/clipboard-menu"))
 hl.bind(mod .. " + A", hl.dsp.exec_cmd(home .. "/.local/bin/audio-menu"))
 hl.bind(mod .. " + F1", hl.dsp.exec_cmd(home .. "/.local/bin/shortcut-center"))
 hl.bind(mod .. " + N", hl.dsp.exec_cmd("dunstctl close"))
