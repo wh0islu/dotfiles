@@ -4,15 +4,9 @@
 </div>
 <br>
 
-
-
-![i3wm](assets/i3.png)
-
-<br>
-
-<samp>set up Hyprland</samp>
+<samp>set up Arch + Hyprland (single script, packages + configs + fonts + neovim)</samp>
 ```bash
-./setup/hyprland.sh
+./install-arch.sh
 ```
 
 <br>
