@@ -1,55 +1,15 @@
 #!/usr/bin/env bash
-# Brilho pelo backlight do sysfs (notebook) ou por DDC/CI (monitor externo).
-# up/down ajustam e notificam; status imprime o JSON do modulo do waybar.
 set -euo pipefail
 
-step=5
-signal=9
-
-has_backlight() {
-  compgen -G '/sys/class/backlight/*' >/dev/null
-}
-
-current_percent() {
-  if has_backlight; then
-    brightnessctl -c backlight -m | awk -F, '{gsub("%", "", $4); print $4}'
-  else
-    ddcutil --brief getvcp 10 2>/dev/null | awk '$5 > 0 {print int($4 * 100 / $5)}'
-  fi
-}
-
 case "${1:-}" in
-  up | down)
-    if has_backlight; then
-      if [[ $1 == up ]]; then
-        brightnessctl -c backlight set "+${step}%" >/dev/null
-      else
-        brightnessctl -c backlight set "${step}%-" >/dev/null
-      fi
-    else
-      if [[ $1 == up ]]; then
-        ddcutil --noverify setvcp 10 + "$step"
-      else
-        ddcutil --noverify setvcp 10 - "$step"
-      fi
-    fi
-    brightness="$(current_percent)"
-    pkill -RTMIN+"$signal" waybar || true
-    notify-send -a System -t 1200 \
-      -h string:x-dunst-stack-tag:brightness \
-      -h int:value:"$brightness" \
-      "󰃠  Brightness ${brightness}%"
-    ;;
-  status)
-    brightness="$(current_percent || true)"
-    if [[ -n "$brightness" ]]; then
-      printf '{"text":"󰃠","tooltip":"Brightness: %s%%"}\n' "$brightness"
-    else
-      printf '{"text":""}\n'
-    fi
-    ;;
-  *)
-    printf 'Usage: brightness-control {up|down|status}\n' >&2
-    exit 2
-    ;;
+  up)   brightnessctl set +5% >/dev/null ;;
+  down) brightnessctl set 5%- >/dev/null ;;
+  *) printf 'Usage: brightness-control {up|down}\n' >&2; exit 2 ;;
 esac
+
+brightness="$(brightnessctl -m | awk -F, '{gsub("%", "", $4); print $4}')"
+
+notify-send -a System -t 1200 \
+  -h string:x-dunst-stack-tag:brightness \
+  -h int:value:"$brightness" \
+  "󰃠  Brightness ${brightness}%"
