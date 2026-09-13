@@ -35,7 +35,7 @@ docker cp $HOME/dotfiles/ arch-test:/root/
 **5. Run:**
 
 ```bash
-./install.sh
+./install-arch.sh
 ```
 
 > Finally testing..
