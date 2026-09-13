@@ -18,7 +18,7 @@ EOF
 packages=(
     # Hyprland / Wayland
     hyprland xdg-desktop-portal-hyprland waybar dunst alacritty rofi flameshot
-    swaybg hyprpolkitagent brightnessctl playerctl libnotify
+    swaybg hyprpolkitagent brightnessctl ddcutil playerctl libnotify
     pipewire pipewire-pulse wireplumber pavucontrol hyprlock hypridle fzf
     xdg-utils papirus-icon-theme
     # Base / dev tooling
@@ -28,7 +28,7 @@ packages=(
     # Neovim + formatadores/linters usados pelos plugins
     neovim nodejs npm ruff stylua prettier
     # Shell / CLI usados em config/zsh/.zshrc
-    zsh ruby starship
+    zsh starship
     # Outros apps com config versionada
     zathura zathura-pdf-poppler
 )
@@ -73,7 +73,9 @@ show_summary() {
     echo "  - scripts de config/local-bin/ em ~/.local/bin"
     echo "  - servico systemd --user hypridle.service habilitado"
     echo "  - docker.socket habilitado + usuario adicionado ao grupo docker"
+    echo "  - modulo i2c-dev carregado no boot (brilho de monitor externo via ddcutil)"
     echo "  - wallpapers de assets/wallpapers/ symlinkados em ~/Images/Wallpapers"
+    echo "  - pastas ~/Images/Captures e ~/Developments/Git"
     echo
 }
 
@@ -91,7 +93,9 @@ fi
 #   - scripts de config/local-bin/ symlinkados em ~/.local/bin
 #   - servico systemd --user hypridle.service habilitado
 #   - docker.socket habilitado + usuario adicionado ao grupo docker
+#   - modulo i2c-dev carregado no boot (brilho de monitor externo via ddcutil)
 #   - wallpapers de assets/wallpapers/ symlinkados em ~/Images/Wallpapers
+#   - pastas ~/Images/Captures e ~/Developments/Git
 
 repo="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 warnings=()
@@ -183,27 +187,44 @@ link_configs() {
 
 setup_wallpapers() {
     log "Configurando wallpapers..."
-    mkdir -p "$repo/assets/wallpapers" "$HOME/Images/Wallpapers"
-    [[ -n "$(ls -A "$repo/assets/wallpapers" 2>/dev/null)" ]] || touch "$repo/assets/wallpapers/.gitkeep"
+    mkdir -p "$HOME/Images/Wallpapers"
     shopt -s nullglob
     for wp in "$repo/assets/wallpapers/"*; do
-        [[ "$(basename "$wp")" == .gitkeep ]] && continue
         link "$wp" "$HOME/Images/Wallpapers/$(basename "$wp")"
     done
     shopt -u nullglob
 }
 
+# Sem systemd como PID 1 (container, chroot) os passos com systemctl sao pulados.
+has_systemd() {
+    [[ -d /run/systemd/system ]]
+}
+
 setup_docker() {
     log "Configurando Docker..."
-    sudo systemctl enable --now docker.socket
     sudo usermod -aG docker "$USER"
+    if has_systemd; then
+        sudo systemctl enable --now docker.socket
+    else
+        warn "systemd nao esta rodando; habilite depois: sudo systemctl enable --now docker.socket"
+    fi
+}
+
+setup_ddc() {
+    log "Habilitando i2c-dev para controle de brilho via DDC/CI..."
+    echo i2c-dev | sudo tee /etc/modules-load.d/i2c-dev.conf >/dev/null
+    sudo modprobe i2c-dev 2>/dev/null || warn "Nao foi possivel carregar o i2c-dev agora; ele carrega no proximo boot."
 }
 
 setup_dirs() {
-    mkdir -p "$HOME/Developments/Git"
+    mkdir -p "$HOME/Developments/Git" "$HOME/Images/Captures"
 }
 
 setup_services() {
+    if ! has_systemd; then
+        warn "systemd nao esta rodando; habilite depois: systemctl --user enable --now hypridle.service"
+        return
+    fi
     log "Habilitando servicos de usuario..."
     systemctl --user daemon-reload
     systemctl --user enable --now hypridle.service
@@ -215,6 +236,7 @@ install_fonts
 link_configs
 setup_wallpapers
 setup_docker
+setup_ddc
 setup_dirs
 setup_services
 
@@ -225,11 +247,13 @@ if [[ ${#warnings[@]} -gt 0 ]]; then
     printf ' - %s\n' "${warnings[@]}"
 fi
 echo
-echo "Abra o Neovim e rode :Lazy restore, depois abra um arquivo e confira :Mason e :checkhealth."
-echo "Para wallpapers: coloque imagens em $repo/assets/wallpapers/ e rode este script de novo."
+if [[ ! -e "$repo/config/hypr/local.lua" ]]; then
+    echo "Monitor, teclado e wallpaper desta maquina: cp $repo/config/hypr/local.lua.example $repo/config/hypr/local.lua"
+fi
+echo "Para novos wallpapers: coloque imagens em $repo/assets/wallpapers/ e rode este script de novo."
 echo
 
-read -rp "Deseja reiniciar agora? [y/N]: " answer
+read -rp "Deseja reiniciar agora? [y/N]: " answer || answer=""
 answer=${answer,,}
 if [[ "$answer" == y* ]]; then
     sudo reboot
