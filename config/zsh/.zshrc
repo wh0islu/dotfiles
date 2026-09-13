@@ -63,17 +63,34 @@ export PATH="$HOME/.local/bin:$HOME/.local/opt/nodejs/bin:$PATH"
 autoload -Uz compinit
 compinit -C
 
+# Cores do ls e do completion na paleta kz (truecolor, sem fundo).
+() {
+  local dir='1;38;2;159;190;160'
+  local link='38;2;159;185;180'
+  local broken='38;2;216;154;154'
+  local exec='1;38;2;210;189;140'
+  local archive='38;2;180;165;184'
+  local media='38;2;159;173;184'
+  local special='38;2;133;133;139'
+  local -a c=(
+    "di=$dir" "ow=$dir" "tw=$dir" "st=$dir"
+    "ln=$link" "or=$broken" "mi=$broken"
+    "ex=$exec" "su=$exec" "sg=$exec"
+    "pi=$special" "so=$special" "bd=$special" "cd=$special" "do=$special"
+  )
+  local ext
+  for ext in tar tgz gz xz zst bz2 zip 7z rar iso deb rpm; do c+=("*.$ext=$archive"); done
+  for ext in png jpg jpeg gif webp svg bmp mp4 mkv webm mov avi mp3 flac ogg wav; do c+=("*.$ext=$media"); done
+  export LS_COLORS="${(j.:.)c}"
+}
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 ############################################################
 # ALIASES
 ############################################################
 
-alias ls='eza --icons=auto --group-directories-first'
-alias ll='eza -la --icons=auto --group-directories-first --git'
-alias tree='eza --tree --icons=auto --group-directories-first'
-alias b='bat'
-alias catp='bat --paging=never'
+alias ls='ls --color=auto --group-directories-first'
+alias ll='ls -la'
 alias grep='grep --color=auto'
 alias v='nvim'
 alias dev='cd ~/Developments'
@@ -150,36 +167,26 @@ codex() {
 # KEYBOARD-FIRST CLI
 ############################################################
 
-export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_DEFAULT_COMMAND='find . -type f -not -path "*/.git/*"'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+export FZF_ALT_C_COMMAND='find . -type d -not -path "*/.git/*"'
 export FZF_DEFAULT_OPTS='--height=45% --layout=reverse --border=rounded --info=inline --prompt="› " --pointer="▸" --marker="✓" --color=bg+:#18181b,bg:#080808,spinner:#a1a1aa,hl:#c5c5ca,fg:#d7d7da,header:#85858b,info:#85858b,pointer:#c5c5ca,marker:#9fbea0,fg+:#f5f5f7,prompt:#c5c5ca,hl+:#f5f5f7'
-export FZF_CTRL_T_OPTS='--preview "bat --color=always --style=numbers --line-range=:200 {}"'
+export FZF_CTRL_T_OPTS='--preview "cat {}"'
 
 source /usr/share/fzf/completion.zsh
 source /usr/share/fzf/key-bindings.zsh
-eval "$(zoxide init zsh)"
-
-y() {
-  local cwd_file cwd
-  cwd_file="$(mktemp -t yazi-cwd.XXXXXX)" || return 1
-  command yazi "$@" --cwd-file="$cwd_file"
-  cwd="$(<"$cwd_file")"
-  command rm -f -- "$cwd_file"
-  [[ -n "$cwd" && "$cwd" != "$PWD" ]] && builtin cd -- "$cwd"
-}
 
 # Select a directory with fzf and enter it.
 fcd() {
   local dir
-  dir="$(fd --type d --hidden --exclude .git . "${1:-$HOME}" | fzf --preview 'eza -la --icons=auto --color=always {}')" || return
+  dir="$(find "${1:-$HOME}" -type d -not -path '*/.git/*' | fzf --preview 'ls -la {}')" || return
   [[ -n "$dir" ]] && builtin cd -- "$dir"
 }
 
 # Select a file with a preview and open it in Neovim.
 fedit() {
   local file
-  file="$(fd --type f --hidden --exclude .git . "${1:-.}" | fzf --preview 'bat --color=always --style=numbers --line-range=:250 {}')" || return
+  file="$(find "${1:-.}" -type f -not -path '*/.git/*' | fzf --preview 'cat {}')" || return
   [[ -n "$file" ]] && nvim -- "$file"
 }
 
