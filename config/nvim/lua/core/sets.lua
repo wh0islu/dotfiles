@@ -2,7 +2,9 @@ vim.cmd([[syntax enable]])
 vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
-vim.g.python3_host_prog = vim.fn.expand("~/.virtualenvs/neovim/bin/python")
+-- No configured plugin requires the Python remote-plugin host.
+-- Python LSP, Ruff and :Run use external executables independently.
+vim.g.loaded_python3_provider = 0
 vim.o.encoding = "utf-8"
 vim.opt.fileencodings = { "utf-8", "ucs-bom", "default", "latin1" }
 vim.o.hidden = true

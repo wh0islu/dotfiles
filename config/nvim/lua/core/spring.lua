@@ -1,6 +1,6 @@
 local M = {}
 
-local projects_root = vim.fn.expand("~/Developments/Git")
+local projects_root = require("core.environment").projects_root()
 local default_dependencies = "web,validation,lombok,devtools"
 local database_dependencies = "data-jpa,postgresql"
 

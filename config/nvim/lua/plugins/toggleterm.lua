@@ -24,17 +24,7 @@ local PANEL_HEIGHT = 12
 -- Codex
 -- =========================================================
 
-local codex_bin =
-"$HOME/.nvm/versions/node/v22.22.1/lib/node_modules/@openai/codex/bin/codex.js"
-
-local node_bin =
-"$HOME/.nvm/versions/node/v22.22.1/bin/node"
-
-local codex_cmd =
-	vim.fn.executable(node_bin) == 1
-	and vim.fn.filereadable(codex_bin) == 1
-	and (node_bin .. " " .. codex_bin)
-	or "codex"
+local codex_cmd = "codex"
 
 -- =========================================================
 -- Janela do editor

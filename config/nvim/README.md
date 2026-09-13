@@ -4,6 +4,47 @@ Esta configuracao fica em `~/.config/nvim` e usa Lua com carregamento modular.
 O arquivo de entrada e `init.lua`, que carrega opcoes gerais, atalhos, runner,
 plugins e o tema local `cyberia`.
 
+## Instalacao e dependencias
+
+Esta configuracao faz parte do fluxo unico de instalacao do repositorio. Na
+raiz do repositorio, em uma maquina Arch:
+
+```bash
+./install-arch.sh                            # pacotes, fontes, configs, symlink do nvim etc.
+./install-arch.sh --java --go --rust --nix --extras
+```
+
+O instalador usa `pacman -Syu --needed` (inclui atualizacao do sistema, com
+confirmacao do pacman) e symlinka `config/nvim` para `~/.config/nvim` sem
+sobrescrever uma configuracao existente (faz backup em vez de apagar). Os
+grupos por linguagem sao opcionais. `--extras` instala lazygit e Poetry.
+Claude Code e a CLI `codex` devem estar no PATH para usar seus atalhos.
+
+Ao abrir o Neovim, o Lazy instala os plugins. Use `:Lazy restore` para aplicar
+as revisoes de `lazy-lock.json`. Abra um arquivo para acionar o Mason e confira
+`:Mason` e `:checkhealth`. O Mason instala basedpyright, clangd, lua_ls, ts_ls e
+jdtls; Ruff, StyLua e Prettier sao instalados pelo script. JDTLS precisa de um
+JDK compativel; o grupo `--java` fornece JDK 21. Os parsers Treesitter sao
+instalados ao abrir arquivos.
+
+## Ajustes locais
+
+Variaveis opcionais do shell, definidas antes de abrir o Neovim:
+
+```bash
+export NVIM_PROJECTS_DIR="$HOME/Projects"
+export NVIM_JAVA_HOME="/caminho/para/seu/jdk-21"
+```
+
+Dashboard e Spring usam `NVIM_PROJECTS_DIR`, com `~/Developments/Git` como
+padrao. Java usa, nesta ordem, `NVIM_JAVA_HOME`, `JAVA_HOME`, uma instalacao
+JDK 21 em `/usr/lib/jvm`, ou `java` no PATH. Caminhos de JDK precisam conter
+`bin/java` executavel. Escolha um JDK compativel com o JDTLS instalado.
+
+O timeout de formatacao ao salvar continua em 1000 ms. Para arquivos que
+precisem de mais tempo, defina `vim.g.format_timeout_ms = 3000` antes do
+carregamento dos plugins em `init.lua`. Consulte `:ConformInfo` para diagnostico.
+
 ## Estrutura
 
 ```text
@@ -48,9 +89,10 @@ O Neovim usa `lazy.nvim` como gerenciador de plugins. Caso o Lazy nao exista em
 `~/.local/share/nvim/lazy/lazy.nvim`, ele e clonado automaticamente.
 
 Os plugins sao carregados sob demanda quando possivel. Telescope, NvimTree,
-ToggleTerm, completion, LSP, DAP, Git helpers e outras ferramentas entram apenas
+ToggleTerm, completion, Git helpers e outras ferramentas entram apenas
 quando um comando, tecla ou evento precisa deles. Isso mantem o startup mais
-leve.
+leve. A configuracao LSP e registrada na inicializacao; os servidores iniciam
+conforme o tipo de arquivo e a raiz do projeto.
 
 Quando o Neovim abre sem arquivo, `lua/core/dashboard.lua` cria uma tela inicial
 minimalista com logo central em ASCII e um menu de acoes rapidas.
@@ -131,7 +173,7 @@ O leader esta definido como `,`.
 | `p` na tela inicial | lista repositorios em `~/Developments/Git` |
 | `f` na tela inicial | busca arquivos no projeto atual |
 | `g` na tela inicial | busca texto no projeto atual |
-| `s` na tela inicial | lista arquivos recentes com Telescope |
+| `s` na tela inicial | restaura sessao; fallback para arquivos recentes |
 | `c` na tela inicial | abre `~/.config/nvim/init.lua` |
 | `L` na tela inicial | abre o Lazy |
 | `q` na tela inicial | sai do Neovim |
@@ -145,19 +187,24 @@ O runner tenta detectar primeiro o tipo de projeto:
 
 | Arquivo do projeto | Comando |
 | --- | --- |
-| `manage.py` + `pyproject.toml` | `poetry run python manage.py runserver` |
+| `manage.py` + projeto Poetry (com Poetry instalado) | `poetry run python manage.py runserver` |
 | `manage.py` | `python manage.py runserver` |
-| `package.json` | `npm run dev` |
-| `mvnw` + `pom.xml` | `./mvnw spring-boot:run` |
-| `gradlew` + `build.gradle` | `./gradlew bootRun` |
+| `package.json` com script `dev` ou `start` | `npm run dev` ou `npm run start` |
+| `mvnw` + `pom.xml` | `sh ./mvnw spring-boot:run` |
+| `gradlew` + `build.gradle` | `sh ./gradlew bootRun` |
 | `pom.xml` | `mvn spring-boot:run` |
 | `build.gradle` | `gradle bootRun` |
 | `Cargo.toml` | `cargo run` |
 | `go.mod` | `go run .` |
 
-Para comandos Java/Spring Boot, o runner usa `JAVA_HOME=/usr/lib/jvm/java-21-openjdk`
-quando esse JDK estiver instalado. Isso evita erro de Maven como
-`release version 21 not supported` quando o Java default do sistema ainda for 17.
+O runner considera o diretorio de trabalho atual como raiz. Maven precisa
+de `spring-boot-maven-plugin` declarado no `pom.xml`; Gradle precisa de
+`org.springframework.boot` em `build.gradle` ou `build.gradle.kts`. Declaracoes
+herdadas ou indiretas nao sao detectadas. Sem essa declaracao, ou sem scripts
+`dev`/`start` no package.json, o runner avisa e nao executa outro comando.
+O gerenciador JavaScript usado continua sendo npm.
+
+A selecao do JDK segue a secao Ajustes locais.
 
 Em projetos Maven Spring Boot, o runner tambem procura a classe com
 `@SpringBootApplication` em `src/main/java` e passa explicitamente
@@ -275,9 +322,7 @@ Mason:
 
 - `jdtls`
 
-O `jdtls` usa `/usr/lib/jvm/java-21-openjdk/bin/java` quando esse Java estiver
-instalado. Isso permite manter outro Java como default do sistema e ainda assim
-rodar o language server moderno.
+O `jdtls` compartilha a selecao de Java do runner (veja Ajustes locais).
 
 Atalhos Java:
 
@@ -459,7 +504,7 @@ Use `<leader>td` para buscar essas marcacoes com Telescope.
 
 Configurado em `lua/plugins/toggleterm.lua`:
 
-- tamanho 20
+- tamanho 12
 - direcao horizontal
 - atalho nativo do plugin: `<C-\>`
 - `<C-t>` abre o terminal horizontal para comandos do projeto
@@ -537,7 +582,7 @@ Configurado em `lua/plugins/lualine.lua`:
   (so em arquivos `.py`), filetype, progresso e posicao
 - desabilitado para `NvimTree`
 
-## Tema Kaizen
+## Tema Cyberia
 
 O tema ativo esta em `lua/themes/cyberia.lua`.
 
@@ -549,7 +594,7 @@ O fundo base do tema Cyberia e:
 
 O tema antigo permanece em `lua/themes/kaizen.lua`.
 
-Ele foi feito para combinar com o Alacritty atual:
+A paleta abaixo documenta o tema antigo Kaizen:
 
 | Uso | Cor |
 | --- | --- |
