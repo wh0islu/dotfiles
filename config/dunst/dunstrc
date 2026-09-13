@@ -42,6 +42,7 @@
     min_icon_size = 24
     max_icon_size = 40
     enable_recursive_icon_lookup = true
+    icon_theme = "Papirus-Dark, Adwaita"
 
     sticky_history = yes
     history_length = 20
@@ -84,7 +85,7 @@
     frame_color = "#9FBEA0"
 
 [system]
-    appname = "System|NetworkManager|nm-applet|Flameshot|Update|Downloads|Battery
+    appname = "System|NetworkManager|nm-applet|Flameshot|Update|Downloads|Battery"
     frame_color = "#9FB9B4"
 
 [terminal]
