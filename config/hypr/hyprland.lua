@@ -1,7 +1,26 @@
 local home = os.getenv("HOME")
 local mod = "SUPER"
 
-hl.monitor({ output = "DP-1", mode = "1920x1080@240", position = "auto", scale = 1 })
+-- Ajustes por maquina ficam em local.lua (fora do git); modelo em local.lua.example.
+local machine = {
+    monitors = { { output = "", mode = "preferred", position = "auto", scale = 1 } },
+    kb_layout = "us",
+    kb_model = "",
+    wallpaper = nil,
+}
+
+local local_config = home .. "/.config/hypr/local.lua"
+local local_file = io.open(local_config)
+if local_file then
+    local_file:close()
+    for key, value in pairs(dofile(local_config)) do
+        machine[key] = value
+    end
+end
+
+for _, monitor in ipairs(machine.monitors) do
+    hl.monitor(monitor)
+end
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
 
 hl.on("hyprland.start", function()
@@ -13,14 +32,19 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("systemctl --user restart dunst.service")
     do
         local wallpaper_dir = home .. "/Images/Wallpapers"
-        local first_wallpaper = nil
-        local handle = io.popen("ls -1 '" .. wallpaper_dir .. "' 2>/dev/null | head -n1")
-        if handle then
-            first_wallpaper = handle:read("*l")
-            handle:close()
+        local wallpaper = machine.wallpaper
+        if not wallpaper then
+            local handle = io.popen("ls -1 '" .. wallpaper_dir .. "' 2>/dev/null | grep -iE '\\.(png|jpe?g|webp)$' | head -n1")
+            if handle then
+                wallpaper = handle:read("*l")
+                handle:close()
+            end
         end
-        if first_wallpaper and first_wallpaper ~= "" then
-            hl.exec_cmd("swaybg -i '" .. wallpaper_dir .. "/" .. first_wallpaper .. "' -m fill")
+        if wallpaper and wallpaper ~= "" then
+            if wallpaper:sub(1, 1) ~= "/" then
+                wallpaper = wallpaper_dir .. "/" .. wallpaper
+            end
+            hl.exec_cmd("swaybg -i '" .. wallpaper .. "' -m fill")
         else
             hl.exec_cmd("swaybg -c '#080808'")
         end
@@ -29,8 +53,8 @@ end)
 
 hl.config({
     input = {
-        kb_layout = "us",
-        -- kb_model = "thinkpad", -- descomente ao instalar no ThinkPad
+        kb_layout = machine.kb_layout,
+        kb_model = machine.kb_model,
         follow_mouse = 1,
         sensitivity = 0,
         touchpad = {
@@ -100,7 +124,7 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(home .. "/.local/bin/brightness
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
-hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("env QT_QPA_PLATFORM=wayland XDG_CURRENT_DESKTOP=Hyprland flameshot screen --number 0 --edit"))
+hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("env QT_QPA_PLATFORM=wayland XDG_CURRENT_DESKTOP=Hyprland flameshot screen --number 0 --edit --path " .. home .. "/Images/Captures"))
 
 for workspace = 1, 10 do
     local key = workspace % 10
