@@ -6,19 +6,19 @@ end
 claudecode.setup({})
 
 vim.keymap.set("n", "<leader>cc", "<cmd>ClaudeCode<cr>", {
-    desc = "Abrir/fechar Claude",
+    desc = "Toggle Claude",
     noremap = true,
     silent = true,
 })
 
 vim.keymap.set("v", "<leader>cs", "<cmd>ClaudeCodeSend<cr>", {
-    desc = "Enviar selecao para o Claude",
+    desc = "Send selection to Claude",
     noremap = true,
     silent = true,
 })
 
 vim.keymap.set("n", "<leader>cw", "<cmd>ClaudeCodeFocus<cr>", {
-    desc = "Focar janela do Claude",
+    desc = "Focus Claude window",
     noremap = true,
     silent = true,
 })

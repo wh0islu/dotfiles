@@ -11,8 +11,8 @@ require("toggleterm").setup({
 	persist_mode = false,
 	persist_size = true,
 
-	-- Impede o ToggleTerm de alterar automaticamente
-	-- a cor do terminal.
+	-- Prevent ToggleTerm from automatically changing
+	-- the terminal color.
 	shade_terminals = false,
 })
 
@@ -27,7 +27,7 @@ local PANEL_HEIGHT = 12
 local codex_cmd = "codex"
 
 -- =========================================================
--- Janela do editor
+-- Editor window
 -- =========================================================
 
 local terminal_targets = {}
@@ -66,7 +66,7 @@ local function get_editor_window()
 end
 
 -- =========================================================
--- Visual do terminal
+-- Terminal appearance
 -- =========================================================
 
 local function apply_terminal_style(term)
@@ -88,7 +88,7 @@ local function apply_terminal_style(term)
 end
 
 -- =========================================================
--- Posicionamento abaixo do editor
+-- Position below the editor
 -- =========================================================
 
 local function place_terminal_below_editor(
@@ -134,7 +134,7 @@ local function place_terminal_below_editor(
 end
 
 -- =========================================================
--- Toggle do painel
+-- Panel toggle
 -- =========================================================
 
 local function toggle_terminal_panel(
@@ -150,7 +150,7 @@ local function toggle_terminal_panel(
 
 	if not target then
 		vim.notify(
-			"Nenhuma janela de editor encontrada.",
+			"No editor window found.",
 			vim.log.levels.WARN
 		)
 
@@ -159,7 +159,7 @@ local function toggle_terminal_panel(
 
 	terminal_targets[term.id] = target
 
-	-- Evita mostrar o layout intermediário
+	-- Avoid displaying the intermediate layout
 	local old_lazyredraw = vim.o.lazyredraw
 
 	vim.o.lazyredraw = true
@@ -175,7 +175,7 @@ local function toggle_terminal_panel(
 
 	if not ok then
 		vim.notify(
-			"Erro ao abrir terminal: "
+			"Error opening terminal: "
 			.. tostring(err),
 			vim.log.levels.ERROR
 		)
@@ -187,7 +187,7 @@ local function toggle_terminal_panel(
 end
 
 -- =========================================================
--- Terminal principal
+-- Main terminal
 -- =========================================================
 
 local project_terminal = Terminal:new({
@@ -285,7 +285,7 @@ local lazygit = Terminal:new({
 local function toggle_lazygit()
 	if vim.fn.executable("lazygit") == 0 then
 		vim.notify(
-			"lazygit nao esta instalado.",
+			"lazygit is not installed.",
 			vim.log.levels.WARN
 		)
 
@@ -368,7 +368,7 @@ local function restart_codex()
 end
 
 -- =========================================================
--- Sempre entrar no terminal em modo de digitação
+-- Always enter terminals in input mode
 -- =========================================================
 
 vim.api.nvim_create_autocmd(
@@ -397,7 +397,7 @@ vim.api.nvim_create_autocmd(
 -- Keymaps
 -- =========================================================
 
--- Terminal principal
+-- Main terminal
 vim.keymap.set(
 	{ "n", "t" },
 	"<C-t>",
@@ -408,7 +408,7 @@ vim.keymap.set(
 		)
 	end,
 	{
-		desc = "Abrir terminal",
+		desc = "Open terminal",
 		noremap = true,
 		silent = true,
 	}
@@ -425,7 +425,7 @@ vim.keymap.set(
 		)
 	end,
 	{
-		desc = "Rodar Django runserver",
+		desc = "Run Django runserver",
 		noremap = true,
 		silent = true,
 	}
@@ -442,7 +442,7 @@ vim.keymap.set(
 		)
 	end,
 	{
-		desc = "Rodar npm run dev",
+		desc = "Run npm run dev",
 		noremap = true,
 		silent = true,
 	}
@@ -454,7 +454,7 @@ vim.keymap.set(
 	"<leader>tg",
 	toggle_lazygit,
 	{
-		desc = "Abrir Lazygit",
+		desc = "Open Lazygit",
 		noremap = true,
 		silent = true,
 	}
@@ -465,7 +465,7 @@ vim.keymap.set(
 	"<leader>gt",
 	toggle_lazygit,
 	{
-		desc = "Abrir Lazygit",
+		desc = "Open Lazygit",
 		noremap = true,
 		silent = true,
 	}
@@ -477,7 +477,7 @@ vim.keymap.set(
 	"<leader>ai",
 	open_codex,
 	{
-		desc = "Abrir Codex lateral",
+		desc = "Open Codex sidebar",
 		noremap = true,
 		silent = true,
 	}
@@ -488,7 +488,7 @@ vim.keymap.set(
 	"<leader>ac",
 	open_codex,
 	{
-		desc = "Abrir Codex no projeto",
+		desc = "Open Codex in project",
 		noremap = true,
 		silent = true,
 	}
@@ -499,7 +499,7 @@ vim.keymap.set(
 	"<leader>ak",
 	close_codex,
 	{
-		desc = "Fechar Codex",
+		desc = "Close Codex",
 		noremap = true,
 		silent = true,
 	}
@@ -510,7 +510,7 @@ vim.keymap.set(
 	"<leader>ar",
 	restart_codex,
 	{
-		desc = "Reiniciar Codex",
+		desc = "Restart Codex",
 		noremap = true,
 		silent = true,
 	}

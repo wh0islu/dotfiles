@@ -3,24 +3,24 @@ local colors = {
   -- Backgrounds
   -- =========================================================
 
-  -- Área principal do editor
+  -- Main editor area
   bg = "#080808",
   bg_dark = "#080808",
 
   -- NvimTree + Terminal
   bg_panel = "#0D0D0D",
 
-  -- Seleções discretas dentro dos painéis
+  -- Subtle selections inside panels
   bg_panel_soft = "#131313",
 
-  -- Janelas flutuantes
+  -- Floating windows
   bg_float = "#0D0D0D",
 
-  -- Elementos internos
+  -- Internal elements
   bg_soft = "#101010",
   bg_visual = "#202C33",
 
-  -- Separadores extremamente discretos
+  -- Very subtle separators
   border = "#131313",
 
   -- =========================================================
@@ -145,7 +145,7 @@ local function apply_theme()
   })
 
   -- =========================================================
-  -- Seleção
+  -- Selection
   -- =========================================================
 
   hi("Visual", {
@@ -204,7 +204,7 @@ local function apply_theme()
   })
 
   -- =========================================================
-  -- Windows / Separadores
+  -- Windows / Separators
   -- =========================================================
 
   hi("WinSeparator", {
@@ -239,7 +239,7 @@ local function apply_theme()
   -- =========================================================
   -- Terminal
   --
-  -- O ToggleTerm usa esses grupos via winhighlight.
+  -- ToggleTerm uses these groups through winhighlight.
   -- =========================================================
 
   hi("TerminalNormal", {
@@ -545,94 +545,78 @@ local function apply_theme()
 
   hi("NvimTreeRootFolder", {
     fg = colors.blue,
-    bg = colors.bg_panel,
     bold = true,
   })
 
   hi("NvimTreeFolderName", {
     fg = colors.fg_soft,
-    bg = colors.bg_panel,
   })
 
   hi("NvimTreeOpenedFolderName", {
     fg = colors.blue,
-    bg = colors.bg_panel,
     bold = true,
   })
 
   hi("NvimTreeEmptyFolderName", {
     fg = colors.muted,
-    bg = colors.bg_panel,
   })
 
   hi("NvimTreeFolderIcon", {
     fg = colors.blue_soft,
-    bg = colors.bg_panel,
   })
 
   hi("NvimTreeOpenedFolderIcon", {
     fg = colors.blue,
-    bg = colors.bg_panel,
   })
 
   hi("NvimTreeFileIcon", {
     fg = colors.fg_soft,
-    bg = colors.bg_panel,
   })
 
   hi("NvimTreeIndentMarker", {
     fg = colors.muted_soft,
-    bg = colors.bg_panel,
   })
 
   hi("NvimTreeGitDirty", {
     fg = colors.yellow,
-    bg = colors.bg_panel,
   })
 
   hi("NvimTreeGitNew", {
     fg = colors.green,
-    bg = colors.bg_panel,
   })
 
   hi("NvimTreeGitDeleted", {
     fg = colors.red,
-    bg = colors.bg_panel,
   })
 
   hi("NvimTreeGitStaged", {
     fg = colors.green,
-    bg = colors.bg_panel,
   })
 
   hi("NvimTreeGitMerge", {
     fg = colors.purple,
-    bg = colors.bg_panel,
   })
 
   hi("NvimTreeGitRenamed", {
     fg = colors.teal_soft,
-    bg = colors.bg_panel,
   })
 
   hi("NvimTreeSpecialFile", {
     fg = colors.yellow,
-    bg = colors.bg_panel,
     bold = true,
   })
 
   hi("NvimTreeSymlink", {
     fg = colors.teal_soft,
-    bg = colors.bg_panel,
   })
 
+  -- The text cursor is hidden in the tree; this highlight is the only selection indicator.
   hi("NvimTreeCursorLine", {
-    bg = colors.bg_panel_soft,
+    bg = colors.bg_visual,
   })
 
   hi("NvimTreeExecFile", {
     fg = colors.green,
-    bg = colors.bg_panel,
   })
 
   -- =========================================================

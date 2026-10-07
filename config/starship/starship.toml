@@ -1,53 +1,85 @@
+# Match the waybar/GTK palette (config/waybar/style.css) to give the entire
+# desktop a consistent visual identity instead of generic starship colors.
+#   meter #6bd6d6 (cyan, accent)      accent #9fbea0 (green, clean git tree)
+#   critical #ff5f5f (error/dirty)    warning #d2bd8c (command duration)
+#   secondary #a9afb3 (languages)    muted #85858b (time, secondary text)
+
 format = """
 $directory\
-$nodejs\
-$golang\
-$c\
-$python\
-$git_branch\
-$git_status\
-$character
-"""
+$git_branch$git_status\
+$nodejs$golang$c$python$rust\
+$cmd_duration
+$character"""
+
+right_format = "[$time]($style)"
+
+add_newline = true
 
 [directory]
-style = "bold green"
-truncate_to_repo = false
+style = "bold #6bd6d6"
+truncate_to_repo = true
+truncation_length = 3
+truncation_symbol = "…/"
+format = "[$path]($style)[$read_only]($read_only_style) "
+read_only = " "
+read_only_style = "#ff5f5f"
+
+[git_branch]
+symbol = " "
+style = "bold #9fbea0"
+format = "on [$symbol$branch]($style) "
+
+[git_status]
+style = "bold #ff5f5f"
+format = "[$all_status$ahead_behind]($style) "
 
 [nodejs]
-symbol = "  "
+symbol = " "
 format = "via [$symbol$version]($style) "
-style = "bold yellow"
+style = "bold #d2bd8c"
 detect_extensions = ["js", "ts"]
 detect_files = ["package.json", "node_modules"]
 
 [golang]
-symbol = " "
+symbol = " "
 format = "via [$symbol$version]($style) "
-style = "bold blue"
+style = "bold #a9afb3"
 detect_extensions = ["go"]
 detect_files = ["go.mod"]
 
 [c]
-symbol = " "
+symbol = " "
 format = "via [$symbol$version]($style) "
-style = "bold red"
+style = "bold #ff5f5f"
 detect_extensions = ["c", "h"]
 detect_files = ["Makefile", "CMakeLists.txt"]
 
 [python]
-symbol = " "
+symbol = " "
 format = "via [$symbol$version]($style) "
-style = "bold green"
+style = "bold #9fbea0"
 pyenv_version_name = true
 detect_files = ["pyproject.toml", "requirements.txt", ".venv", "venv"]
 
-[git_branch]
-symbol = "󰊢 "
-style = "bold purple"
+[rust]
+symbol = " "
+format = "via [$symbol$version]($style) "
+style = "bold #ff5f5f"
+detect_extensions = ["rs"]
+detect_files = ["Cargo.toml"]
 
-[git_status]
-style = "red"
+[cmd_duration]
+min_time = 2_000
+style = "bold #d2bd8c"
+format = "took [$duration]($style)"
+
+[time]
+disabled = false
+time_format = "%H:%M"
+style = "#85858b"
+format = "[$time]($style)"
 
 [character]
-success_symbol = "[➜ ](bold green) "
-error_symbol = "[✗](bold red) "
+success_symbol = "[❯](bold #6bd6d6)"
+error_symbol = "[❯](bold #ff5f5f)"
+vimcmd_symbol = "[❮](bold #9fbea0)"

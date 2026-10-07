@@ -10,7 +10,7 @@ setopt notify
 setopt numericglobsort
 setopt promptsubst
 
-# Histórico
+# History
 setopt histignorealldups
 setopt sharehistory
 setopt hist_expire_dups_first
@@ -64,11 +64,13 @@ path=($HOME/.local/share/gem/ruby/*/bin(N/) $path)
 autoload -Uz compinit
 compinit -C
 
-# Cores do ls e do completion na paleta kz (truecolor, sem fundo).
+# Use the waybar/starship palette for ls and completion (truecolor, no
+# background): directories use the same cyan accent as the rest of the desktop;
+# other entries use distinct shades so they are easy to tell apart.
 () {
-  local dir='1;38;2;159;190;160'
-  local link='38;2;159;185;180'
-  local broken='38;2;216;154;154'
+  local dir='1;38;2;107;214;214'
+  local link='38;2;169;175;179'
+  local broken='38;2;255;95;95'
   local exec='1;38;2;210;189;140'
   local archive='38;2;180;165;184'
   local media='38;2;159;173;184'
@@ -94,6 +96,17 @@ alias ls='ls --color=auto --group-directories-first'
 alias ll='ls -la'
 alias grep='grep --color=auto'
 alias v='nvim'
+# Run terminal Neovim (TUI, same config/plugins) in its own Alacritty window
+# with Fira Code, without changing the current terminal's font:
+# a single terminal window can only use one font for all its contents.
+nv() {
+  setsid alacritty --class neovim-fira \
+    -o 'font.normal.family="FiraCode Nerd Font"' \
+    -o 'font.bold.family="FiraCode Nerd Font"' \
+    -o 'font.italic.family="FiraCode Nerd Font"' \
+    -e nvim "$@" >/dev/null 2>&1 &
+  disown
+}
 alias dev='cd ~/Developments'
 alias gitp='cd ~/Developments/Git/'
 alias ..='cd ..'
@@ -238,6 +251,18 @@ add-zsh-hook precmd _command_notify_precmd
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#44475a'
 source "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+# Use the cyan accent for valid commands instead of the plugin's dull default green
+# (the same color as ls/starship). Set this before sourcing the plugin below:
+# the plugin only applies its default when the key does not already exist.
+typeset -gA ZSH_HIGHLIGHT_STYLES
+ZSH_HIGHLIGHT_STYLES[arg0]='fg=#6bd6d6,bold'
+ZSH_HIGHLIGHT_STYLES[precommand]='fg=#6bd6d6,underline'
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#ff5f5f,bold'
+ZSH_HIGHLIGHT_STYLES[path]='fg=#a9afb3,underline'
+ZSH_HIGHLIGHT_STYLES[globbing]='fg=#d2bd8c'
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#d2bd8c'
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#d2bd8c'
 source "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 ############################################################

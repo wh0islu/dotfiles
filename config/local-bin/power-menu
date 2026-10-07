@@ -3,10 +3,10 @@ set -euo pipefail
 
 choice="$(printf '%s\n' \
   '󰌾  Lock' \
-  '󰒲  Suspender' \
-  '󰤄  Hibernar' \
-  '󰜉  Reiniciar' \
-  '󰐥  Desligar' \
+  '󰒲  Suspend' \
+  '󰤄  Hibernate' \
+  '󰜉  Restart' \
+  '󰐥  Poweroff' \
   '󰍃  Log out' |
   rofi -dmenu -i -p 'Session')"
 
@@ -18,9 +18,9 @@ confirm() {
 
 case "$choice" in
   *Lock)             exec "$HOME/.local/bin/lockscreen" ;;
-  *Suspender)        systemctl suspend ;;
-  *Hibernar)         confirm 'Hibernar agora?' && systemctl hibernate ;;
-  *Reiniciar)        confirm 'Reiniciar agora?' && systemctl reboot ;;
-  *Desligar)         confirm 'Desligar agora?' && systemctl poweroff ;;
+  *Suspend)        systemctl suspend ;;
+  *Hibernate)         confirm 'Hibernate now?' && systemctl hibernate ;;
+  *Restart)        confirm 'Reboot now?' && systemctl reboot ;;
+  *Poweroff)         confirm 'Power off now?' && systemctl poweroff ;;
   *'Log out')          confirm 'Exit Hyprland?' && hyprctl dispatch exit ;;
 esac

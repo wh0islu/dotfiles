@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Change the wallpaper immediately and save the choice for the next login.
+#   wallpaper                -> choose using rofi
+#   wallpaper <file>          -> apply that file
+#   wallpaper --restore [x]  -> apply the last choice (or x); used at Hyprland startup
+#
+# Use hyprpaper: the daemon stays alive and changes only the image, without
+# recreating the screen surface (which caused flickering with swaybg).
+set -euo pipefail
+
+dir="$HOME/Images/Wallpapers"
+state="${XDG_STATE_HOME:-$HOME/.local/state}/wallpaper"
+
+images() {
+    find -L "$dir" -maxdepth 1 -type f -iregex '.*\.\(png\|jpe?g\|webp\)' 2>/dev/null | sort
+}
+
+ensure_daemon() {
+    # Left over from older sessions that used swaybg for the wallpaper.
+    pkill -x swaybg 2>/dev/null || true
+
+    pgrep -x hyprpaper >/dev/null && return 0
+
+    setsid hyprpaper >/dev/null 2>&1 &
+    for _ in $(seq 1 50); do
+        hyprctl hyprpaper listactive >/dev/null 2>&1 && return 0
+        sleep 0.1
+    done
+    printf 'hyprpaper did not respond.\n' >&2
+    return 1
+}
+
+apply() {
+    local file="$1"
+    if [[ ! -f "$file" ]]; then
+        printf 'Wallpaper not found: %s\n' "$file" >&2
+        return 1
+    fi
+    ensure_daemon
+    # A comma without a monitor name before the path applies it to all monitors.
+    hyprctl hyprpaper wallpaper ",$file" >/dev/null
+    mkdir -p "$(dirname "$state")"
+    printf '%s\n' "$file" > "$state"
+}
+
+case "${1:-}" in
+    --restore)
+        saved=""
+        [[ -f "$state" ]] && saved="$(< "$state")"
+        for candidate in "$saved" "${2:-}" "$(images | head -n1)"; do
+            if [[ -n "$candidate" && -f "$candidate" ]]; then
+                apply "$candidate"
+                exit 0
+            fi
+        done
+        # Without an image, the background stays black, Hyprland's default.
+        ;;
+    "")
+        choice="$(images | while read -r f; do basename "$f"; done | rofi -dmenu -i -p 'Wallpaper')" || exit 0
+        [[ -n "$choice" ]] || exit 0
+        apply "$dir/$choice"
+        notify-send -a System -t 1500 'Wallpaper' "$choice"
+        ;;
+    *)
+        apply "$1"
+        notify-send -a System -t 1500 'Wallpaper' "$(basename "$1")"
+        ;;
+esac

@@ -13,6 +13,13 @@ vim.o.autoindent = true
 vim.o.ruler = true
 vim.o.shiftwidth = 4
 vim.o.softtabstop = 4
+-- The default indents 8 spaces inside parentheses and aligns ")" with the last line;
+-- this makes Neovim indentation match ruff format.
+vim.g.python_indent = {
+    open_paren = "shiftwidth()",
+    continue = "shiftwidth()",
+    closed_paren_align_last_line = false,
+}
 vim.o.numberwidth = 4
 vim.o.number = true
 vim.o.showtabline = 2
@@ -53,14 +60,14 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "FileType" }, {
 	callback = apply_window_numbers,
 })
 
--- Seleção no estilo VS Code/JetBrains
+-- VS Code/JetBrains-style selection
 vim.opt.keymodel = { "startsel", "stopsel" }
 vim.opt.selectmode = { "key" }
 
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 
--- Separadores finos e conectados
+-- Thin, connected separators
 vim.opt.fillchars = {
 	vert = "│",
 	horiz = "─",
@@ -79,12 +86,12 @@ vim.opt.guicursor = {
 	-- Normal / Visual / Command
 	"n-v-c-sm:block-Cursor",
 
-	-- Insert / Terminal: barra fina
+	-- Insert / Terminal: thin bar
 	"i-ci-ve-t:ver1-Cursor",
 
-	-- Replace / Operator: linha fina embaixo
+	-- Replace / Operator: thin underline
 	"r-cr-o:hor10-Cursor",
 
-	-- Sem piscar em nenhum modo
+	-- No blinking in any mode
 	"a:blinkon0",
 }

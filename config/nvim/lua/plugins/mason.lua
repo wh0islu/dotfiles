@@ -117,6 +117,20 @@ local server_specific = {
       },
     },
   },
+  emmet_language_server = {
+    filetypes = {
+      "html",
+      "htmldjango",
+      "css",
+      "scss",
+      "sass",
+      "less",
+      "javascriptreact",
+      "typescriptreact",
+      "vue",
+      "svelte",
+    },
+  },
   ts_ls = {
     settings = {
       typescript = {
@@ -145,7 +159,7 @@ local server_specific = {
   },
 }
 
-local servers = { "basedpyright", "clangd", "lua_ls", "ts_ls" }
+local servers = { "basedpyright", "clangd", "lua_ls", "ts_ls", "emmet_language_server" }
 
 for _, server_name in ipairs(servers) do
   local opts = {
@@ -170,7 +184,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
   group = vim.api.nvim_create_augroup("UserLspStartup", { clear = true }),
   once = true,
   callback = function()
-    for _, name in ipairs({ "basedpyright", "clangd", "lua_ls", "ts_ls", "ruff" }) do
+    for _, name in ipairs({ "basedpyright", "clangd", "lua_ls", "ts_ls", "emmet_language_server", "ruff" }) do
       if vim.lsp.is_enabled(name) then
         vim.lsp.enable(name)
       end
@@ -179,11 +193,11 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 
 -- =========================================================
--- Ruff (diagnóstico Python)
+-- Ruff (Python diagnostics)
 --
--- Não é um pacote Mason: usa o binário `ruff` instalado pelo
--- gerenciador do sistema, igual aos formatadores externos do
--- conform.nvim. Hover fica só com basedpyright.
+-- Not a Mason package: use the `ruff` executable installed by the
+-- system package manager, like the external formatters used by
+-- conform.nvim. Only basedpyright provides hover information.
 -- =========================================================
 
 if vim.fn.executable("ruff") == 1 then
@@ -210,7 +224,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         local filter = { bufnr = ev.buf }
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(filter), filter)
       end, vim.tbl_extend("force", opts, {
-        desc = "Alternar inlay hints",
+        desc = "Toggle inlay hints",
       }))
     end
 
@@ -223,7 +237,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
       end
 
       vim.keymap.set("i", "<C-k>", signature_help, vim.tbl_extend("force", opts, {
-        desc = "Mostrar assinatura da funcao",
+        desc = "Show function signature",
       }))
 
       if not vim.b[ev.buf].python_signature_help_configured then

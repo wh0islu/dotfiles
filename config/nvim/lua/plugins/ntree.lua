@@ -34,11 +34,11 @@ require("nvim-tree").setup({
 })
 
 -- =========================================================
--- Esconde o cursor de texto dentro do NvimTree
+-- Hide the text cursor inside NvimTree
 --
--- A linha atual ja fica marcada pelo highlight
--- NvimTreeCursorLine; o bloco do cursor "sumir" evita
--- distracao numa arvore de arquivos.
+-- The current line is already highlighted by
+-- NvimTreeCursorLine; hiding the cursor block avoids
+-- distractions in the file tree.
 -- =========================================================
 
 local function nvimtree_cursor_colors()

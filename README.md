@@ -20,6 +20,7 @@ cp config/hypr/local.lua.example config/hypr/local.lua
 - `Super + F1`: manual keyboard shortcuts
 - `Super + Shift + E`: file picker with FZF
 - `Super + A`: audio controls
+- `Super + Shift + W`: wallpaper picker
 - `Super + Shift + S`: screenshot
 - `Super + Shift + L`: lock screen
 - `Super + Shift + P`: power and session

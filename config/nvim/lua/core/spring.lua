@@ -88,7 +88,7 @@ function M.new_project()
         return
     end
 
-    local name = input("Project name: ", "meu-projeto")
+    local name = input("Project name: ", "my-project")
     if name == "" then
         vim.notify("Project creation cancelled.", vim.log.levels.INFO)
         return

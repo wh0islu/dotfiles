@@ -66,7 +66,7 @@ local function create_file()
 	local dir = target_dir()
 
 	vim.ui.input({
-		prompt = "Novo arquivo em " .. vim.fn.fnamemodify(dir, ":~") .. "/: ",
+		prompt = "New file in " .. vim.fn.fnamemodify(dir, ":~") .. "/: ",
 	}, function(name)
 		if not name or name == "" then
 			return
@@ -75,7 +75,7 @@ local function create_file()
 		local path = dir .. "/" .. name
 
 		if vim.fn.filereadable(path) == 1 or vim.fn.isdirectory(path) == 1 then
-			vim.notify("Ja existe: " .. path, vim.log.levels.WARN)
+			vim.notify("Already exists: " .. path, vim.log.levels.WARN)
 			return
 		end
 
@@ -88,17 +88,17 @@ local function create_file()
 
 		open_created_file(path)
 
-		vim.notify("Arquivo criado: " .. path, vim.log.levels.INFO)
+		vim.notify("File created: " .. path, vim.log.levels.INFO)
 	end)
 end
 
 
 vim.api.nvim_create_user_command("NewFile", create_file, {
-	desc = "Cria um arquivo na pasta atual",
+	desc = "Create a file in the current directory",
 	force = true,
 })
 
 vim.keymap.set("n", "<leader>ee", create_file, {
-	desc = "Criar arquivo na pasta atual",
+	desc = "Create a file in the current directory",
 	silent = true,
 })

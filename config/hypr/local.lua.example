@@ -1,12 +1,17 @@
--- Copie para local.lua (ignorado pelo git) e ajuste para esta maquina.
--- Qualquer chave omitida usa o padrao do hyprland.lua.
+-- Copy to local.lua (ignored by git) and adjust for this machine.
+-- Any omitted key uses the default from hyprland.lua.
 return {
-    -- Nomes e modos disponiveis: hyprctl monitors
+    -- Available names and modes: hyprctl monitors
     monitors = {
         { output = "DP-1", mode = "1920x1080@240", position = "auto", scale = 1 },
     },
     kb_layout = "us",
     -- kb_model = "thinkpad",
-    -- Nome de um arquivo em ~/Images/Wallpapers ou caminho absoluto.
+    -- A filename in ~/Images/Wallpapers or an absolute path.
     -- wallpaper = "ni.png",
+    -- With two monitors, assigning each its own range avoids confusion in the bar:
+    -- workspace_rules = {
+    --     { workspace = "1", monitor = "DP-1" },
+    --     { workspace = "6", monitor = "HDMI-A-2" },
+    -- },
 }

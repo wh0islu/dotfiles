@@ -4,10 +4,10 @@ require("Comment").setup({
 
 vim.keymap.set("n", "<leader>/", "<Plug>(comment_toggle_linewise_current)", {
   remap = true,
-  desc = "Alternar comentario da linha",
+  desc = "Toggle line comment",
 })
 
 vim.keymap.set("x", "<leader>/", "<Plug>(comment_toggle_linewise_visual)", {
   remap = true,
-  desc = "Alternar comentario da selecao",
+  desc = "Toggle selection comment",
 })
