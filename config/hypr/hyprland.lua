@@ -1,7 +1,7 @@
 local home = os.getenv("HOME")
 local mod = "SUPER"
 
--- Ajustes por maquina ficam em local.lua (fora do git); modelo em local.lua.example.
+-- Machine-specific settings live in local.lua (outside git); see local.lua.example.
 local machine = {
     monitors = { { output = "", mode = "preferred", position = "auto", scale = 1 } },
     kb_layout = "us",
@@ -21,6 +21,11 @@ end
 for _, monitor in ipairs(machine.monitors) do
     hl.monitor(monitor)
 end
+
+-- Bind workspaces to monitors (monitor names are specific to each machine).
+for _, rule in ipairs(machine.workspace_rules or {}) do
+    hl.workspace_rule(rule)
+end
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
 
 hl.on("hyprland.start", function()
@@ -30,26 +35,15 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("waybar")
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
     hl.exec_cmd("systemctl --user restart dunst.service")
-    -- Mantem o clipboard quando o app que copiou fecha (ex.: o editor do flameshot).
+    -- Preserve clipboard contents when the source app closes (e.g. the flameshot editor).
     hl.exec_cmd("wl-clip-persist --clipboard regular")
     do
-        local wallpaper_dir = home .. "/Images/Wallpapers"
-        local wallpaper = machine.wallpaper
-        if not wallpaper then
-            local handle = io.popen("ls -1 '" .. wallpaper_dir .. "' 2>/dev/null | grep -iE '\\.(png|jpe?g|webp)$' | head -n1")
-            if handle then
-                wallpaper = handle:read("*l")
-                handle:close()
-            end
+        -- The script restores the last selected wallpaper; machine.wallpaper is only the initial default.
+        local default = machine.wallpaper or ""
+        if default ~= "" and default:sub(1, 1) ~= "/" then
+            default = home .. "/Images/Wallpapers/" .. default
         end
-        if wallpaper and wallpaper ~= "" then
-            if wallpaper:sub(1, 1) ~= "/" then
-                wallpaper = wallpaper_dir .. "/" .. wallpaper
-            end
-            hl.exec_cmd("swaybg -i '" .. wallpaper .. "' -m fill")
-        else
-            hl.exec_cmd("swaybg -c '#080808'")
-        end
+        hl.exec_cmd(home .. "/.local/bin/wallpaper --restore '" .. default .. "'")
     end
 end)
 
@@ -93,14 +87,18 @@ hl.animation({ leaf = "workspaces", enabled = true, speed = 3, bezier = "default
 hl.bind(mod .. " + Return", hl.dsp.exec_cmd("alacritty"))
 hl.bind(mod .. " + D", hl.dsp.exec_cmd("rofi -show drun"))
 hl.bind(mod .. " + SHIFT + E", hl.dsp.exec_cmd("alacritty -e " .. home .. "/.local/bin/file-picker"))
+hl.bind(mod .. " + E", hl.dsp.exec_cmd("thunar"))
 hl.bind(mod .. " + A", hl.dsp.exec_cmd(home .. "/.local/bin/audio-menu"))
+hl.bind(mod .. " + SHIFT + W", hl.dsp.exec_cmd(home .. "/.local/bin/wallpaper"))
+hl.bind(mod .. " + SHIFT + F", hl.dsp.exec_cmd(home .. "/.local/bin/firefox-search"))
 hl.bind(mod .. " + F1", hl.dsp.exec_cmd(home .. "/.local/bin/shortcut-center"))
 hl.bind(mod .. " + N", hl.dsp.exec_cmd("dunstctl close"))
 hl.bind(mod .. " + SHIFT + N", hl.dsp.exec_cmd("dunstctl history-pop"))
 hl.bind(mod .. " + CTRL + N", hl.dsp.exec_cmd("dunstctl action"))
 hl.bind(mod .. " + SHIFT + Q", hl.dsp.window.close())
 hl.bind(mod .. " + F", hl.dsp.window.fullscreen())
-hl.bind(mod .. " + Space", hl.dsp.window.float({ action = "toggle" }))
+-- Toggle floating mode with a fixed size and centered position (see local-bin/float-toggle).
+hl.bind(mod .. " + Space", hl.dsp.exec_cmd(home .. "/.local/bin/float-toggle"))
 hl.bind(mod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mod .. " + SHIFT + J", hl.dsp.layout("togglesplit"))
 hl.bind(mod .. " + SHIFT + L", hl.dsp.exec_cmd(home .. "/.local/bin/lockscreen"))

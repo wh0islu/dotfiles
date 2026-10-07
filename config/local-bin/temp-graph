@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Persistent waybar module: CPU temperature with a segmented bar (Pango markup).
+# The bar ranges from 30C (empty) to 90C (full); below that there is nothing to show.
+set -euo pipefail
+
+segments=5
+floor=30
+ceiling=90
+alert_at=80
+
+accent="#6BD6D6"
+dim="#303034"
+label="#7A7A7A"
+value_color="#E8E8E8"
+alert="#FF5F5F"
+
+sensor=""
+for candidate in /sys/devices/platform/coretemp.0/hwmon/hwmon*/temp1_input; do
+    [[ -r $candidate ]] && sensor=$candidate && break
+done
+if [[ -z $sensor ]]; then
+    printf '{"text":""}\n'
+    exec sleep infinity
+fi
+
+meter() {
+    local percent=$1 color=$2 filled i out=""
+    filled=$(((percent * segments + 99) / 100))
+    ((filled < 0)) && filled=0
+    ((filled > segments)) && filled=$segments
+    for ((i = 0; i < segments; i++)); do
+        if ((i < filled)); then
+            out+="<span color='$color'>▍</span>"
+        else
+            out+="<span color='$dim'>▍</span>"
+        fi
+    done
+    printf '%s' "$out"
+}
+
+while :; do
+    read -r millicelsius < "$sensor"
+    celsius=$((millicelsius / 1000))
+
+    percent=$((100 * (celsius - floor) / (ceiling - floor)))
+    ((percent < 0)) && percent=0
+    ((percent > 100)) && percent=100
+
+    color=$accent
+    ((celsius >= alert_at)) && color=$alert
+
+    printf '{"text":"<span color=\\"%s\\">TEMP</span> %s <span color=\\"%s\\">%d°</span>","tooltip":"CPU: %d°C"}\n' \
+        "$label" "$(meter "$percent" "$color")" "$value_color" "$celsius" "$celsius"
+
+    sleep 2
+done

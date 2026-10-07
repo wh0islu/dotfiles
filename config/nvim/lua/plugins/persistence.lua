@@ -12,12 +12,12 @@ local opts = { noremap = true, silent = true }
 
 vim.keymap.set("n", "<leader>qs", function()
     persistence.load()
-end, vim.tbl_extend("force", opts, { desc = "Restaurar sessao" }))
+end, vim.tbl_extend("force", opts, { desc = "Restore session" }))
 
 vim.keymap.set("n", "<leader>ql", function()
     persistence.load({ last = true })
-end, vim.tbl_extend("force", opts, { desc = "Restaurar ultima sessao" }))
+end, vim.tbl_extend("force", opts, { desc = "Restore last session" }))
 
 vim.keymap.set("n", "<leader>qd", function()
     persistence.stop()
-end, vim.tbl_extend("force", opts, { desc = "Nao salvar sessao" }))
+end, vim.tbl_extend("force", opts, { desc = "Stop saving the session" }))

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Super+Space: toggle between tiled and floating mode.
+# When floating, the window is always centered and given the same size.
+# Window rules do not apply here: they only take effect when a window is created.
+set -euo pipefail
+
+width=1200
+height=700
+
+hyprctl dispatch "hl.dsp.window.float({ action = 'toggle' })" >/dev/null
+
+if hyprctl activewindow | grep -q "floating: 1"; then
+    hyprctl dispatch "hl.dsp.window.resize({ x = $width, y = $height })" >/dev/null
+    hyprctl dispatch "hl.dsp.window.center()" >/dev/null
+fi

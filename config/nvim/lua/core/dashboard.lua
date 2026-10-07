@@ -161,7 +161,7 @@ end
 function M.projects()
   local projects = get_projects()
   if #projects == 0 then
-    vim.notify("Nenhum repositorio encontrado em " .. project_root, vim.log.levels.WARN)
+    vim.notify("No repositories found in " .. project_root, vim.log.levels.WARN)
     return
   end
 

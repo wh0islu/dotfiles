@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Modulo continuo do waybar: fica rodando e so imprime quando o capslock muda,
-# para o waybar nao precisar refazer fork/parse/redraw a cada tick.
+# Persistent waybar module: keep running and print only when Caps Lock changes,
+# so waybar does not need to repeat fork/parse/redraw on each tick.
 
 shopt -s nullglob
 leds=(/sys/class/leds/*::capslock/brightness)

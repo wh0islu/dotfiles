@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+# Firefox address-bar-style search: history + bookmarks,
+# with a favicon per row, sorted by frecency (the same metric Firefox
+# uses in its "awesomebar"). Text without a match becomes a Google search,
+# like "Search with Google".
+#
+# Rofi limitation: an external script is queried again only when you
+# select something (Enter), never on each keystroke. This prevents showing
+# a search suggestion that updates as you type, as Firefox's address bar
+# does. The -mesg below explains that Enter searches even without a match.
+#
+# There is no "Switch to Tab" either: an external script cannot see which tabs
+# are open in Firefox; only the browser knows. Opening a URL that is already
+# open in another tab creates a new tab instead of switching to it.
+#
+# Each rofi row carries a "\0icon\x1f<file>" field to display the favicon.
+# Bash CANNOT store null bytes in variables (command substitution silently
+# discards them), so these rows must go directly through a pipe to rofi,
+# never through an intermediate variable.
+set -euo pipefail
+
+# Firefox 127+ stores profiles in ~/.config/mozilla/firefox (XDG); older
+# versions, or profiles not yet migrated, use ~/.mozilla/firefox.
+profile_dir=""
+for base in "$HOME/.config/mozilla/firefox" "$HOME/.mozilla/firefox"; do
+    profile_dir="$(find "$base" -maxdepth 1 -name '*.default-release' -print -quit 2>/dev/null)"
+    [[ -n "$profile_dir" ]] && break
+done
+if [[ -z "$profile_dir" ]]; then
+    notify-send -a System 'Firefox' 'Default profile not found.'
+    exit 1
+fi
+
+db="$profile_dir/places.sqlite"
+favdb="$profile_dir/favicons.sqlite"
+icon_dir="${XDG_CACHE_HOME:-$HOME/.cache}/firefox-search-icons"
+mkdir -p "$icon_dir"
+
+# Extract all favicons into <id>.png files (a few hundred, ~1-2MB: fast).
+if [[ -f "$favdb" ]]; then
+    sqlite3 "file:$favdb?immutable=1" "
+        SELECT writefile('$icon_dir/' || id || '.png', data)
+        FROM moz_icons WHERE data IS NOT NULL;
+    " >/dev/null 2>&1 || true
+fi
+
+# Use the visited page's specific icon when available (better quality);
+# most sites only have the domain's "root" favicon.ico (root=1), without
+# a per-page entry in moz_icons_to_pages. Without this domain fallback,
+# most of the list would have no icon.
+root_icons="$(sqlite3 -separator $'\t' "file:$favdb?immutable=1" "
+    SELECT id, icon_url FROM moz_icons WHERE root = 1 AND data IS NOT NULL;
+" 2>/dev/null)"
+
+page_icons="$(sqlite3 -separator $'\t' "file:$favdb?immutable=1" "
+    SELECT page_url, id FROM (
+        SELECT pw.page_url AS page_url, i.id AS id,
+               ROW_NUMBER() OVER (PARTITION BY pw.page_url ORDER BY i.width DESC) AS rn
+        FROM moz_pages_w_icons pw
+        JOIN moz_icons_to_pages ip ON ip.page_id = pw.id
+        JOIN moz_icons i ON i.id = ip.icon_id
+        WHERE i.data IS NOT NULL
+    ) WHERE rn = 1;
+" 2>/dev/null)"
+
+query="
+    SELECT
+        p.url,
+        CASE WHEN b.id IS NOT NULL THEN '★ ' ELSE '' END || COALESCE(NULLIF(p.title, ''), p.url)
+    FROM moz_places p
+    LEFT JOIN moz_bookmarks b ON b.fk = p.id AND b.type = 1
+    WHERE p.hidden = 0 AND p.url NOT LIKE 'place:%'
+    GROUP BY p.url
+    ORDER BY p.frecency DESC
+    LIMIT 500;
+"
+
+selection="$(
+    sqlite3 -separator $'\t' "file:$db?immutable=1" "$query" 2>/dev/null |
+    python3 -c "
+import sys
+from urllib.parse import urlparse
+
+icon_dir = sys.argv[1]
+
+def read_pairs(text):
+    pairs = {}
+    for line in text.splitlines():
+        if '\t' not in line:
+            continue
+        key, value = line.split('\t', 1)
+        pairs[key] = value
+    return pairs
+
+page_icon = read_pairs(open(sys.argv[2]).read())
+
+# Not every site declares a conventional favicon.ico (root=1): some use
+# a custom path (e.g. /design/favicon.png) that Firefox does not mark as
+# 'root'. In those cases, the most common icon among pages on the same
+# domain is a good guess (multiple Claude conversations, for example,
+# share the same icon even when the home page has no entry of its own).
+from collections import Counter
+from urllib.parse import urlparse as _up
+domain_votes = {}
+for url, icon_id in page_icon.items():
+    domain = _up(url).netloc
+    domain_votes.setdefault(domain, Counter())[icon_id] += 1
+majority_icon_by_domain = {d: c.most_common(1)[0][0] for d, c in domain_votes.items()}
+
+root_icon_by_domain = {}
+for line in open(sys.argv[3]):
+    if '\t' not in line:
+        continue
+    icon_id, icon_url = line.rstrip('\n').split('\t', 1)
+    domain = urlparse(icon_url).netloc
+    if domain and domain not in root_icon_by_domain:
+        root_icon_by_domain[domain] = icon_id
+
+out = sys.stdout.buffer
+for line in sys.stdin:
+    line = line.rstrip('\n')
+    if '\t' not in line:
+        continue
+    url, title = line.split('\t', 1)
+    p = urlparse(url)
+    domain = p.netloc.removeprefix('www.') + p.path
+    icon_id = (
+        page_icon.get(url)
+        or majority_icon_by_domain.get(p.netloc)
+        or root_icon_by_domain.get(p.netloc)
+    )
+    row = f'{url}\t{title}  —  {domain}'
+    out.write(row.encode())
+    if icon_id:
+        out.write(f'\0icon\x1f{icon_dir}/{icon_id}.png'.encode())
+    out.write(b'\n')
+" "$icon_dir" <(printf '%s\n' "$page_icons") <(printf '%s\n' "$root_icons") |
+    rofi -dmenu -i -p 'Firefox' -show-icons \
+        -mesg 'No results? Press Enter to search Google.' \
+        -display-columns 2 -display-column-separator $'\t'
+)" || exit 0
+[[ -n "$selection" ]] || exit 0
+
+if [[ "$selection" == *$'\t'* ]]; then
+    # Selected from the list: use the URL hidden in column 1.
+    url="${selection%%$'\t'*}"
+else
+    # Text entered without selecting a list item: search Google.
+    url="https://www.google.com/search?q=$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$selection")"
+fi
+
+firefox "$url" >/dev/null 2>&1 &

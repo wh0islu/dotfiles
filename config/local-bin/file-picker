@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+user_dir() {
+  local path=""
+  if command -v xdg-user-dir >/dev/null 2>&1; then
+    path="$(xdg-user-dir "$1" 2>/dev/null)" || path=""
+  fi
+  printf '%s\n' "${path:-$HOME/$2}"
+}
+
 roots=(
-  "$HOME/Documentos"
+  "$(user_dir DOCUMENTS Documents)"
   "$HOME/Downloads"
   "$HOME/Images"
   "$HOME/Videos"
-  "$HOME/Área de trabalho"
+  "$(user_dir DESKTOP Desktop)"
 )
 
 file="$(find "${roots[@]}" -type f \

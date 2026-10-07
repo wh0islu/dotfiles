@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Persistent waybar module: CPU usage with a segmented bar (Pango markup).
+# One process that prints every 2s; no fork on each tick.
+set -euo pipefail
+
+segments=5
+accent="#6BD6D6"
+dim="#303034"
+label="#7A7A7A"
+value_color="#E8E8E8"
+alert="#FF5F5F"
+
+prev_total=0
+prev_idle=0
+
+meter() {
+    local percent=$1 color=$2 filled i out=""
+    filled=$(((percent * segments + 99) / 100))  # Round up: 1% already lights up the first segment
+    ((filled > segments)) && filled=$segments
+    for ((i = 0; i < segments; i++)); do
+        if ((i < filled)); then
+            out+="<span color='$color'>▍</span>"
+        else
+            out+="<span color='$dim'>▍</span>"
+        fi
+    done
+    printf '%s' "$out"
+}
+
+while :; do
+    read -r _ user nice system idle iowait irq softirq steal _ < /proc/stat
+    total=$((user + nice + system + idle + iowait + irq + softirq + steal))
+    idle_all=$((idle + iowait))
+
+    usage=0
+    if ((prev_total > 0 && total > prev_total)); then
+        usage=$((100 * ((total - prev_total) - (idle_all - prev_idle)) / (total - prev_total)))
+    fi
+    ((usage < 0)) && usage=0
+    ((usage > 100)) && usage=100
+
+    prev_total=$total
+    prev_idle=$idle_all
+
+    color=$accent
+    ((usage >= 85)) && color=$alert
+
+    printf '{"text":"<span color=\\"%s\\">CPU</span> %s <span color=\\"%s\\">%d%%</span>","tooltip":"CPU: %d%%"}\n' \
+        "$label" "$(meter "$usage" "$color")" "$value_color" "$usage" "$usage"
+
+    sleep 2
+done

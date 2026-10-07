@@ -15,7 +15,7 @@ todo.setup({
 })
 
 vim.keymap.set("n", "<leader>td", "<cmd>TodoTelescope<CR>", {
-    desc = "Buscar TODOs",
+    desc = "Find TODOs",
     noremap = true,
     silent = true,
 })

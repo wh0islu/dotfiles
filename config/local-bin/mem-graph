@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Persistent waybar module: memory usage with a segmented bar and values in GiB.
+set -euo pipefail
+
+segments=5
+accent="#6BD6D6"
+dim="#303034"
+label="#7A7A7A"
+value_color="#E8E8E8"
+alert="#FF5F5F"
+
+meter() {
+    local percent=$1 color=$2 filled i out=""
+    filled=$(((percent * segments + 99) / 100))  # Round up: 1% already lights up the first segment
+    ((filled > segments)) && filled=$segments
+    for ((i = 0; i < segments; i++)); do
+        if ((i < filled)); then
+            out+="<span color='$color'>▍</span>"
+        else
+            out+="<span color='$dim'>▍</span>"
+        fi
+    done
+    printf '%s' "$out"
+}
+
+gib() { # kB -> "5.5"
+    printf '%d.%d' $(($1 / 1048576)) $(($1 % 1048576 * 10 / 1048576))
+}
+
+while :; do
+    total=0
+    available=0
+    while read -r key value _; do
+        case "$key" in
+            MemTotal:) total=$value ;;
+            MemAvailable:) available=$value ;;
+        esac
+        [[ $total -gt 0 && $available -gt 0 ]] && break
+    done < /proc/meminfo
+
+    used=$((total - available))
+    percent=$((100 * used / total))
+
+    color=$accent
+    ((percent >= 90)) && color=$alert
+
+    printf '{"text":"<span color=\\"%s\\">MEM</span> %s <span color=\\"%s\\">%s/%sG</span>","tooltip":"RAM: %s / %s GiB (%d%%)"}\n' \
+        "$label" "$(meter "$percent" "$color")" "$value_color" "$(gib "$used")" "$(gib "$total")" \
+        "$(gib "$used")" "$(gib "$total")" "$percent"
+
+    sleep 2
+done

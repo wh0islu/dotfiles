@@ -19,7 +19,7 @@ telescope.setup({
     pickers = {
         -- =====================================================
         -- Ctrl + F
-        -- Busca no arquivo atual
+        -- Search the current file
         -- =====================================================
 
         current_buffer_fuzzy_find = {
@@ -34,10 +34,10 @@ telescope.setup({
 
         -- =====================================================
         -- Ctrl + Shift + F
-        -- Busca em todo o projeto
+        -- Search the entire project
         --
-        -- Layout parecido com o screenshot oficial do Telescope:
-        -- resultados à esquerda + preview à direita.
+        -- Layout similar to the official Telescope screenshot:
+        -- results on the left + preview on the right.
         -- =====================================================
 
         live_grep = {
@@ -45,7 +45,7 @@ telescope.setup({
 
             previewer = true,
 
-            prompt_prefix = "Buscar: ",
+            prompt_prefix = "Search: ",
             sorting_strategy = "ascending",
 
             layout_config = {
@@ -62,7 +62,7 @@ telescope.setup({
         },
 
         -- =====================================================
-        -- Busca de arquivos
+        -- File search
         -- =====================================================
 
         find_files = {
@@ -70,7 +70,7 @@ telescope.setup({
 
             previewer = true,
 
-            prompt_prefix = "Buscar: ",
+            prompt_prefix = "Search: ",
             sorting_strategy = "ascending",
 
             layout_config = {

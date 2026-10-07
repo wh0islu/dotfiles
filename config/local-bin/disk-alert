@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Waybar module: show disk usage only when it needs attention.
+# Below the threshold, print empty text so waybar hides the module.
+set -euo pipefail
+
+path="${1:-/}"
+warn_at=80
+critical_at=92
+segments=5
+
+dim="#303034"
+label="#7A7A7A"
+value_color="#E8E8E8"
+warning="#D2BD8C"
+alert="#FF5F5F"
+
+read -r _ _ _ _ percent _ < <(df -P "$path" | tail -1)
+percent=${percent%\%}
+
+if ((percent < warn_at)); then
+    printf '{"text":""}\n'
+    exit 0
+fi
+
+color=$warning
+class=warning
+if ((percent >= critical_at)); then
+    color=$alert
+    class=critical
+fi
+
+filled=$(((percent * segments + 99) / 100))
+((filled > segments)) && filled=$segments
+meter=""
+for ((i = 0; i < segments; i++)); do
+    if ((i < filled)); then
+        meter+="<span color='$color'>▍</span>"
+    else
+        meter+="<span color='$dim'>▍</span>"
+    fi
+done
+
+printf '{"text":"<span color=\\"%s\\">DSK</span> %s <span color=\\"%s\\">%d%%</span>","tooltip":"Disk %s: %d%% used","class":"%s"}\n' \
+    "$label" "$meter" "$value_color" "$percent" "$path" "$percent" "$class"

@@ -8,12 +8,16 @@
 @define-color secondary #a9afb3;
 @define-color warning #d2bd8c;
 @define-color critical #d89a9a;
+/* Cyan and red for the meters. The scripts in local-bin repeat these values,
+   because scripts do not read CSS: update them too when changing these colors. */
+@define-color meter #6bd6d6;
+@define-color meter_alert #ff5f5f;
 
 * {
   min-height: 0;
   border: none;
   border-radius: 0;
-  font-family: "GeistMono Nerd Font", "JetBrainsMono Nerd Font", monospace;
+  font-family: "GeistMono Nerd Font", "JetBrainsMono Nerd Font", "Noto Sans CJK JP", monospace;
   font-size: 10px;
   font-weight: 600;
 }
@@ -31,24 +35,30 @@ window#waybar {
   background: transparent;
 }
 
+/* Empty workspaces are dimmed, occupied ones are readable, and the active one has a cyan box. */
 #workspaces button {
-  min-width: 18px;
-  padding: 0 4px;
+  min-width: 20px;
+  padding: 0 5px;
   margin: 2px 1px;
   color: @muted;
   background: transparent;
-  border-radius: 5px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
   transition: color 120ms ease, background-color 120ms ease;
 }
 
-#workspaces button.active {
-  color: @text;
-  background: transparent;
-  box-shadow: inset 0 -1px @accent;
+#workspaces button.empty {
+  color: #3f3f45;
 }
 
-#workspaces button.occupied {
+#workspaces button.active {
+  color: @base;
+  background: @meter;
+}
+
+#workspaces button:hover {
   color: @text;
+  background: @raised;
 }
 
 #workspaces button.urgent {
@@ -56,14 +66,15 @@ window#waybar {
   background: @critical;
 }
 
-#network,
-#disk,
-#memory,
-#temperature,
+#custom-tag,
+#custom-cpu-graph,
+#custom-mem-graph,
+#custom-disk-alert,
+#custom-temp-graph,
+#custom-net-graph,
 #backlight,
 #battery,
 #pulseaudio,
-#language,
 #custom-capslock,
 #tray,
 #clock,
@@ -79,23 +90,34 @@ window#waybar {
   color: @secondary;
 }
 
-#network { color: @muted; }
-#network.disconnected { color: @critical; }
+#custom-tag {
+  color: @meter;
+  letter-spacing: 1px;
+}
 
-#disk { color: @muted; }
-#disk.warning { color: @warning; }
-#disk.critical { color: @critical; }
+/* Metrics group: uppercase labels, neutral tone. Red is reserved for alerts. */
+#custom-cpu-graph,
+#custom-mem-graph,
+#custom-temp-graph,
+#custom-net-graph,
+#custom-disk-alert {
+  color: @muted;
+  letter-spacing: 0.4px;
+}
 
-#memory { color: @muted; }
-#memory.warning { color: @warning; }
-#memory.critical { color: @critical; }
+#custom-cpu-graph { padding-left: 10px; border-left: 1px solid @border; }
+#custom-net-graph { padding-right: 10px; }
+#custom-disk-alert { border-left: 1px solid @border; padding-left: 10px; }
 
-#temperature { color: @muted; }
-#temperature.critical { color: @critical; }
+#custom-cpu-graph.warning,
+#custom-mem-graph.warning { color: @warning; }
+
+#custom-cpu-graph.critical,
+#custom-mem-graph.critical,
+#custom-net-graph.disconnected { color: @meter_alert; }
 
 #battery { color: @text; }
 #pulseaudio { color: @secondary; }
-#language { color: @muted; }
 #custom-capslock { color: @muted; }
 #custom-capslock.locked {
   color: #080808;
@@ -106,7 +128,10 @@ window#waybar {
   min-width: 0;
   padding: 0;
 }
-#clock { color: @text; }
+#clock {
+  color: @text;
+  padding: 0 10px;
+}
 
 #battery.charging { color: @accent; }
 #battery.warning:not(.charging) { color: @warning; }
@@ -120,10 +145,8 @@ window#waybar {
 #custom-power:hover,
 #backlight:hover,
 #pulseaudio:hover,
-#network:hover,
-#disk:hover,
-#memory:hover,
-#temperature:hover,
+#custom-temp-graph:hover,
+#custom-net-graph:hover,
 #clock:hover {
   color: @text;
   background: @raised;

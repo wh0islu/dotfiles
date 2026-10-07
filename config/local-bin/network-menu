@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Open nmtui in a floating window of fixed size to manage networks (Wi-Fi/Ethernet).
+# nm-applet was dropped: it shows a cable/plug tray icon for Ethernet connections,
+# instead of the signal bars we want to display at all times.
+set -euo pipefail
+
+width=900
+height=600
+
+setsid alacritty --class network-menu -e nmtui >/dev/null 2>&1 &
+
+for _ in $(seq 1 40); do
+    hyprctl activewindow -j 2>/dev/null | grep -q '"class": *"network-menu"' && break
+    sleep 0.05
+done
+
+hyprctl dispatch "hl.dsp.window.float({ action = 'toggle' })" >/dev/null
+hyprctl dispatch "hl.dsp.window.resize({ x = $width, y = $height })" >/dev/null
+hyprctl dispatch "hl.dsp.window.center()" >/dev/null

@@ -4,7 +4,7 @@ local opts = {
 }
 
 -- =========================================================
--- Estilo dos diagnostics
+-- Diagnostic styling
 -- =========================================================
 
 vim.diagnostic.config({
@@ -39,10 +39,10 @@ vim.diagnostic.config({
 })
 
 -- =========================================================
--- Navegação entre diagnostics
+-- Navigate diagnostics
 -- =========================================================
 
--- Próximo diagnostic
+-- Next diagnostic
 vim.keymap.set("n", "]d", function()
     vim.diagnostic.jump({
         count = 1,
@@ -52,7 +52,7 @@ end, vim.tbl_extend("force", opts, {
     desc = "Next diagnostic",
 }))
 
--- Diagnostic anterior
+-- Previous diagnostic
 vim.keymap.set("n", "[d", function()
     vim.diagnostic.jump({
         count = -1,
@@ -63,7 +63,7 @@ end, vim.tbl_extend("force", opts, {
 }))
 
 -- =========================================================
--- Lista de diagnostics
+-- Diagnostic list
 -- =========================================================
 
 vim.keymap.set("n", "<leader>ld", function()
@@ -75,7 +75,7 @@ end, vim.tbl_extend("force", opts, {
 }))
 
 -- =========================================================
--- Diagnostic automático ao parar o cursor
+-- Show diagnostics automatically when the cursor rests
 -- =========================================================
 
 local diagnostic_group = vim.api.nvim_create_augroup(

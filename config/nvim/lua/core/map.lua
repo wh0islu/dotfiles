@@ -12,7 +12,7 @@ vim.keymap.set("n", "<C-r>", function()
 end, opts)
 
 -- =========================================================
--- Arquivos
+-- Files
 -- =========================================================
 
 vim.keymap.set("n", "<C-s>", "<cmd>w!<CR>", opts)
@@ -37,7 +37,7 @@ vim.keymap.set("n", "<C-n>", function()
 		find_file = true,
 	})
 end, {
-	desc = "Abrir File Explorer",
+	desc = "Open File Explorer",
 	silent = true,
 })
 
@@ -66,17 +66,17 @@ end
 
 -- =========================================================
 -- Ctrl + F
--- Buscar no arquivo atual
+-- Search the current file
 -- =========================================================
 
 vim.keymap.set("n", "<C-f>", function()
 	local buftype = vim.bo.buftype
 	local filetype = vim.bo.filetype
 
-	-- Evita pesquisar buffers especiais.
+	-- Avoid searching special buffers.
 	if buftype ~= "" then
 		vim.notify(
-			"Ctrl+F está disponível somente em arquivos.",
+			"Ctrl+F is only available in file buffers.",
 			vim.log.levels.INFO
 		)
 
@@ -92,85 +92,85 @@ vim.keymap.set("n", "<C-f>", function()
 	end
 
 	require("telescope.builtin").current_buffer_fuzzy_find({
-		prompt_title = "Buscar no arquivo",
+		prompt_title = "Search file",
 	})
 end, {
-	desc = "Buscar no arquivo atual",
+	desc = "Search current file",
 	silent = true,
 })
 
 -- =========================================================
 -- Ctrl + Shift + F
--- Alacritty envia como F13
--- Buscar conteúdo no projeto inteiro
+-- Alacritty sends this as F13
+-- Search contents across the entire project
 -- =========================================================
 
 vim.keymap.set("n", "<F13>", function()
 	require("telescope.builtin").live_grep({
-		prompt_title = "Buscar no projeto",
+		prompt_title = "Search project",
 		cwd = project_root(),
 	})
 end, {
-	desc = "Buscar texto no projeto",
+	desc = "Search text in project",
 	silent = true,
 })
 
 -- =========================================================
 -- Ctrl + P
--- Buscar arquivos pelo nome
+-- Search files by name
 -- =========================================================
 
 vim.keymap.set("n", "<C-p>", function()
 	require("telescope.builtin").find_files({
-		prompt_title = "Buscar arquivos",
+		prompt_title = "Find files",
 		cwd = project_root(),
 		hidden = true,
 	})
 end, {
-	desc = "Buscar arquivos no projeto",
+	desc = "Find files in project",
 	silent = true,
 })
 
 -- =========================================================
--- Grupo <leader>f (Find)
+-- <leader>f group (Find)
 -- =========================================================
 
 vim.keymap.set("n", "<leader>ff", function()
 	require("telescope.builtin").find_files({
-		prompt_title = "Buscar arquivos",
+		prompt_title = "Find files",
 		cwd = project_root(),
 		hidden = true,
 	})
 end, {
-	desc = "Buscar arquivos no projeto",
+	desc = "Find files in project",
 	silent = true,
 })
 
 vim.keymap.set("n", "<leader>fg", function()
 	require("telescope.builtin").current_buffer_fuzzy_find({
-		prompt_title = "Buscar no arquivo atual",
-		prompt_prefix = "Buscar: ",
+		prompt_title = "Search current file",
+		prompt_prefix = "Search: ",
 	})
 end, {
-	desc = "Buscar texto no arquivo atual",
+	desc = "Search text in current file",
 	silent = true,
 })
 
 vim.keymap.set("n", "<leader>fb", function()
 	require("telescope.builtin").buffers({
-		prompt_title = "Buffers abertos",
+		prompt_title = "Open buffers",
 	})
 end, {
-	desc = "Listar buffers abertos",
+	desc = "List open buffers",
 	silent = true,
 })
 
 vim.keymap.set("n", "<leader>fo", function()
 	require("telescope.builtin").oldfiles({
-		prompt_title = "Arquivos recentes",
+		prompt_title = "Recent files",
 	})
 end, {
-	desc = "Listar arquivos recentes",
+	desc = "List recent files",
 	silent = true,
 })
 
@@ -179,25 +179,25 @@ vim.keymap.set("n", "<leader>fd", function()
 		prompt_title = "Diagnostics",
 	})
 end, {
-	desc = "Listar diagnostics",
+	desc = "List diagnostics",
 	silent = true,
 })
 
 vim.keymap.set("n", "<leader>fs", function()
 	require("telescope.builtin").lsp_document_symbols({
-		prompt_title = "Symbols do arquivo",
+		prompt_title = "Document symbols",
 	})
 end, {
-	desc = "Listar symbols do arquivo atual",
+	desc = "List current document symbols",
 	silent = true,
 })
 
 vim.keymap.set("n", "<leader>fS", function()
 	require("telescope.builtin").lsp_dynamic_workspace_symbols({
-		prompt_title = "Symbols do workspace",
+		prompt_title = "Workspace symbols",
 	})
 end, {
-	desc = "Listar symbols do workspace",
+	desc = "List workspace symbols",
 	silent = true,
 })
 
@@ -270,12 +270,12 @@ vim.keymap.set(
 -- Visual Mode
 -- =========================================================
 
--- Mantém a seleção após aumentar indentação
+-- Keep the selection after increasing indentation
 vim.keymap.set("v", ">", ">gv", {
 	desc = "Indent selection",
 })
 
--- Mantém a seleção após diminuir indentação
+-- Keep the selection after decreasing indentation
 vim.keymap.set("v", "<lt>", "<gv", {
 	desc = "Unindent selection",
 })
@@ -284,8 +284,8 @@ vim.keymap.set("v", "<lt>", "<gv", {
 -- Select Mode
 -- =========================================================
 
--- Permite usar gc depois de selecionar com Shift + setas.
--- Ctrl-G converte Select Mode para Visual Mode.
+-- Allow gc after selecting with Shift + arrow keys.
+-- Ctrl-G converts Select Mode to Visual Mode.
 vim.keymap.set(
 	"s",
 	"gc",
@@ -310,7 +310,7 @@ vim.keymap.set(
 	}
 )
 
--- Alguns terminais enviam Ctrl+Backspace como Ctrl+H
+-- Some terminals send Ctrl+Backspace as Ctrl+H
 vim.keymap.set(
 	"i",
 	"<C-H>",
@@ -325,7 +325,7 @@ vim.keymap.set(
 -- =========================================================
 
 -- Ctrl + Shift + C
--- O Alacritty envia essa combinação como F14.
+-- Alacritty sends this combination as F14.
 
 -- Visual Mode
 vim.keymap.set("x", "<F14>", '"+y', {
@@ -334,7 +334,7 @@ vim.keymap.set("x", "<F14>", '"+y', {
 })
 
 -- Select Mode
--- Usado quando você seleciona com Shift + setas.
+-- Used when selecting with Shift + arrow keys.
 vim.keymap.set("s", "<F14>", '<C-G>"+y', {
 	desc = "Copy to system clipboard",
 	silent = true,
@@ -379,7 +379,7 @@ end, {
 })
 
 -- =========================================================
--- Seleção por palavra sem cruzar linhas
+-- Select by word without crossing lines
 -- =========================================================
 
 local function select_word_right_same_line()
@@ -392,13 +392,13 @@ local function select_word_right_same_line()
 
 	local last_col = #line - 1
 
-	-- Já chegou ao final da linha
+	-- Already at the end of the line
 	if col >= last_col then
 		return
 	end
 
-	-- Procura o próximo limite de palavra,
-	-- mas somente na linha atual.
+	-- Find the next word boundary,
+	-- but only on the current line.
 	local pos = vim.fn.searchpos(
 		[[\<\|\>]],
 		"W",
@@ -416,8 +416,8 @@ local function select_word_right_same_line()
 			{ row, target_col }
 		)
 	else
-		-- Não há outra palavra:
-		-- para no final da linha.
+		-- No other word:
+		-- stop at the end of the line.
 		vim.api.nvim_win_set_cursor(
 			0,
 			{ row, last_col }
@@ -428,13 +428,13 @@ end
 local function select_word_left_same_line()
 	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
 
-	-- Já chegou ao início da linha
+	-- Already at the start of the line
 	if col <= 0 then
 		return
 	end
 
-	-- Procura o limite anterior de palavra,
-	-- mas somente na linha atual.
+	-- Find the previous word boundary,
+	-- but only on the current line.
 	local pos = vim.fn.searchpos(
 		[[\<\|\>]],
 		"bW",
@@ -447,8 +447,8 @@ local function select_word_left_same_line()
 			{ row, pos[2] - 1 }
 		)
 	else
-		-- Não há outra palavra:
-		-- para no início da linha.
+		-- No other word:
+		-- stop at the start of the line.
 		vim.api.nvim_win_set_cursor(
 			0,
 			{ row, 0 }
@@ -488,7 +488,7 @@ vim.keymap.set(
 	"i",
 	"<C-S-Right>",
 	function()
-		-- Sai do Insert Mode e inicia Select Mode
+		-- Exit Insert Mode and enter Select Mode
 		vim.cmd("stopinsert")
 		vim.cmd("normal! gh")
 
@@ -504,7 +504,7 @@ vim.keymap.set(
 	"i",
 	"<C-S-Left>",
 	function()
-		-- Sai do Insert Mode e inicia Select Mode
+		-- Exit Insert Mode and enter Select Mode
 		vim.cmd("stopinsert")
 		vim.cmd("normal! gh")
 

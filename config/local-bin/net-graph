@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+# Persistent waybar module: signal icon (single glyph, Nerd Font U+F012).
+# Upload/download rates appear only in the tooltip; networks are managed
+# through nm-applet in the tray (a separate icon, XFCE style).
+#
+# This classic Font Awesome glyph has no signal-strength variants;
+# there is only one version, unlike the Material Design "wifi-strength-1..4"
+# icons, which show a Wi-Fi fan rather than the requested bars. Signal
+# strength is represented by color (cyan when connected, red with no link) and
+# tooltip text; a wired connection counts as connected even without actual "strength".
+# Requires NetworkManager (nmcli); without it, the module stays empty.
+set -euo pipefail
+
+# U+F012 (classic Font Awesome via Nerd Font). Use a Unicode escape rather than
+# the literal glyph: private-use area (PUA) characters can silently disappear
+# if the text passes through a sanitization step.
+signal_icon=$''
+prev_rx=0
+prev_tx=0
+interval=2
+
+meter="#6BD6D6"
+disconnected="#FF5F5F"
+
+have_nmcli() { command -v nmcli >/dev/null; }
+
+# Print "wired" | "wifi:<signal 0-100>" | "" (no link) for the active connection.
+connection_status() {
+    local line dev type state
+    while IFS=: read -r dev type state; do
+        [[ "$state" == connected* && "$dev" != lo ]] || continue
+        if [[ "$type" == ethernet ]]; then
+            echo "wired"
+            return
+        fi
+        if [[ "$type" == wifi ]]; then
+            local signal
+            signal="$(nmcli -t -f IN-USE,SIGNAL dev wifi 2>/dev/null | awk -F: '$1=="*"{print $2; exit}')"
+            echo "wifi:${signal:-0}"
+            return
+        fi
+    done < <(nmcli -t -f DEVICE,TYPE,STATE dev status 2>/dev/null)
+}
+
+counters() {
+    local rx=0 tx=0 iface r t
+    while read -r iface r _ _ _ _ _ _ _ t _; do
+        iface="${iface%:}"
+        [[ $iface == lo || $iface == Inter-* || $iface == face ]] && continue
+        rx=$((rx + r))
+        tx=$((tx + t))
+    done < /proc/net/dev
+    printf '%s %s' "$rx" "$tx"
+}
+
+human() {
+    local bytes=$1
+    if ((bytes >= 1048576)); then
+        printf '%d.%dM' $((bytes / 1048576)) $((bytes % 1048576 * 10 / 1048576))
+    elif ((bytes >= 1024)); then
+        printf '%dK' $((bytes / 1024))
+    else
+        printf '%dB' "$bytes"
+    fi
+}
+
+if ! have_nmcli; then
+    printf '{"text":""}\n'
+    exec sleep infinity
+fi
+
+read -r prev_rx prev_tx <<<"$(counters)"
+
+while :; do
+    status="$(connection_status)"
+
+    if [[ -z "$status" ]]; then
+        printf '{"text":"<span color=\\"%s\\">%s</span>","tooltip":"Disconnected","class":"disconnected"}\n' \
+            "$disconnected" "$signal_icon"
+        sleep "$interval"
+        read -r prev_rx prev_tx <<<"$(counters)"
+        continue
+    fi
+
+    if [[ "$status" == wired ]]; then
+        tooltip_head="Wired (Ethernet)"
+    else
+        signal="${status#wifi:}"
+        tooltip_head="Wi-Fi: ${signal}%"
+    fi
+
+    read -r rx tx <<<"$(counters)"
+    down=$(((rx - prev_rx) / interval))
+    up=$(((tx - prev_tx) / interval))
+    ((down < 0)) && down=0
+    ((up < 0)) && up=0
+    prev_rx=$rx
+    prev_tx=$tx
+
+    printf '{"text":"<span color=\\"%s\\">%s</span>","tooltip":"%s\\nDownload: %s/s\\nUpload: %s/s"}\n' \
+        "$meter" "$signal_icon" \
+        "$tooltip_head" "$(human "$down")" "$(human "$up")"
+
+    sleep "$interval"
+done

@@ -27,7 +27,7 @@ su - tester -c 'cd ~/dotfiles && ./install-arch.sh'
 
 **4. Check the result:**
 
-- Run it a second time: no `Backup criado` lines should appear.
+- Run it a second time: no `Backup created` lines should appear.
 - `ls -l ~/.config ~/.local/bin ~/Images/Wallpapers` shows symlinks into `~/dotfiles`.
 - `zsh -ic exit` prints no errors.
 - `nvim --headless "+Lazy! restore" +qa` installs the plugins; afterwards `nvim --headless +qa` prints nothing.

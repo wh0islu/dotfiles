@@ -54,7 +54,7 @@ local function create_dir()
 	local dir = target_dir()
 
 	vim.ui.input({
-		prompt = "Nova pasta em " .. vim.fn.fnamemodify(dir, ":~") .. "/: ",
+		prompt = "New directory in " .. vim.fn.fnamemodify(dir, ":~") .. "/: ",
 	}, function(name)
 		if not name or name == "" then
 			return
@@ -63,27 +63,27 @@ local function create_dir()
 		local path = dir .. "/" .. name
 
 		if vim.fn.isdirectory(path) == 1 or vim.fn.filereadable(path) == 1 then
-			vim.notify("Ja existe: " .. path, vim.log.levels.WARN)
+			vim.notify("Already exists: " .. path, vim.log.levels.WARN)
 			return
 		end
 
 		if vim.fn.mkdir(path, "p") == 0 then
-			vim.notify("Nao foi possivel criar: " .. path, vim.log.levels.ERROR)
+			vim.notify("Could not create: " .. path, vim.log.levels.ERROR)
 			return
 		end
 
 		reveal_created_dir(path)
 
-		vim.notify("Pasta criada: " .. path, vim.log.levels.INFO)
+		vim.notify("Directory created: " .. path, vim.log.levels.INFO)
 	end)
 end
 
 vim.api.nvim_create_user_command("NewDir", create_dir, {
-	desc = "Cria uma pasta na pasta atual",
+	desc = "Create a directory in the current directory",
 	force = true,
 })
 
 vim.keymap.set("n", "<leader>ed", create_dir, {
-	desc = "Criar pasta na pasta atual",
+	desc = "Create a directory in the current directory",
 	silent = true,
 })

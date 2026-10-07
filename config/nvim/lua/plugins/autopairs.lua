@@ -2,12 +2,12 @@ require("nvim-autopairs").setup({
   check_ts = true,
 })
 
--- Integra com o nvim-cmp: aceitar uma funcao do completion
--- ja fecha os parenteses automaticamente.
+-- Integrate with nvim-cmp: accepting a function from completion
+-- automatically closes the parentheses.
 --
--- Agendado com vim.schedule para nao depender da ordem de
--- carregamento entre nvim-autopairs e nvim-cmp (os dois
--- entram no InsertEnter).
+-- Schedule with vim.schedule to avoid depending on the loading order
+-- of nvim-autopairs and nvim-cmp (both load
+-- on InsertEnter).
 vim.schedule(function()
   local ok_cmp, cmp = pcall(require, "cmp")
   local ok_pairs, cmp_autopairs = pcall(require, "nvim-autopairs.completion.cmp")

@@ -1,7 +1,7 @@
 local function format_buffer()
     local clients = vim.lsp.get_clients({ bufnr = 0 })
     if #clients == 0 then
-        vim.notify("Nenhum LSP ativo para formatar este buffer.", vim.log.levels.WARN)
+        vim.notify("No active LSP client to format this buffer.", vim.log.levels.WARN)
         return
     end
 
@@ -14,7 +14,7 @@ end
 local function lint_buffer()
     local diagnostics = vim.diagnostic.get(0)
     if #diagnostics == 0 then
-        vim.notify("Nenhum diagnostic encontrado no buffer atual.", vim.log.levels.INFO)
+        vim.notify("No diagnostics found in the current buffer.", vim.log.levels.INFO)
         return
     end
 
@@ -46,16 +46,16 @@ local function reload_config()
 end
 
 vim.api.nvim_create_user_command("Format", format_buffer, {
-    desc = "Formata o buffer atual usando LSP",
+    desc = "Format the current buffer using LSP",
     force = true,
 })
 
 vim.api.nvim_create_user_command("Lint", lint_buffer, {
-    desc = "Abre diagnostics do buffer atual no quickfix",
+    desc = "Open current buffer diagnostics in quickfix",
     force = true,
 })
 
 vim.api.nvim_create_user_command("ReloadConfig", reload_config, {
-    desc = "Recarrega a configuracao local do Neovim",
+    desc = "Reload the local Neovim configuration",
     force = true,
 })
