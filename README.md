@@ -9,6 +9,13 @@
 ./install-arch.sh
 ```
 
+Security tools have a [separate installer](setup/README.md) that detects Ubuntu
+or Arch Linux. For a server:
+
+```bash
+./setup/sectools.sh --server --dry-run
+```
+
 <samp>per-machine settings (monitor, keyboard, wallpaper)</samp>
 ```bash
 cp config/hypr/local.lua.example config/hypr/local.lua
