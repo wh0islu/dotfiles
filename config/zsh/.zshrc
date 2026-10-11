@@ -116,7 +116,7 @@ alias ...='cd ../..'
 ############################################################
 
 # Compact fallback prompt when Starship is unavailable.
-PROMPT='%F{cyan}%n@%m%f %F{yellow}%1~%f %(?.%F{green}.%F{red})❯%f '
+PROMPT='%F{yellow}%1~%f %(?.%F{cyan}.%F{red})λ%f '
 
 if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
