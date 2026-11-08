@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Standalone security-tool installer for Ubuntu and Arch Linux.
+# Standalone security-tool installer for Kali, Ubuntu and Arch Linux.
 set -euo pipefail
 
 usage() {
@@ -13,7 +13,7 @@ Choose one or more groups:
   --helpers       Additional Go utilities from the original installer
   --dns           massdns, puredns, DNSRecon (isolated with pipx)
   --screenshots   gowitness and Chromium
-  --metasploit    Metasploit (Arch package; separate upstream setup on Ubuntu)
+  --metasploit    Metasploit (Kali/Arch package; separate upstream setup on Ubuntu)
   --passwords     John the Ripper, Hashcat, hashcat-utils, Hydra, clinfo
   --network       tcpdump, tshark, socat, mtr, iperf3, traceroute, ethtool, nethogs
   --web           SQLmap, mitmproxy, testssl.sh, Nikto
@@ -30,14 +30,14 @@ Choose one or more groups:
 Options:
   --dry-run       Print commands without downloads or changes
   --upgrade-system
-                  Upgrade the system with apt-get upgrade or pacman -Syu
-  --os=NAME       Preview ubuntu or arch; requires --dry-run
+                  Upgrade with Kali full-upgrade, Ubuntu upgrade or pacman -Syu
+  --os=NAME       Preview kali, ubuntu or arch; requires --dry-run
   --opencl-cpu    Add PoCL for CPU OpenCL support (not included in --all)
   --go-latest     Install the latest stable Go from go.dev in the user directory
   -h, --help      Show this help
 
 No group selected: show help without installing anything.
-Distribution is detected from /etc/os-release. Ubuntu 24.04+ is the target.
+Distribution is detected from /etc/os-release. Kali Rolling, Ubuntu and Arch are supported.
 Run as your regular user; package installation uses sudo and asks for confirmation.
 User tools: ~/.local/share/sectools/bin (or $SECTOOLS_HOME/bin).
 Rerunning installs the latest upstream Go tools and updates DNSRecon.
@@ -103,9 +103,9 @@ else
     source /etc/os-release
 fi
 case ${ID:-} in
-    ubuntu) package_manager=apt-get ;;
+    kali|ubuntu) package_manager=apt-get ;;
     arch) package_manager=pacman ;;
-    *) printf 'Unsupported distribution: %s. Supported: Ubuntu and Arch Linux.\n' "${ID:-unknown}" >&2; exit 1 ;;
+    *) printf 'Unsupported distribution: %s. Supported: Kali, Ubuntu and Arch Linux.\n' "${ID:-unknown}" >&2; exit 1 ;;
 esac
 printf 'Detected: %s; package manager: %s\n' "${PRETTY_NAME:-$ID}" "$package_manager"
 if [[ $ID == ubuntu && ${VERSION_ID:-} != preview ]] &&
@@ -146,29 +146,35 @@ if "$antivirus"; then packages+=(clamav); fi
 if "$opencl_cpu"; then packages+=(pocl); fi
 
 failures=()
-if [[ $ID == ubuntu ]]; then
-    ubuntu_packages=()
+if [[ $package_manager == apt-get ]]; then
+    apt_packages=()
     for package in "${packages[@]}"; do
         case $package in
-            bind) ubuntu_packages+=(dnsutils) ;;
-            hping) ubuntu_packages+=(hping3) ;;
-            nmap) ubuntu_packages+=(nmap ncat) ;;
-            go) ubuntu_packages+=(golang-go ca-certificates) ;;
-            python-pipx) ubuntu_packages+=(pipx python3-venv python3-dev) ;;
-            wireshark-cli) ubuntu_packages+=(tshark) ;;
-            wireshark-qt) ubuntu_packages+=(wireshark) ;;
-            mtr) ubuntu_packages+=(mtr-tiny) ;;
-            perl-image-exiftool) ubuntu_packages+=(libimage-exiftool-perl) ;;
-            pocl) ubuntu_packages+=(pocl-opencl-icd) ;;
-            chromium) ubuntu_packages+=(chromium-browser) ;;
-            metasploit)
-                echo 'UNAVAILABLE: Metasploit needs separate upstream installation on Ubuntu; see setup/README.md.' >&2
-                failures+=(metasploit)
+            bind) apt_packages+=(dnsutils) ;;
+            hping) apt_packages+=(hping3) ;;
+            nmap) apt_packages+=(nmap ncat) ;;
+            go) apt_packages+=(golang-go ca-certificates) ;;
+            python-pipx) apt_packages+=(pipx python3-venv python3-dev) ;;
+            wireshark-cli) apt_packages+=(tshark) ;;
+            wireshark-qt) apt_packages+=(wireshark) ;;
+            mtr) apt_packages+=(mtr-tiny) ;;
+            perl-image-exiftool) apt_packages+=(libimage-exiftool-perl) ;;
+            pocl) apt_packages+=(pocl-opencl-icd) ;;
+            chromium)
+                if [[ $ID == kali ]]; then apt_packages+=(chromium); else apt_packages+=(chromium-browser); fi
                 ;;
-            *) ubuntu_packages+=("$package") ;;
+            metasploit)
+                if [[ $ID == kali ]]; then
+                    apt_packages+=(metasploit-framework)
+                else
+                    echo 'UNAVAILABLE: Metasploit needs separate upstream installation on Ubuntu; see setup/README.md.' >&2
+                    failures+=(metasploit)
+                fi
+                ;;
+            *) apt_packages+=("$package") ;;
         esac
     done
-    packages=("${ubuntu_packages[@]}")
+    packages=("${apt_packages[@]}")
 fi
 
 if "$recon"; then
@@ -231,7 +237,7 @@ if ! "$dry_run"; then
 fi
 
 echo 'System packages and dependencies will be shown before confirmation.'
-if [[ $ID == ubuntu ]]; then
+if [[ $package_manager == apt-get ]]; then
     if ((${#packages[@]})); then
         run sudo apt-get update
         if ! "$dry_run"; then
@@ -241,7 +247,7 @@ if [[ $ID == ubuntu ]]; then
                 if [[ -n $candidate && $candidate != '(none)' ]]; then
                     available+=("$package")
                 else
-                    printf 'UNAVAILABLE: %s (check Ubuntu release and Universe/Multiverse repositories).\n' "$package" >&2
+                    printf 'UNAVAILABLE: %s (check package availability and enabled repositories).\n' "$package" >&2
                     failures+=("$package")
                 fi
             done
@@ -250,7 +256,9 @@ if [[ $ID == ubuntu ]]; then
             echo 'Package candidates will be checked after apt-get update during installation.'
         fi
     fi
-    if "$upgrade_system"; then run sudo apt-get upgrade; fi
+    if "$upgrade_system"; then
+        if [[ $ID == kali ]]; then run sudo apt-get full-upgrade; else run sudo apt-get upgrade; fi
+    fi
     if ((${#packages[@]})); then
         run sudo apt-get install --no-install-recommends "${packages[@]}"
     fi

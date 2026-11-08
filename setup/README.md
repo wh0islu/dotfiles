@@ -1,17 +1,18 @@
-# Security tools (Ubuntu Server and Arch Linux)
+# Security tools (Kali, Ubuntu Server and Arch Linux)
 
 `sectools.sh` is independent of the desktop installer. Run it from the repository
 root as your regular user with sudo access. With no arguments it only displays
-help. It reads `/etc/os-release` and selects `apt-get` on Ubuntu or `pacman` on
-Arch. Other distribution IDs are rejected before making changes.
+help. It reads `/etc/os-release` and selects `apt-get` on Kali and Ubuntu or
+`pacman` on Arch. Other distribution IDs are rejected before making changes.
 
-Ubuntu 24.04 LTS or newer is the target for the complete toolset. Older Ubuntu
-releases can use package-only groups; source-tool groups require 24.04+ for the
-Go and Python baseline. Package availability depends on the release, architecture
-and enabled repositories. This script is not a generic installer for every Linux
-distribution, macOS or Windows.
+Kali Rolling is supported with its APT package names, including Kali's
+`metasploit-framework` and `chromium` packages. Ubuntu 24.04 LTS or newer is the
+target for the complete Ubuntu toolset. Older Ubuntu releases can use package-only
+groups; source-tool groups require 24.04+ for the Go and Python baseline. Package
+availability depends on the release, architecture and enabled repositories. This
+script is not a generic installer for every Linux distribution, macOS or Windows.
 
-## Ubuntu server quick start
+## Kali or Ubuntu server quick start
 
 Run these commands on the server from the repository root:
 
@@ -28,15 +29,16 @@ export PATH="$HOME/.local/share/sectools/bin:$PATH"
 GUI applications, a browser, wireless tools, Metasploit or a compute runtime.
 Add the printed PATH export to your shell configuration once for future logins.
 
-To preview Ubuntu commands from an Arch machine:
+To preview commands for another supported system:
 
 ```bash
+./setup/sectools.sh --server --os=kali --dry-run
 ./setup/sectools.sh --server --os=ubuntu --dry-run
 ```
 
-`--os=ubuntu` and `--os=arch` only work with `--dry-run`; real installations always
-use the detected distribution. A preview does not query the remote server or
-verify package candidates.
+`--os=kali`, `--os=ubuntu` and `--os=arch` only work with `--dry-run`; real
+installations always use the detected distribution. A preview does not query the
+remote server or verify package candidates.
 
 ## Selecting groups
 
@@ -68,7 +70,7 @@ verify package candidates.
 | `--helpers` | notify, hakrevdns, gf, fff, httprobe, anew, unfurl, qsreplace, meg, goop, hakcheckurl, sdlookup, metabigor, xurlfind3r, subjs, jsubfinder, getJS, rayder |
 | `--dns` | massdns, puredns, DNSRecon |
 | `--screenshots` | gowitness, Chromium |
-| `--metasploit` | Arch package; separate upstream installation on Ubuntu |
+| `--metasploit` | Kali `metasploit-framework` and Arch package; separate upstream installation on Ubuntu |
 | `--passwords` | John the Ripper (`john`), hashcat, hashcat-utils, Hydra, clinfo |
 | `--network` | tcpdump, tshark (`wireshark-cli`), socat, mtr, iperf3, traceroute, ethtool, nethogs |
 | `--web` | sqlmap, mitmproxy, testssl.sh, nikto |
@@ -134,15 +136,17 @@ in the same transaction, explicitly add `--upgrade-system`. Pacman displays
 transitive dependencies before asking for confirmation. The installer does not
 use `--noconfirm` or configure AUR/BlackArch.
 
-On Ubuntu, it runs `apt-get update`, checks package candidates, then uses
-`apt-get install --no-install-recommends`. `--upgrade-system` additionally runs
-`apt-get upgrade`; otherwise no general system upgrade is requested, although
-APT may upgrade requested packages or required dependencies. Unavailable
-packages are reported, remaining packages are installed, and the script exits
-with status 1 to indicate an incomplete selection. It does not silently add
-PPAs or other distributions' repositories. Many security packages require the
-Ubuntu Universe component; check the reported package and your repository
-configuration if a candidate is missing.
+On Kali and Ubuntu, it runs `apt-get update`, checks package candidates, then uses
+`apt-get install --no-install-recommends`. `--upgrade-system` runs
+`apt-get full-upgrade` on Kali and `apt-get upgrade` on Ubuntu; otherwise no
+general system upgrade is requested, although APT may upgrade requested packages
+or required dependencies. Kali recommends `full-upgrade` for its rolling system;
+review APT's proposed package removals before confirming. Unavailable packages are
+reported, remaining packages are installed, and the script exits with status 1
+to indicate an incomplete selection. It does not silently add PPAs or other
+distributions' repositories. On Ubuntu, many security packages require the
+Universe component; check the reported package and repository configuration if a
+candidate is missing.
 
 The script does not configure firewall rules, SSH, group memberships or services.
 Distribution package installation scripts may start services or ask configuration
@@ -191,12 +195,14 @@ export command and does not edit your shell files.
 - API-backed tools such as Chaos and Notify need your own provider credentials
   or configuration. No credentials are written by this installer.
 - Nuclei manages its templates separately. This installer only builds the CLI.
-- Metasploit is available through the Arch package. On Ubuntu, `--metasploit`
+- Metasploit is available through Kali's `metasploit-framework` and the Arch
+  package. On Ubuntu, `--metasploit`
   is reported as unavailable and produces exit status 1 (including with `--all`).
   Follow the [official Metasploit installer documentation](https://docs.metasploit.com/docs/using-metasploit/getting-started/nightly-installers.html)
   separately if needed. The script does not add Rapid7 repositories or initialize
   PostgreSQL.
-- Ubuntu's `chromium-browser` package may install Chromium through Snap. Select
+- Ubuntu's `chromium-browser` package may install Chromium through Snap. Kali
+  installs its native `chromium` package. Select
   `--screenshots` only if that fits your server; it is excluded from `--server`.
 - Ubuntu's `john` package may offer fewer formats than Arch's Jumbo build. Check
   the installed build before assuming support for a particular hash format.
