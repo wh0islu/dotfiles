@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install and link this repository's i3 + Polybar setup on Debian/Ubuntu systems.
+# Install and link this repository's i3 + Polybar setup on Kali/Debian/Ubuntu systems.
 # Usage: ./install-i3-polybar-apt.sh [--dry-run]
 set -euo pipefail
 
@@ -44,9 +44,9 @@ fi
 # shellcheck disable=SC1091
 source /etc/os-release
 case " ${ID:-} ${ID_LIKE:-} " in
-    *" ubuntu "*|*" debian "*) ;;
+    *" kali "*|*" ubuntu "*|*" debian "*) ;;
     *)
-        printf 'Unsupported apt distribution: %s (%s). Supported: Debian/Ubuntu derivatives.\n' \
+        printf 'Unsupported apt distribution: %s (%s). Supported: Kali, Debian, and Ubuntu derivatives.\n' \
             "${PRETTY_NAME:-unknown}" "${ID:-unknown}" >&2
         exit 1
         ;;
@@ -71,7 +71,6 @@ packages=(
     iproute2
     kitty
     network-manager
-    network-manager-gnome
     neovim
     picom
     polybar
@@ -84,6 +83,11 @@ packages=(
     zathura
     zathura-pdf-poppler
 )
+if [[ "${ID:-}" == kali ]]; then
+    packages+=(network-manager-applet)
+else
+    packages+=(network-manager-gnome)
+fi
 config_dirs=(i3 polybar rofi flameshot zathura)
 fonts=(FiraMono JetBrainsMono)
 
@@ -118,7 +122,7 @@ if [[ -z "$polybar_candidate" || "$polybar_candidate" == "(none)" ]] ||
     ! dpkg --compare-versions "$polybar_candidate" ge 3.7.0; then
     printf 'The apt repositories offer Polybar %s; this setup requires 3.7.0 or newer.\n' \
         "${polybar_candidate:-none}" >&2
-    echo "On Ubuntu, enable Universe or use a newer Debian/Ubuntu release. No configs were linked." >&2
+    echo "On Ubuntu, enable Universe; on Kali/Debian, check that the official rolling/current repository is enabled. No configs were linked." >&2
     exit 1
 fi
 

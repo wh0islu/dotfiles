@@ -9,7 +9,7 @@
 ./install-arch.sh
 ```
 
-<samp>set up i3 + Polybar on Debian/Ubuntu-based systems</samp>
+<samp>set up i3 + Polybar on Kali, Debian, or Ubuntu-based systems</samp>
 ```bash
 ./install-i3-polybar-apt.sh
 ```
