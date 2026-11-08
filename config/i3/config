@@ -132,8 +132,9 @@ gaps inner 5
 
 # Set background wallpaper and launch Polybar & Picom
 exec_always --no-startup-id feh --bg-scale $HOME/Images/Wallpapers/wall1.png
-exec_always --no-startup-id $HOME/.config/polybar/launch.sh
-exec --no-startup-id picom --config ~/.config/picom/picom.conf
+# Polybar profiles dock at the top; i3 reserves their space automatically.
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh auto
+exec --no-startup-id picom
 
 # Launch rofi for running nvim
 bindsym $mod+n exec --no-startup-id rofi -show run -run-command "nvim {cmd}"
