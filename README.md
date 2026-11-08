@@ -9,6 +9,13 @@
 ./install-arch.sh
 ```
 
+<samp>set up i3 + Polybar on Debian/Ubuntu-based systems</samp>
+```bash
+./install-i3-polybar-apt.sh
+```
+Use `--dry-run` to preview package installation and config links. The apt
+repositories must provide Polybar 3.7.0 or newer.
+
 Security tools have a [separate installer](setup/README.md) that detects Ubuntu
 or Arch Linux. For a server:
 
