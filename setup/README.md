@@ -9,7 +9,7 @@ It detects the system from `/etc/os-release` and uses `apt-get` (Kali, Ubuntu) o
 
 ```bash
 ./setup/sectools.sh --server --dry-run     # preview
-./setup/sectools.sh --server               # base, recon, DNS, network and web
+./setup/sectools.sh --server               # base, recon, DNS, network, web and webfuzz
 ./setup/sectools.sh --passwords            # add groups at any time
 export PATH="$HOME/.local/share/sectools/bin:$PATH"
 ```
@@ -22,7 +22,7 @@ group, including GUI apps; prefer `--server` on remote machines.
 | Group | Tools |
 | --- | --- |
 | `--base` | jq, curl, wget, nmap, whois, dig, net-tools, hping |
-| `--recon` | subfinder, chaos, httpx, dnsx, nuclei, amass, ffuf, gau, waybackurls, assetfinder, mapcidr, asnmap |
+| `--recon` | subfinder, chaos, httpx, dnsx, nuclei, amass, ffuf, gau, waybackurls, assetfinder, mapcidr, asnmap, naabu, katana, tlsx, uncover, alterx, shuffledns, cdncheck, urlfinder, interactsh-client, vulnx |
 | `--helpers` | notify, hakrevdns, gf, fff, httprobe, anew, unfurl, qsreplace, meg, goop, and others |
 | `--dns` | massdns, puredns, DNSRecon |
 | `--screenshots` | gowitness, Chromium |
@@ -30,6 +30,7 @@ group, including GUI apps; prefer `--server` on remote machines.
 | `--passwords` | John the Ripper, hashcat, hashcat-utils, Hydra, clinfo |
 | `--network` | tcpdump, tshark, socat, mtr, iperf3, traceroute, ethtool, nethogs |
 | `--web` | sqlmap, mitmproxy, testssl.sh, nikto |
+| `--webfuzz` | ParamSpider, Arjun, dalfox, gobuster, gospider, hakrawler, wfuzz (Kali/Ubuntu only) |
 | `--wireless` | aircrack-ng, iw, hcxtools |
 | `--forensics` | binwalk, foremost, Sleuth Kit, ExifTool, YARA |
 | `--reverse` | radare2, GDB, strace, ltrace, checksec, hexedit |
@@ -51,7 +52,9 @@ group, including GUI apps; prefer `--server` on remote machines.
 - Executables go to `~/.local/share/sectools/bin` (override with `SECTOOLS_HOME`). Putting it first in PATH selects ProjectDiscovery's `httpx` over the Python one.
 - Hashcat needs a compute runtime: check with `hashcat -I`. `--opencl-cpu` adds PoCL; GPU runtimes are up to you.
 - `--go-latest` installs the latest stable Go (SHA-256 verified) in `~/.local/share/sectools/toolchains` without replacing the system Go; add `~/.local/share/sectools/go/bin` to PATH.
-- Some tools need their own setup: PureDNS resolvers, GF patterns, JSubfinder signatures, API keys for Chaos/Notify, `freshclam` for ClamAV, and the `wireshark` group for live capture.
+- wfuzz releases don't run on Python 3.12+, so it comes from the patched Kali/Ubuntu package; on Arch it is skipped (AUR only) and `ffuf` covers the same use.
+- naabu SYN scans need root or `CAP_NET_RAW`; use `-s c` (connect scan) otherwise. shuffledns needs massdns (`--dns`) and a resolver list.
+- Some tools need their own setup: PureDNS resolvers, GF patterns, JSubfinder signatures, API keys for Chaos, Notify, uncover and vulnx, `freshclam` for ClamAV, and the `wireshark` group for live capture.
 
 ## Tests
 

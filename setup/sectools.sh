@@ -9,7 +9,9 @@ Usage: ./setup/sectools.sh [GROUPS] [--dry-run] [--upgrade-system]
 Choose one or more groups:
   --base          jq, curl, wget, nmap/ncat, whois, bind, net-tools, hping
   --recon         Subfinder, Chaos, httpx, dnsx, Nuclei, Amass, ffuf,
-                  gau, waybackurls, assetfinder, mapcidr, asnmap
+                  gau, waybackurls, assetfinder, mapcidr, asnmap, and
+                  ProjectDiscovery's naabu, katana, tlsx, uncover, alterx,
+                  shuffledns, cdncheck, urlfinder, interactsh-client, vulnx
   --helpers       Additional Go utilities from the original installer
   --dns           massdns, puredns, DNSRecon (isolated with pipx)
   --screenshots   gowitness and Chromium
@@ -17,6 +19,8 @@ Choose one or more groups:
   --passwords     John the Ripper, Hashcat, hashcat-utils, Hydra, clinfo
   --network       tcpdump, tshark, socat, mtr, iperf3, traceroute, ethtool, nethogs
   --web           SQLmap, mitmproxy, testssl.sh, Nikto
+  --webfuzz       ParamSpider, Arjun, dalfox, gobuster, gospider, hakrawler,
+                  wfuzz (Kali/Ubuntu package; skipped on Arch, use ffuf)
   --wireless      aircrack-ng, iw, hcxtools
   --forensics     binwalk, foremost, Sleuth Kit, ExifTool, YARA
   --reverse       radare2, GDB, strace, ltrace, checksec, hexedit
@@ -24,7 +28,7 @@ Choose one or more groups:
   --crypto        age, GnuPG, OpenSSL
   --wireshark-gui Wireshark graphical interface
   --antivirus     ClamAV (signature download and services configured separately)
-  --server        Base, recon, DNS, network and web tools (no GUI)
+  --server        Base, recon, DNS, network, web and webfuzz tools (no GUI)
   --all           All groups above
 
 Options:
@@ -40,12 +44,12 @@ No group selected: show help without installing anything.
 Distribution is detected from /etc/os-release. Kali Rolling, Ubuntu and Arch are supported.
 Run as your regular user; package installation uses sudo and asks for confirmation.
 User tools: ~/.local/share/sectools/bin (or $SECTOOLS_HOME/bin).
-Rerunning installs the latest upstream Go tools and updates DNSRecon.
+Rerunning installs the latest upstream Go tools and updates the pipx tools.
 EOF
 }
 
 base=false recon=false helpers=false dns=false screenshots=false metasploit=false
-passwords=false network=false web=false wireless=false forensics=false reverse=false
+passwords=false network=false web=false webfuzz=false wireless=false forensics=false reverse=false
 audit=false crypto=false wireshark_gui=false antivirus=false opencl_cpu=false
 dry_run=false upgrade_system=false selected=false
 go_latest=false
@@ -61,6 +65,7 @@ for arg in "$@"; do
         --passwords) passwords=true; selected=true ;;
         --network) network=true; selected=true ;;
         --web) web=true; selected=true ;;
+        --webfuzz) webfuzz=true; selected=true ;;
         --wireless) wireless=true; selected=true ;;
         --forensics) forensics=true; selected=true ;;
         --reverse) reverse=true; selected=true ;;
@@ -70,11 +75,11 @@ for arg in "$@"; do
         --antivirus) antivirus=true; selected=true ;;
         --opencl-cpu) opencl_cpu=true; selected=true ;;
         --go-latest) go_latest=true; selected=true ;;
-        --server) base=true recon=true dns=true network=true web=true; selected=true ;;
+        --server) base=true recon=true dns=true network=true web=true webfuzz=true; selected=true ;;
         --os=*) preview_os=${arg#--os=} ;;
         --all)
             base=true recon=true helpers=true dns=true screenshots=true metasploit=true
-            passwords=true network=true web=true wireless=true forensics=true reverse=true
+            passwords=true network=true web=true webfuzz=true wireless=true forensics=true reverse=true
             audit=true crypto=true wireshark_gui=true antivirus=true
             selected=true ;;
         --dry-run) dry_run=true ;;
@@ -109,7 +114,7 @@ case ${ID:-} in
 esac
 printf 'Detected: %s; package manager: %s\n' "${PRETTY_NAME:-$ID}" "$package_manager"
 if [[ $ID == ubuntu && ${VERSION_ID:-} != preview ]] &&
-    { "$recon" || "$helpers" || "$dns" || "$screenshots"; }; then
+    { "$recon" || "$helpers" || "$dns" || "$screenshots" || "$webfuzz"; }; then
     if [[ ! ${VERSION_ID:-} =~ ^[0-9]+\.[0-9]+$ ]] || (( ${VERSION_ID%%.*} < 24 )); then
         echo 'Source-tool groups require Ubuntu 24.04+ (Go 1.21+ and Python 3.12+). No changes made.' >&2
         exit 1
@@ -125,17 +130,26 @@ tool_bin="$tool_home/bin"
 packages=()
 go_tools=()
 if "$base"; then packages+=(jq curl wget nmap whois bind net-tools hping); fi
-if "$recon" || "$helpers" || "$dns" || "$screenshots"; then
+if "$recon" || "$helpers" || "$dns" || "$screenshots" || "$webfuzz"; then
     packages+=(git gcc make)
     if ! "$go_latest"; then packages+=(go); fi
 fi
 if "$go_latest"; then packages+=(curl jq ca-certificates tar gzip); fi
-if "$dns"; then packages+=(python-pipx); fi
+# naabu (recon) links against libpcap for SYN scans.
+if "$recon"; then packages+=(libpcap); fi
+if "$dns" || "$webfuzz"; then packages+=(python-pipx); fi
 if "$screenshots"; then packages+=(chromium); fi
 if "$metasploit"; then packages+=(metasploit); fi
 if "$passwords"; then packages+=(john hashcat hashcat-utils hydra clinfo); fi
 if "$network"; then packages+=(tcpdump wireshark-cli socat mtr iperf3 traceroute ethtool nethogs); fi
 if "$web"; then packages+=(sqlmap mitmproxy testssl.sh nikto); fi
+# Published wfuzz releases do not run on Python 3.12+; Kali and Ubuntu ship
+# patched packages, while Arch only has it in the AUR (not used here).
+skipped=()
+if "$webfuzz"; then
+    if [[ $ID == arch ]]; then skipped+=('wfuzz (AUR only on Arch; ffuf from --recon covers the same use)')
+    else packages+=(wfuzz); fi
+fi
 if "$wireless"; then packages+=(aircrack-ng iw hcxtools); fi
 if "$forensics"; then packages+=(binwalk foremost sleuthkit perl-image-exiftool yara); fi
 if "$reverse"; then packages+=(radare2 gdb strace ltrace checksec hexedit); fi
@@ -155,6 +169,7 @@ if [[ $package_manager == apt-get ]]; then
             nmap) apt_packages+=(nmap ncat) ;;
             go) apt_packages+=(golang-go ca-certificates) ;;
             python-pipx) apt_packages+=(pipx python3-venv python3-dev) ;;
+            libpcap) apt_packages+=(libpcap-dev) ;;
             wireshark-cli) apt_packages+=(tshark) ;;
             wireshark-qt) apt_packages+=(wireshark) ;;
             mtr) apt_packages+=(mtr-tiny) ;;
@@ -191,6 +206,17 @@ if "$recon"; then
         github.com/tomnomnom/assetfinder@latest
         github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest
         github.com/projectdiscovery/asnmap/cmd/asnmap@latest
+        github.com/projectdiscovery/naabu/v2/cmd/naabu@latest
+        github.com/projectdiscovery/katana/cmd/katana@latest
+        github.com/projectdiscovery/tlsx/cmd/tlsx@latest
+        github.com/projectdiscovery/uncover/cmd/uncover@latest
+        github.com/projectdiscovery/alterx/cmd/alterx@latest
+        github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest
+        github.com/projectdiscovery/cdncheck/cmd/cdncheck@latest
+        github.com/projectdiscovery/urlfinder/cmd/urlfinder@latest
+        github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest
+        # vulnx (formerly cvemap) still declares the cvemap module path.
+        github.com/projectdiscovery/cvemap/cmd/vulnx@latest
     )
 fi
 if "$helpers"; then
@@ -217,6 +243,14 @@ if "$helpers"; then
 fi
 if "$dns"; then go_tools+=(github.com/d3mondev/puredns/v2@latest); fi
 if "$screenshots"; then go_tools+=(github.com/sensepost/gowitness@latest); fi
+if "$webfuzz"; then
+    go_tools+=(
+        github.com/hahwul/dalfox/v2@latest
+        github.com/OJ/gobuster/v3@latest
+        github.com/jaeles-project/gospider@latest
+        github.com/hakluke/hakrawler@latest
+    )
+fi
 
 run() {
     printf '+'
@@ -355,12 +389,22 @@ install_massdns() {
     run install -m 755 "$source_dir/bin/massdns" "$tool_bin/massdns"
 }
 
+# Python tools stay isolated from system Python, one pipx venv each.
+pipx_install() {
+    local name=$1 spec=$2
+    if ! run env PIPX_HOME="$tool_home/pipx" PIPX_BIN_DIR="$tool_bin" \
+        pipx install --force "$spec"; then
+        failures+=("$name")
+    fi
+}
+
 if "$dns"; then
     if ! install_massdns; then failures+=(massdns); fi
-    if ! run env PIPX_HOME="$tool_home/pipx" PIPX_BIN_DIR="$tool_bin" \
-        pipx install --force 'git+https://github.com/darkoperator/dnsrecon.git'; then
-        failures+=(dnsrecon)
-    fi
+    pipx_install dnsrecon 'git+https://github.com/darkoperator/dnsrecon.git'
+fi
+if "$webfuzz"; then
+    pipx_install paramspider 'git+https://github.com/devanshbatham/ParamSpider.git'
+    pipx_install arjun arjun
 fi
 
 if ((${#go_tools[@]})); then
@@ -372,6 +416,14 @@ if "$go_latest"; then
     printf 'export PATH=%q:"$PATH"\n' "$tool_home/go/bin"
 fi
 if "$dns"; then echo 'PureDNS needs a resolver list; see setup/README.md.'; fi
+if "$recon"; then
+    echo 'shuffledns needs massdns (--dns) and a resolver list; uncover and vulnx use your own API keys.'
+    echo 'naabu SYN scans need root or CAP_NET_RAW; without them use its connect scan (-s c).'
+fi
+if ((${#skipped[@]})); then
+    printf '\nSkipped on this distribution:\n'
+    printf '  %s\n' "${skipped[@]}"
+fi
 if "$helpers"; then echo 'GF patterns and JSubfinder signatures require configuration; see setup/README.md.'; fi
 if "$metasploit"; then echo 'Metasploit selection covers the package only; database and service setup are separate.'; fi
 if "$passwords"; then

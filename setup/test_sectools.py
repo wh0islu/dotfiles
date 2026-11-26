@@ -52,7 +52,8 @@ esac
         result = self.run_script("--server", "--dry-run")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("apt-get install --no-install-recommends", result.stdout)
-        for name in ("dnsutils", "hping3", "golang-go", "python3-venv", "tshark", "mtr-tiny"):
+        for name in ("dnsutils", "hping3", "golang-go", "python3-venv", "tshark", "mtr-tiny",
+                     "libpcap-dev", "wfuzz", "naabu", "katana", "dalfox", "ParamSpider"):
             self.assertIn(name, result.stdout)
         for name in ("chromium", "wireshark-qt", "metasploit", "aircrack-ng", "pocl"):
             self.assertNotIn(name, result.stdout)
@@ -65,6 +66,22 @@ esac
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("pacman -Syu --needed", result.stdout)
         self.assertNotIn("apt-get", result.stdout)
+
+    def test_arch_skips_wfuzz_without_failing(self):
+        self.release.write_text("ID=arch\n")
+        result = self.run_script("--webfuzz", "--dry-run")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn(" wfuzz", result.stdout.split("Skipped")[0])
+        self.assertIn("wfuzz (AUR only on Arch", result.stdout)
+        self.assertIn("python-pipx", result.stdout)
+        self.assertIn("arjun", result.stdout)
+
+    def test_recon_adds_libpcap_on_arch(self):
+        self.release.write_text("ID=arch\n")
+        result = self.run_script("--recon", "--dry-run")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("libpcap", result.stdout)
+        self.assertIn("cvemap/cmd/vulnx@latest", result.stdout)
 
     def test_preview_override_cannot_install(self):
         result = self.run_script("--base", "--os=arch")
@@ -111,7 +128,10 @@ esac
         self.assertEqual(result.returncode, 0, result.stderr)
         commands = self.log.read_text()
         self.assertIn("apt-get upgrade", commands)
-        self.assertEqual(commands.count("go install "), 13)
+        # 22 recon + puredns (dns) + 4 webfuzz
+        self.assertEqual(commands.count("go install "), 27)
+        for tool in ("dnsrecon", "ParamSpider", "arjun"):
+            self.assertIn(tool, commands)
         self.assertTrue((self.root / "tools with spaces/bin/massdns").exists())
 
     def test_latest_go_preview(self):
